@@ -102,8 +102,9 @@ demo/assets/           이미지 에셋 (비어 있으면 Canvas 렌더링)
 로딩에 실패하면 경고 1줄을 남기고 조용히 Canvas 렌더링으로 돌아간다.
 **이미지는 보이는 것만 바꾼다** — 충돌 판정, 속도, 성장 수치, 저장 데이터는 영향받지 않는다.
 
-규격은 [`docs/ASSETS.md`](docs/ASSETS.md), 생성 프롬프트는
-[`docs/ASSET_PROMPTS.md`](docs/ASSET_PROMPTS.md).
+규격은 [`docs/ASSETS.md`](docs/ASSETS.md).
+생성 프롬프트는 [`docs/ASSET_PROMPTS.md`](docs/ASSET_PROMPTS.md) (완료분),
+**남은 31장은 [`docs/ASSET_PROMPTS_REMAINING.md`](docs/ASSET_PROMPTS_REMAINING.md)**.
 
 ### 적용 현황 (22/53)
 
