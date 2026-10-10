@@ -104,6 +104,13 @@
   .hubTop{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
   .hubTop h2{color:#eaf9ff;font-size:19px;font-weight:800;letter-spacing:-.3px}
   .hubTop .pl{color:#ffe08a;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+  .mute{margin-right:12px;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.22);
+    background:rgba(8,38,60,.7);color:#8fd6f0;font-size:13px;vertical-align:middle}
+
+  .mute.off{color:#5b7a8c;text-decoration:line-through}
+  .card .bl{color:#ff9aa8;font-size:10.5px;font-weight:700;flex:0 0 auto;text-align:right;max-width:112px;line-height:1.35}
+  .card .ok{color:#5ee8a8}
+  .card .sub{color:#7fb6d0;font-size:10px;margin-top:3px;letter-spacing:.3px}
   .hubSec{margin-bottom:20px}
   .hubSec h3{color:#7fb6d0;font-size:10.5px;font-weight:700;letter-spacing:1.6px;
     margin-bottom:9px;text-transform:uppercase}
@@ -191,14 +198,17 @@
 <div id="boost">BOOST</div>
 
 <div id="bossBar" class="hidden">
-  <div class="bn">거대 바라쿠다</div>
+  <div class="bn" id="bossName">거대 바라쿠다</div>
   <div id="bossTrack"><i id="bossFill"></i><u style="left:66%"></u><u style="left:33%"></u></div>
 </div>
 
 <div id="toast"><div class="t1">E V O L V E</div><div class="t2">리프 샤크</div></div>
 
 <div id="hubScreen" class="screen hub hidden">
-  <div class="hubTop"><h2>해저 기지</h2><div class="pl">◈ <span id="hubPearls">0</span></div></div>
+  <div class="hubTop"><h2>해저 기지</h2>
+    <div><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
+  </div>
+  <div class="hubSec"><h3>해역</h3><div id="stageList" class="cards"></div></div>
   <div class="hubSec"><h3>상어</h3><div id="sharkList" class="cards"></div></div>
   <div class="hubSec"><h3>능력치</h3><div id="upgList"></div></div>
   <div class="hubSec"><h3>부화기</h3><div id="hatchBox" class="hatch"></div></div>
@@ -263,12 +273,15 @@ const TARGET_FISH    = 170;   // 활성 구역 내 동시 생존 목표
 const ACTIVE_PAD     = { x: 520, y: 300 };  // 화면 밖 이만큼까지가 활성 구역
 
 /* ---------------- 플레이어 진화 단계 ---------------- */
+/* 진화 4단계. 티어는 상어의 기본 티어에서 파생된다 (base, +1, +2, +3) */
 const EVO = [
-  { tier: 2, len: 30, speed: 178, name: '리프 샤크 치어', need: 30 },
-  { tier: 3, len: 46, speed: 198, name: '리프 샤크 유어', need: 72 },
-  { tier: 4, len: 66, speed: 218, name: '리프 샤크',      need: 150 },
-  { tier: 5, len: 92, speed: 238, name: '성체 리프 샤크', need: Infinity },
+  { len: 30, speed: 178, label: '치어',   need: 30 },
+  { len: 46, speed: 198, label: '유어',   need: 72 },
+  { len: 66, speed: 218, label: '',       need: 150 },
+  { len: 92, speed: 238, label: '성체',   need: Infinity },
 ];
+const evoName = (shark, i) =>
+  shark.name + (EVO[i].label ? ' ' + EVO[i].label : '');
 
 /* ---------------- 물고기 정의 — 1종 = 1줄 ----------------
    depth: 세로 서식 범위(0=수면, 1=바닥) / behavior: school|drift|flee|bottom|aggro|float   */
@@ -283,29 +296,95 @@ const FISH = [
   { id:'ray',      name:'가오리',    tier:4, len:60, body:'#a678d8', fin:'#6c45a0', behavior:'drift',  speed:46, depth:[.6,.97] },
   { id:'barra',    name:'바라쿠다',  tier:5, len:84, body:'#eef4f6', fin:'#8ba3ad', behavior:'aggro',  speed:96, depth:[.15,.75] },
   { id:'jelly',    name:'해파리',    tier:9, len:26, body:'#e9b6ff', fin:'#bb7ddb', behavior:'float',  speed:16, depth:[.1,.85], shock:true },
+
+  /* --- 산호 정원 --- */
+  { id:'parrot',   name:'비늘돔',    tier:2, len:30, body:'#3ad6a0', fin:'#ff9ad0', behavior:'drift',  speed:48, depth:[.2,.75] },
+  { id:'butterfly',name:'나비고기',  tier:2, len:22, body:'#ffe14d', fin:'#2b3a52', behavior:'flee',   speed:72, depth:[.15,.6], stripes:true },
+  { id:'wrasse',   name:'청줄놀래기',tier:2, len:24, body:'#4db8ff', fin:'#ffd24d', behavior:'school', speed:66, depth:[.2,.7], school:true },
+  { id:'lionfish', name:'쏠배감펭',  tier:3, len:34, body:'#ff6b3d', fin:'#fff0e0', behavior:'drift',  speed:30, depth:[.3,.85], toxic:true, stripes:true },
+  { id:'striped',  name:'돌돔',      tier:3, len:38, body:'#dde6ea', fin:'#2b3a52', behavior:'flee',   speed:76, depth:[.25,.8], stripes:true },
+  { id:'squid',    name:'오징어',    tier:4, len:46, body:'#ffb3c7', fin:'#d4718f', behavior:'drift',  speed:58, depth:[.2,.8] },
+  { id:'moraykid', name:'곰치 치어', tier:4, len:52, body:'#8aa83c', fin:'#5d7524', behavior:'aggro',  speed:70, depth:[.5,.95] },
+  { id:'reefpup',  name:'상어 치어', tier:5, len:64, body:'#9fb4c4', fin:'#6b8294', behavior:'aggro',  speed:88, depth:[.2,.8] },
+  { id:'clam',     name:'대왕조개',  tier:5, len:40, body:'#e0cdf5', fin:'#9a7fc0', behavior:'bottom', speed:0,  depth:[.92,.99], shell:true },
+  { id:'urchin',   name:'성게',      tier:9, len:22, body:'#4a2f6b', fin:'#2a1a40', behavior:'bottom', speed:0,  depth:[.93,.99], shock:true },
+
+  /* --- 난파선 해구 --- */
+  { id:'sardine',  name:'정어리',    tier:3, len:20, body:'#cfe0e8', fin:'#8fa7b5', behavior:'school', speed:62, depth:[.1,.6], school:true },
+  { id:'yellowray',name:'노랑가오리',tier:3, len:48, body:'#e8c24a', fin:'#a8862a', behavior:'drift',  speed:42, depth:[.6,.95] },
+  { id:'angler',   name:'아귀',      tier:4, len:50, body:'#4a4038', fin:'#2b241e', behavior:'aggro',  speed:44, depth:[.55,.95], lure:true },
+  { id:'conger',   name:'붕장어',    tier:4, len:62, body:'#7d8a6b', fin:'#55603f', behavior:'drift',  speed:52, depth:[.5,.95] },
+  { id:'tuna',     name:'참치',      tier:5, len:70, body:'#5c7fa8', fin:'#35506e', behavior:'flee',   speed:120, depth:[.1,.7] },
+  { id:'swordfish',name:'황새치',    tier:5, len:82, body:'#7a6fa8', fin:'#4c4470', behavior:'aggro',  speed:104, depth:[.15,.7] },
+  { id:'hammer',   name:'귀상어',    tier:6, len:92, body:'#a8b6bf', fin:'#74838d', behavior:'aggro',  speed:98, depth:[.2,.8] },
+  { id:'blueshark',name:'청새리상어',tier:6, len:88, body:'#6e92c4', fin:'#45628d', behavior:'aggro',  speed:102, depth:[.2,.85] },
+  { id:'mine',     name:'기뢰',      tier:9, len:30, body:'#3b4046', fin:'#20242a', behavior:'float',  speed:0,  depth:[.2,.9], shock:true, mine:true },
 ];
 const FISH_BY_ID = {}; FISH.forEach(d => FISH_BY_ID[d.id] = d);
 
 /* ---------------- 보스 ---------------- */
-const BOSS = {
-  name: '거대 바라쿠다', tier: 6, len: 140, hp: 500,
-  body: '#e8f1f5', fin: '#758c97',
-  contact: 11,          // 경직 중이 아닐 때 접촉 피해 (HIT_CD 간격)
-  staggerMul: 2.0,      // 경직 중 물기 데미지 배수
+const BOSSES = {
+  giant_barra: { name:'거대 바라쿠다', tier:6, len:140, hp:500, shape:'barracuda',
+    body:'#e8f1f5', fin:'#758c97', contact:11, staggerMul:2.0,
+    summon:['anchovy','shrimp','clown','mackerel'] },
+  giant_moray: { name:'대왕 곰치', tier:7, len:200, hp:700, shape:'eel',
+    body:'#a8cc52', fin:'#5d7524', contact:13, staggerMul:2.0,
+    summon:['parrot','wrasse','butterfly'] },
+  rogue_white: { name:'무법자 백상아리', tier:8, len:165, hp:950, shape:'shark',
+    body:'#d3dde2', fin:'#7b8c97', contact:15, staggerMul:2.0,
+    summon:['sardine','yellowray'] },
 };
-const BOSS_TRIGGER_STAGE = 2;   // 티어 4(리프 샤크) 도달 시 등장
+const BOSS_TRIGGER_STAGE = 2;   // 진화 3단계(기본 티어 +2) 도달 시 등장
+
+/* ==========================================================================
+   해역 — 1개 = 데이터 한 블록. 물색/조명/지형/부유물/어종/보스를 갈아끼운다.
+   ========================================================================== */
+const STAGES = [
+  { id:'shore', name:'햇살 연안', depth:'0 ~ 30m',
+    blurb:'얕고 밝다. 처음 이빨을 시험하는 곳',
+    world:{ w:3200, h:1700 },
+    water:['#38b0dc','#0a6391'], deep:['#04243c','#01101c'],
+    light:'shafts', terrain:'reef',
+    mote:'rgba(200,238,255,.30)', flora:'rgba(38,104,78,.42)', rock:'rgba(3,38,62,.5)',
+    fish:['anchovy','shrimp','clown','mackerel','puffer','seabass','crab','ray','barra','jelly'],
+    boss:'giant_barra', hungerMul:1.0, reqBase:2 },
+
+  { id:'coral', name:'산호 정원', depth:'30 ~ 80m',
+    blurb:'색이 폭발한다. 독과 가시가 숨어 있다',
+    world:{ w:3400, h:1800 },
+    water:['#2fc7b0','#07525c'], deep:['#06323c','#021a20'],
+    light:'shafts', terrain:'coral',
+    mote:'rgba(255,214,160,.34)', flora:'rgba(226,122,168,.45)', rock:'rgba(10,62,64,.5)',
+    fish:['parrot','butterfly','wrasse','lionfish','striped','squid','moraykid','reefpup','clam','urchin','jelly'],
+    boss:'giant_moray', hungerMul:1.1, reqBase:3 },
+
+  { id:'wreck', name:'난파선 해구', depth:'80 ~ 250m',
+    blurb:'어둡다. 보이는 곳까지만 안전하다',
+    world:{ w:3600, h:2000 },
+    water:['#1d4a5e','#06212c'], deep:['#04141c','#01080c'],
+    light:'dark', terrain:'wreck',
+    mote:'rgba(190,215,230,.22)', flora:'rgba(58,76,70,.40)', rock:'rgba(6,26,38,.62)',
+    fish:['sardine','yellowray','angler','conger','tuna','swordfish','hammer','blueshark','mine','jelly'],
+    boss:'rogue_white', hungerMul:1.2, reqBase:3 },
+];
+const STAGE_BY_ID = {}; STAGES.forEach(x => STAGE_BY_ID[x.id] = x);
 
 /* ---------------- 상어 로스터 ---------------- */
+/* base = 시작 티어. 깊은 바다는 더 높은 기본 티어를 요구한다 —
+   알 부화가 스킨 수집이 아니라 "다음 해역으로 가는 열쇠"가 되도록. */
 const SHARKS = [
-  { id:'reef',   name:'리프 샤크', tag:'균형',
+  { id:'reef',   name:'리프 샤크',  tag:'균형', base:2,
     desc:'모든 면에서 평균. 무엇을 하든 무난하다',
     hp:1.0,  speed:1.0,  suction:1.0, shellBreaker:false, skin:'#52788f' },
-  { id:'saw',    name:'톱상어',   tag:'파괴',
+  { id:'saw',    name:'톱상어',    tag:'파괴', base:3,
     desc:'톱날 주둥이 — 껍질을 부스트 없이 부순다. 체력이 높고 조금 느리다',
     hp:1.25, speed:0.92, suction:1.0, shellBreaker:true,  skin:'#5f7a63' },
-  { id:'hammer', name:'귀상어',   tag:'포식',
-    desc:'광각 감각 — 흡입 반경 1.8배. 지나가기만 해도 빨려든다',
+  { id:'hammerhead', name:'귀상어', tag:'감각', base:3,
+    desc:'광각 감각 — 흡입 반경 1.8배. 어두운 바다에서 더 멀리 본다',
     hp:0.9,  speed:1.05, suction:1.8, shellBreaker:false, skin:'#5a6c8e' },
+  { id:'mako',   name:'청상아리',  tag:'속도', base:4,
+    desc:'바다에서 가장 빠르다. 대신 몸이 약하다',
+    hp:0.8,  speed:1.22, suction:1.0, shellBreaker:false, skin:'#3f6f9e' },
 ];
 const SHARK_BY_ID = {}; SHARKS.forEach(x => SHARK_BY_ID[x.id] = x);
 
@@ -331,7 +410,9 @@ const freshSave = () => ({
   sharks: { reef: true },
   upg: { bite:0, fin:0, vitality:0, lung:0, sense:0 },
   hatch: { sharkId: null, progress: 0 },
-  bossCleared: false,
+  stages: { shore: { cleared: false } },
+  stage: 'shore',
+  muted: false,
   best: { tier: 0, eaten: 0 },
 });
 let SAVE = freshSave();
@@ -347,12 +428,23 @@ function loadSave(){
       sharks: { ...f.sharks, ...(o.sharks || {}) },
       upg:    { ...f.upg,    ...(o.upg    || {}) },
       hatch:  { ...f.hatch,  ...(o.hatch  || {}) },
+      stages: { ...f.stages, ...(o.stages || {}) },
       best:   { ...f.best,   ...(o.best   || {}) } };
     if (!SHARK_BY_ID[SAVE.active] || !SAVE.sharks[SAVE.active]) SAVE.active = 'reef';
+    if (!STAGE_BY_ID[SAVE.stage]) SAVE.stage = 'shore';
   } catch (e) { SAVE = freshSave(); }     // 손상된 저장은 조용히 초기화
 }
 function writeSave(){
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {}
+}
+
+/* 해역 해금 — 앞 해역 클리어 + 상어 기본 티어 충족 */
+const stageCleared = id => !!(SAVE.stages[id] && SAVE.stages[id].cleared);
+function stageLock(st, i){
+  if (i > 0 && !stageCleared(STAGES[i-1].id)) return '앞 해역을 먼저 클리어';
+  const base = (SHARK_BY_ID[SAVE.active] || SHARKS[0]).base;
+  if (base < st.reqBase) return '기본 티어 ' + st.reqBase + ' 이상 상어 필요';
+  return null;
 }
 
 /* 현재 상어 + 업그레이드에서 나오는 배수들 */
@@ -360,6 +452,7 @@ function stats(){
   const sh = SHARK_BY_ID[SAVE.active] || SHARKS[0], u = SAVE.upg;
   return {
     shark:   sh,
+    base:    sh.base,
     hp:      sh.hp      * (1 + 0.12*u.vitality),
     speed:   sh.speed   * (1 + 0.08*u.fin),
     bite:    1 + 0.15*u.bite,
@@ -367,6 +460,96 @@ function stats(){
     stam:    1 + 0.20*u.lung,          // 부스트 지속 → 소모량을 나눈다
   };
 }
+
+/* ==========================================================================
+   사운드 — 전부 WebAudio 합성. 오디오 파일 0개.
+   브라우저 정책상 첫 사용자 입력 전에는 소리가 나지 않으므로 그때 깨운다.
+   ========================================================================== */
+const SFX = {
+  ac: null, master: null, bed: null, bedFilter: null,
+  ready(){
+    if (this.ac || SAVE.muted) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      this.ac = new AC();
+      this.master = this.ac.createGain();
+      this.master.gain.value = 0.5;
+      this.master.connect(this.ac.destination);
+      this.startBed();
+    } catch (e) { this.ac = null; }
+  },
+  resume(){ if (this.ac && this.ac.state === 'suspended') this.ac.resume().catch(()=>{}); },
+  setMuted(m){
+    if (this.master) this.master.gain.value = m ? 0 : 0.5;
+  },
+  /* 수중 앰비언스 — 저역만 남긴 노이즈 베드 */
+  startBed(){
+    const ac = this.ac;
+    const len = ac.sampleRate*2, buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random()*2 - 1;
+    const src = ac.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const f = ac.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 320; f.Q.value = 0.7;
+    const gn = ac.createGain(); gn.gain.value = 0.055;
+    src.connect(f); f.connect(gn); gn.connect(this.master);
+    src.start();
+    this.bed = src; this.bedFilter = f;
+  },
+  stageBed(st){                      // 해역마다 베드 음색을 바꾼다
+    if (!this.bedFilter) return;
+    const hz = st.light === 'dark' ? 180 : st.terrain === 'coral' ? 420 : 320;
+    try { this.bedFilter.frequency.setTargetAtTime(hz, this.ac.currentTime, 0.4); } catch(e){}
+  },
+  /* 톤 한 방 */
+  tone(freq, dur, type, vol, slideTo){
+    const ac = this.ac; if (!ac) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(slideTo, 1), t + dur);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.master);
+    o.start(t); o.stop(t + dur + 0.02);
+  },
+  /* 노이즈 한 방 */
+  noise(dur, hz, vol, type){
+    const ac = this.ac; if (!ac) return;
+    const t = ac.currentTime;
+    const len = Math.max(1, (ac.sampleRate*dur)|0);
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random()*2 - 1) * (1 - i/len);
+    const src = ac.createBufferSource(); src.buffer = buf;
+    const f = ac.createBiquadFilter();
+    f.type = type || 'bandpass'; f.frequency.value = hz; f.Q.value = 1.1;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master);
+    src.start(t);
+  },
+
+  eat(tier){ this.tone(520 - tier*38, 0.1, 'sine', 0.16, 300 - tier*20); },
+  bite(){    this.noise(0.09, 1400, 0.2); },
+  hurt(){    this.tone(220, 0.26, 'sawtooth', 0.17, 70); this.noise(0.14, 500, 0.14); },
+  shell(){   this.noise(0.16, 2600, 0.22, 'highpass'); },
+  boost(){   this.noise(0.3, 700, 0.13, 'lowpass'); },
+  evolve(){  [392, 523, 659, 784].forEach((f, i) =>
+               setTimeout(() => this.tone(f, 0.32, 'triangle', 0.15), i*85)); },
+  bossIn(){  this.tone(70, 1.5, 'sawtooth', 0.22, 46); this.noise(1.0, 150, 0.15, 'lowpass'); },
+  bossHit(){ this.noise(0.08, 2100, 0.17, 'highpass'); },
+  bossDown(){ this.tone(300, 1.3, 'sawtooth', 0.26, 48); this.noise(1.1, 320, 0.26, 'lowpass'); },
+  dash(){    this.tone(160, 0.3, 'square', 0.11, 420); },
+  ui(){      this.tone(660, 0.07, 'triangle', 0.13); },
+  buy(){     this.tone(540, 0.09, 'triangle', 0.15); setTimeout(()=>this.tone(810,0.12,'triangle',0.14), 80); },
+  dead(){    this.tone(240, 1.0, 'sawtooth', 0.2, 55); },
+};
 
 /* ---------------- 유틸 ---------------- */
 const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
@@ -385,6 +568,7 @@ const G = {
   cam:{ x:0, y:0, w:0, h:0 },
   shake:0, danger:0, eaten:0, evolveFlash:0,
   boss:null, bossSpawned:false, cleared:false, pearls:0, endTimer:0,
+  stage:null, pool:[], bossDef:null,
 };
 
 function makePlayer(){
@@ -392,7 +576,7 @@ function makePlayer(){
   const maxHp = Math.round(100 * st.hp);
   return {
     x: WORLD.w*0.5, y: WORLD.h*0.32, vx: 40, vy: 0,
-    stage:0, tier:e.tier, len:e.len,
+    stage:0, tier:st.base, len:e.len,
     hp:maxHp, maxHp, hunger:100, stam:100,
     growth:0, boosting:false, slow:0, iframe:0, biteCd:0,
     phase:0, hurtFlash:0, st,
@@ -456,10 +640,11 @@ function spawnWeight(def, pTier){
   return 0.25;
 }
 function pickDef(pTier){
-  let total = 0; const w = FISH.map(d => { const v = spawnWeight(d, pTier); total += v; return v; });
+  const pool = G.pool;
+  let total = 0; const w = pool.map(d => { const v = spawnWeight(d, pTier); total += v; return v; });
   let r = Math.random()*total;
-  for (let i=0;i<FISH.length;i++){ r -= w[i]; if (r <= 0) return FISH[i]; }
-  return FISH[0];
+  for (let i=0;i<pool.length;i++){ r -= w[i]; if (r <= 0) return pool[i]; }
+  return pool[0];
 }
 /* 플레이어 주변 활성 사각형 — 이 안의 개체 수가 곧 체감 밀도다 */
 function activeBox(){
@@ -529,7 +714,9 @@ function updatePlayer(dt){
   else if (kv) { dx = kv.dx; dy = kv.dy; mag = 1; }
 
   // 부스트: 스태미나가 바닥이면 시작 불가 (이미 켜져 있으면 0까지 소진)
+  const wasBoosting = p.boosting;
   p.boosting = IN.boost && mag > 0.1 && p.stam > (p.boosting ? 0.5 : STAM_MIN);
+  if (p.boosting && !wasBoosting) SFX.boost();
   if (p.boosting) p.stam = Math.max(0, p.stam - (STAM_USE/p.st.stam)*dt);
   else            p.stam = Math.min(100, p.stam + STAM_REGEN*dt);
 
@@ -545,7 +732,7 @@ function updatePlayer(dt){
   p.phase += (1.1 + Math.hypot(p.vx, p.vy)/70) * dt * 6;
 
   // 포만감 — 멈추면 죽는 압박 장치
-  p.hunger = Math.max(0, p.hunger - HUNGER_DRAIN*dt);
+  p.hunger = Math.max(0, p.hunger - HUNGER_DRAIN*G.stage.hungerMul*dt);
   if (p.hunger <= 0) p.hp -= p.maxHp*STARVE_DPS*dt;
   else if (p.hunger > 70 && p.hp > 0 && p.hp < p.maxHp) p.hp = Math.min(p.maxHp, p.hp + REGEN_PS*dt);
 
@@ -568,6 +755,7 @@ function eatFish(f){
   p.hunger = Math.min(100, p.hunger + def.tier*4);
   p.growth += Math.pow(def.tier, 1.6);
   burst(f.x, f.y, def.body, 6 + def.tier*2, 90 + def.tier*18);
+  SFX.eat(def.tier);
   if (def.toxic) {          // 복어: 먹으면 중독 — "보고 먹어라"를 가르치는 장치
     p.hp -= 8; p.slow = 1.5; p.hurtFlash = 1;
     G.shake = Math.max(G.shake, 5);
@@ -582,21 +770,21 @@ function evolve(){
   p.growth -= EVO[p.stage].need;
   p.stage++;
   const e = EVO[p.stage];
-  p.tier = e.tier; p.len = e.len;
+  p.tier = p.st.base + p.stage; p.len = e.len;
   p.maxHp = Math.round(100 * (1 + 0.2*p.stage) * p.st.hp);
   p.hp = p.maxHp;
   p.hunger = Math.min(100, p.hunger + 25);
-  G.slowmo = 0.45; G.evolveFlash = 1;
+  G.slowmo = 0.45; G.evolveFlash = 1; SFX.evolve();
   ring(p.x, p.y);
   burst(p.x, p.y, 'rgba(180,255,228,.9)', 28, 190, 'bubble');
-  showToast(e.name);
+  showToast(evoName(p.st.shark, p.stage));
   if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned) spawnBoss();
 }
 
 function hurtPlayer(dmg, nx, ny, cd){
   const p = G.player;
   if (p.iframe > 0) return;
-  p.hp -= dmg; p.iframe = cd; p.hurtFlash = 1;
+  p.hp -= dmg; p.iframe = cd; p.hurtFlash = 1; SFX.hurt();
   p.vx += nx*190; p.vy += ny*190;
   G.shake = Math.max(G.shake, 6 + dmg*0.45);
   burst(p.x, p.y, '#ff6b7f', 8, 115);
@@ -611,7 +799,7 @@ function handleContact(f, nx, ny){
 
   if (def.shell) {                       // 게: 부스트로만 깬다 — 부스트에 용도를 준다
     if ((p.boosting || p.st.shark.shellBreaker) && p.tier >= def.tier) {
-      eatFish(f); G.shake = Math.max(G.shake, 8);
+      eatFish(f); G.shake = Math.max(G.shake, 8); SFX.shell();
     }
     else {
       f.vx -= nx*140; f.vy -= ny*140;
@@ -626,7 +814,7 @@ function handleContact(f, nx, ny){
     if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
       f.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1);
-      burst(f.x, f.y, def.body, 5, 85);
+      burst(f.x, f.y, def.body, 5, 85); SFX.bite();
       G.shake = Math.max(G.shake, p.boosting ? 7 : 3);
       if (f.hp <= 0) { eatFish(f); return; }
     }
@@ -646,22 +834,25 @@ function handleContact(f, nx, ny){
    ========================================================================== */
 function spawnBoss(){
   const p = G.player;
+  G.bossDef = BOSSES[G.stage.boss];
   const side = p.x < WORLD.w*0.5 ? 1 : -1;
   G.boss = {
     x: clamp(p.x + side*(G.cam.w*0.5 + 280), 140, WORLD.w - 140),
     y: clamp(p.y, 180, WORLD.h - 180),
     vx: -side*50, vy: 0,
-    hp: BOSS.hp, maxHp: BOSS.hp,
+    hp: G.bossDef.hp, maxHp: G.bossDef.hp,
     state: 'intro', t: 0, phase: 1, cd: 1.0,
     dx: -side, dy: 0, flash: 0,
   };
   G.bossSpawned = true;
-  showToast(BOSS.name, '경  고');
+  showToast(G.bossDef.name, '경  고');
+  SFX.bossIn(); SFX.stageBed(G.stage);
+  UI.bossName.textContent = G.bossDef.name;
   G.shake = Math.max(G.shake, 10);
 }
 
 function bossSummon(b){
-  const pool = FISH.filter(d => d.tier <= 2 && !d.shock && !d.toxic);
+  const pool = G.bossDef.summon.map(id => FISH_BY_ID[id]).filter(Boolean);
   const n = b.phase === 3 ? 10 : 7;
   for (let i = 0; i < n; i++) {
     const def = pick(pool);
@@ -690,9 +881,9 @@ function pickPattern(b, nx, ny){
 function bossDown(){
   const b = G.boss;
   b.state = 'dead';
-  burst(b.x, b.y, BOSS.body, 42, 270);
+  burst(b.x, b.y, G.bossDef.body, 42, 270);
   ring(b.x, b.y);
-  G.shake = 16; G.slowmo = 0.8;
+  G.shake = 16; G.slowmo = 0.8; SFX.bossDown();
   G.cleared = true; G.endTimer = 1.5;
 }
 
@@ -727,7 +918,7 @@ function updateBoss(dt){
       break; }
     case 'telegraph':                                     // 0.7초 예고 — 뒤로 당긴다
       b.vx = lerp(b.vx, -b.dx*55, 0.12); b.vy = lerp(b.vy, -b.dy*40, 0.12);
-      if (b.t > 0.7) { b.state = 'dash'; b.t = 0; }
+      if (b.t > 0.7) { b.state = 'dash'; b.t = 0; SFX.dash(); }
       break;
     case 'dash':
       b.vx = b.dx*640; b.vy = b.dy*640;
@@ -754,24 +945,24 @@ function updateBoss(dt){
 
   if (b.state === 'intro') return;
 
-  if (dist < BOSS.len*0.34 + p.len*0.45) {
+  if (dist < G.bossDef.len*0.34 + p.len*0.45) {
     const staggered = b.state === 'stagger';
     if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      b.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1) * (staggered ? BOSS.staggerMul : 1);
-      b.flash = 1;
-      burst(p.x, p.y, staggered ? '#ffd84d' : BOSS.body, staggered ? 7 : 4, 100);
+      b.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1) * (staggered ? G.bossDef.staggerMul : 1);
+      b.flash = 1; SFX.bossHit();
+      burst(p.x, p.y, staggered ? '#ffd84d' : G.bossDef.body, staggered ? 7 : 4, 100);
       G.shake = Math.max(G.shake, staggered ? 6 : 3);
       if (b.hp <= 0) { bossDown(); return; }
     }
-    if (!staggered) hurtPlayer(BOSS.contact, nx, ny, HIT_CD);   // 경직 중엔 안전하게 때린다
+    if (!staggered) hurtPlayer(G.bossDef.contact, nx, ny, HIT_CD);   // 경직 중엔 안전하게 때린다
   }
 }
 
 function drawBoss(){
   const b = G.boss;
   if (!b || b.state === 'dead') return;
-  const L = BOSS.len, H = L*0.17;
+  const L = G.bossDef.len, H = L*0.17;
 
   if (b.state === 'telegraph') {                    // 돌진 예고선
     const a = 0.25 + 0.4*Math.sin(b.t*22);
@@ -795,30 +986,75 @@ function drawBoss(){
   faceHeading(b.vx || b.dx, b.vy);
   const sw = Math.sin(b.t*7)*0.5;
   const hurt = b.flash > 0;
-  const body = hurt ? '#ffd3da' : BOSS.body;
+  const body = hurt ? '#ffd3da' : G.bossDef.body;
 
-  ctx.fillStyle = hurt ? '#ffa7b4' : BOSS.fin;      // 꼬리
-  ctx.beginPath();
-  ctx.moveTo(-L*0.42, 0);
-  ctx.lineTo(-L*0.70, -H*1.5 + sw*H);
-  ctx.lineTo(-L*0.58, 0);
-  ctx.lineTo(-L*0.70,  H*1.5 + sw*H);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();                                  // 등지느러미
-  ctx.moveTo(-L*0.02, -H*1.9); ctx.lineTo(L*0.12, -H*0.7); ctx.lineTo(-L*0.24, -H*0.7);
-  ctx.closePath(); ctx.fill();
-
-  const g = ctx.createLinearGradient(0, -H, 0, H);  // 길쭉한 몸통
+  const g = ctx.createLinearGradient(0, -H*1.4, 0, H*1.4);
   g.addColorStop(0, shade(body, 0.12));
   g.addColorStop(1, shade(body, -0.34));
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.moveTo(L*0.52, 0);
-  ctx.quadraticCurveTo(L*0.24, -H*1.05, -L*0.16, -H*0.85);
-  ctx.quadraticCurveTo(-L*0.38, -H*0.5, -L*0.44, 0);
-  ctx.quadraticCurveTo(-L*0.38,  H*0.5, -L*0.16,  H*0.85);
-  ctx.quadraticCurveTo(L*0.24,  H*1.05, L*0.52, 0);
-  ctx.closePath(); ctx.fill();
+
+  if (G.bossDef.shape === 'eel') {                  // 대왕 곰치 — 구불거리는 긴 몸
+    ctx.strokeStyle = hurt ? '#ffa7b4' : G.bossDef.fin;
+    ctx.lineWidth = H*0.9; ctx.lineCap = 'round';   // 등지느러미 띠
+    ctx.beginPath();
+    for (let i = 0; i <= 18; i++) {
+      const u = i/18, x = L*0.5 - u*L*1.25;
+      const y = Math.sin(b.t*5 - u*5.2)*H*1.5*u - H*0.5;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = g; ctx.lineWidth = H*1.5;     // 몸통
+    ctx.beginPath();
+    for (let i = 0; i <= 18; i++) {
+      const u = i/18, x = L*0.5 - u*L*1.25;
+      const y = Math.sin(b.t*5 - u*5.2)*H*1.5*u;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = g;                              // 머리
+    ctx.beginPath(); ctx.ellipse(L*0.4, 0, L*0.16, H*1.1, 0, 0, 6.2832); ctx.fill();
+  } else if (G.bossDef.shape === 'shark') {         // 무법자 백상아리
+    ctx.fillStyle = hurt ? '#ffa7b4' : G.bossDef.fin;
+    ctx.beginPath();                                // 초승달 꼬리
+    ctx.moveTo(-L*0.40, 0);
+    ctx.quadraticCurveTo(-L*0.58, -H*1.0 + sw*H, -L*0.76, -H*2.6 + sw*H*1.2);
+    ctx.quadraticCurveTo(-L*0.56, -H*0.7 + sw*H, -L*0.52, 0);
+    ctx.quadraticCurveTo(-L*0.56,  H*0.8 + sw*H, -L*0.72,  H*2.0 + sw*H*1.2);
+    ctx.quadraticCurveTo(-L*0.56,  H*0.8 + sw*H, -L*0.40, 0);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();                                // 큰 등지느러미
+    ctx.moveTo(L*0.02, -H*1.2); ctx.lineTo(-L*0.12, -H*3.1); ctx.lineTo(-L*0.28, -H*1.1);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();                                // 가슴지느러미
+    ctx.moveTo(L*0.1, H*0.7); ctx.lineTo(-L*0.08, H*2.3); ctx.lineTo(-L*0.18, H*0.6);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(L*0.54, 0);
+    ctx.quadraticCurveTo(L*0.2, -H*1.6, -L*0.18, -H*1.2);
+    ctx.quadraticCurveTo(-L*0.4, -H*0.7, -L*0.44, 0);
+    ctx.quadraticCurveTo(-L*0.4,  H*0.8, -L*0.18,  H*1.3);
+    ctx.quadraticCurveTo(L*0.2,  H*1.6, L*0.54, 0);
+    ctx.closePath(); ctx.fill();
+  } else {                                          // 바라쿠다
+    ctx.fillStyle = hurt ? '#ffa7b4' : G.bossDef.fin;
+    ctx.beginPath();
+    ctx.moveTo(-L*0.42, 0);
+    ctx.lineTo(-L*0.70, -H*1.5 + sw*H);
+    ctx.lineTo(-L*0.58, 0);
+    ctx.lineTo(-L*0.70,  H*1.5 + sw*H);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-L*0.02, -H*1.9); ctx.lineTo(L*0.12, -H*0.7); ctx.lineTo(-L*0.24, -H*0.7);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(L*0.52, 0);
+    ctx.quadraticCurveTo(L*0.24, -H*1.05, -L*0.16, -H*0.85);
+    ctx.quadraticCurveTo(-L*0.38, -H*0.5, -L*0.44, 0);
+    ctx.quadraticCurveTo(-L*0.38,  H*0.5, -L*0.16,  H*0.85);
+    ctx.quadraticCurveTo(L*0.24,  H*1.05, L*0.52, 0);
+    ctx.closePath(); ctx.fill();
+  }
 
   ctx.fillStyle = '#fff';                           // 이빨
   for (let i = 0; i < 7; i++) {
@@ -991,23 +1227,29 @@ function mix(h1, h2, t){
 }
 
 /* 지형 — 결정적으로 1회 생성 */
-const rng = mulberry(20261010);
-const FAR = [], KELP = [];
-for (let x = -200; x < WORLD.w + 400; x += 180)
-  FAR.push({ x: x + rng()*80, w: 220 + rng()*260, h: 150 + rng()*320 });
-for (let x = 0; x < WORLD.w; x += 95)
-  KELP.push({ x: x + rng()*60, h: 90 + rng()*210, ph: rng()*6.28, w: 5 + rng()*5 });
+const FAR = [], FLORA = [];
+function buildTerrain(st){
+  const rng = mulberry(20261010 + st.id.length*977);
+  FAR.length = 0; FLORA.length = 0;
+  for (let x = -200; x < WORLD.w + 400; x += 180)
+    FAR.push({ x: x + rng()*80, w: 220 + rng()*260, h: 150 + rng()*320 });
+  const gap = st.terrain === 'wreck' ? 150 : 95;
+  for (let x = 0; x < WORLD.w; x += gap)
+    FLORA.push({ x: x + rng()*60, h: 90 + rng()*210, ph: rng()*6.28,
+                 w: 5 + rng()*5, r: rng(), tilt: (rng()-0.5)*0.5 });
+}
 
 function drawWater(W, H){
+  const st = G.stage;
   const d = clamp(G.cam.y / WORLD.h, 0, 1);
   const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, mix('#38b0dc', '#04243c', clamp(d*1.25, 0, 1)));
-  g.addColorStop(1, mix('#0a6391', '#01101c', clamp(d*1.15, 0, 1)));
+  g.addColorStop(0, mix(st.water[0], st.deep[0], clamp(d*1.25, 0, 1)));
+  g.addColorStop(1, mix(st.water[1], st.deep[1], clamp(d*1.15, 0, 1)));
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
-  // 수면 광선 — 얕은 곳에서만
+  // 수면 광선 — 밝은 해역의 얕은 곳에서만
   const surf = H/2 - G.cam.y;
-  if (surf > -260) {
+  if (st.light === 'shafts' && surf > -260) {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     for (let i = 0; i < 9; i++) {
@@ -1025,7 +1267,7 @@ function drawWater(W, H){
     ctx.restore();
   }
   // 수면 라인
-  if (surf > -20 && surf < H + 20) {
+  if (st.light === 'shafts' && surf > -20 && surf < H + 20) {
     ctx.fillStyle = 'rgba(205,243,255,.22)';
     ctx.fillRect(0, surf - 3, W, 3);
   }
@@ -1034,7 +1276,7 @@ function drawWater(W, H){
 function drawFar(W, H){
   ctx.save();
   ctx.translate(W/2 - G.cam.x*0.55, H/2 - G.cam.y);   // x축만 패럴랙스
-  ctx.fillStyle = 'rgba(3,38,62,.5)';
+  ctx.fillStyle = G.stage.rock;
   for (const r of FAR) {
     ctx.beginPath();
     ctx.moveTo(r.x, WORLD.h);
@@ -1053,11 +1295,46 @@ function drawSeabed(){
   ctx.fillRect(G.cam.x - G.cam.w, WORLD.h - 180, G.cam.w*2, 200);
   // 해초
   const x0 = G.cam.x - G.cam.w*0.6, x1 = G.cam.x + G.cam.w*0.6;
-  ctx.strokeStyle = 'rgba(38,104,78,.42)'; ctx.lineCap = 'round';
-  for (const k of KELP) {
+  const kind = G.stage.terrain;
+  ctx.strokeStyle = G.stage.flora; ctx.fillStyle = G.stage.flora; ctx.lineCap = 'round';
+  for (const k of FLORA) {
     if (k.x < x0 || k.x > x1) continue;
-    const sway = Math.sin(G.t*0.8 + k.ph)*30;
-    ctx.lineWidth = k.w*0.55;
+    const sway = Math.sin(G.t*0.8 + k.ph)*(kind === 'reef' ? 30 : 10);
+
+    if (kind === 'coral') {                       // 산호 — 기둥 + 부채
+      ctx.lineWidth = k.w*1.5;
+      ctx.beginPath();
+      ctx.moveTo(k.x, WORLD.h);
+      ctx.quadraticCurveTo(k.x + sway*0.4, WORLD.h - k.h*0.6, k.x + sway, WORLD.h - k.h*0.9);
+      ctx.stroke();
+      if (k.r > 0.5) {                            // 가지
+        ctx.lineWidth = k.w*0.9;
+        ctx.beginPath();
+        ctx.moveTo(k.x + sway*0.5, WORLD.h - k.h*0.55);
+        ctx.lineTo(k.x + sway*0.5 - k.h*0.22, WORLD.h - k.h*0.85);
+        ctx.stroke();
+      } else {                                    // 부채
+        ctx.beginPath();
+        ctx.ellipse(k.x + sway, WORLD.h - k.h*0.95, k.h*0.2, k.h*0.26, k.tilt, 0, 6.2832);
+        ctx.fill();
+      }
+      continue;
+    }
+    if (kind === 'wreck') {                       // 난파선 잔해 — 기울어진 기둥과 선체
+      ctx.save();
+      ctx.translate(k.x, WORLD.h);
+      ctx.rotate(k.tilt);
+      ctx.fillRect(-k.w*0.9, -k.h*0.9, k.w*1.8, k.h*0.9);
+      if (k.r > 0.62) {                           // 선체 덩어리
+        ctx.beginPath();
+        ctx.moveTo(-k.h*0.5, 0);
+        ctx.quadraticCurveTo(0, -k.h*0.5, k.h*0.55, 0);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      continue;
+    }
+    ctx.lineWidth = k.w*0.55;                     // 해초
     ctx.beginPath();
     ctx.moveTo(k.x, WORLD.h);
     ctx.bezierCurveTo(k.x + sway*0.15, WORLD.h - k.h*0.45,
@@ -1070,7 +1347,7 @@ function drawSeabed(){
 function drawPlankton(W, H){
   const T = 260;
   const ox = (-G.cam.x*1.12) % T, oy = (-G.cam.y*1.12) % T;
-  ctx.fillStyle = 'rgba(200,238,255,.3)';
+  ctx.fillStyle = G.stage.mote;
   for (let x = -T; x < W + T; x += T) {
     for (let y = -T; y < H + T; y += T) {
       const px = x + ox + ((x*7 + y*13) % 97), py = y + oy + ((x*11 + y*5) % 83);
@@ -1299,6 +1576,19 @@ function drawParts(){
   ctx.globalAlpha = 1;
 }
 
+/* 어두운 해역 — 플레이어 주변만 보인다. 감각 업그레이드와 귀상어가 반경을 넓힌다 */
+function drawDark(W, H){
+  if (G.stage.light !== 'dark') return;
+  const p = G.player;
+  const r = (235 + 34*SAVE.upg.sense) * (p.st.shark.suction > 1.5 ? 1.35 : 1);
+  const cx = W/2 + (p.x - G.cam.x), cy = H/2 + (p.y - G.cam.y);
+  const g = ctx.createRadialGradient(cx, cy, r*0.5, cx, cy, r*1.9);
+  g.addColorStop(0, 'rgba(2,10,16,0)');
+  g.addColorStop(0.55, 'rgba(2,10,16,.62)');
+  g.addColorStop(1, 'rgba(1,6,10,.95)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+}
+
 function drawOverlay(W, H){
   const p = G.player;
   // 포식자 근접 비네트
@@ -1356,6 +1646,7 @@ function render(){
   drawParts();
   ctx.restore();
 
+  drawDark(W, H);
   drawOverlay(W, H);
   drawStick();
 }
@@ -1371,7 +1662,7 @@ const UI = {
   toast: el('toast'), toastName: el('toast').querySelector('.t2'),
   toastLabel: el('toast').querySelector('.t1'),
   start: el('startScreen'), over: el('overScreen'), hub: el('hubScreen'),
-  bossBar: el('bossBar'), bossFill: el('bossFill'),
+  bossBar: el('bossBar'), bossFill: el('bossFill'), bossName: el('bossName'),
 };
 let toastTimer = 0;
 
@@ -1387,8 +1678,8 @@ function updateHUD(){
   UI.tier.textContent = p.tier;
   UI.eaten.textContent = '먹은 물고기 ' + G.eaten;
   UI.growLabel.textContent = need === Infinity
-    ? EVO[p.stage].name + ' · 최종 단계'
-    : EVO[p.stage].name + ' → ' + EVO[p.stage+1].name;
+    ? evoName(p.st.shark, p.stage) + ' · 최종 단계'
+    : evoName(p.st.shark, p.stage) + ' → ' + evoName(p.st.shark, p.stage+1);
   boostBtn.classList.toggle('on', p.boosting);
   boostBtn.classList.toggle('dry', p.stam < STAM_MIN && !p.boosting);
   if (G.boss && G.boss.state !== 'dead') {
@@ -1407,6 +1698,20 @@ function showToast(name, label){
 /* ---------------- 허브 ---------------- */
 function renderHub(){
   el('hubPearls').textContent = SAVE.pearls;
+  el('muteBtn').classList.toggle('off', SAVE.muted);
+
+  el('stageList').innerHTML = STAGES.map((st, i) => {
+    const lock = stageLock(st, i), done = stageCleared(st.id), on = SAVE.stage === st.id;
+    return '<div class="card' + (on && !lock ? ' on' : '') + (lock ? ' lock' : '') +
+      '" data-stage="' + st.id + '">' +
+      '<i class="dot" style="background:' + st.water[0] + '"></i>' +
+      '<div class="tx"><div class="nm">' + st.name + (done ? '<em>클리어</em>' : '') + '</div>' +
+      '<div class="ds">' + st.blurb + '</div>' +
+      '<div class="sub">수심 ' + st.depth + ' · 기본 티어 ' + st.reqBase + ' 이상</div></div>' +
+      (lock ? '<div class="bl">' + lock + '</div>'
+            : '<div class="st' + (on ? '' : ' ok') + '">' + (on ? '선택됨' : '선택') + '</div>') +
+      '</div>';
+  }).join('');
 
   el('sharkList').innerHTML = SHARKS.map(sh => {
     const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
@@ -1449,12 +1754,25 @@ function renderHub(){
   el('hatchBox').innerHTML = html;
 }
 
+el('stageList').addEventListener('click', e => {
+  const card = e.target.closest('[data-stage]');
+  if (!card) return;
+  const id = card.dataset.stage, i = STAGES.findIndex(x => x.id === id);
+  if (stageLock(STAGES[i], i)) return;
+  SAVE.stage = id; writeSave(); SFX.ui(); renderHub();
+});
+el('muteBtn').addEventListener('click', () => {
+  SAVE.muted = !SAVE.muted; writeSave();
+  SFX.setMuted(SAVE.muted);
+  if (!SAVE.muted) { SFX.ready(); SFX.resume(); SFX.ui(); }
+  renderHub();
+});
 el('sharkList').addEventListener('click', e => {
   const card = e.target.closest('[data-shark]');
   if (!card) return;
   const id = card.dataset.shark;
   if (!SAVE.sharks[id]) return;
-  SAVE.active = id; writeSave(); renderHub();
+  SAVE.active = id; writeSave(); SFX.ui(); renderHub();
 });
 el('upgList').addEventListener('click', e => {
   const b = e.target.closest('[data-upg]');
@@ -1464,7 +1782,7 @@ el('upgList').addEventListener('click', e => {
   const cost = upgCost(lv);
   if (SAVE.pearls < cost) return;
   SAVE.pearls -= cost; SAVE.upg[id] = lv + 1;
-  writeSave(); renderHub();
+  writeSave(); SFX.buy(); renderHub();
 });
 el('hatchBox').addEventListener('click', e => {
   if (e.target.id !== 'putEgg' || SAVE.eggs < 1) return;
@@ -1472,7 +1790,7 @@ el('hatchBox').addEventListener('click', e => {
   if (!locked.length) return;
   SAVE.eggs -= 1;
   SAVE.hatch = { sharkId: locked[0].id, progress: 0 };
-  writeSave(); renderHub();
+  writeSave(); SFX.ui(); renderHub();
 });
 
 function openHub(){
@@ -1487,6 +1805,13 @@ function openHub(){
 
 /* ---------------- 런 시작 / 정산 ---------------- */
 function startRun(){
+  const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
+  G.stage = st;
+  WORLD.w = st.world.w; WORLD.h = st.world.h;
+  G.pool = st.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
+  G.bossDef = BOSSES[st.boss];
+  buildTerrain(st);
+  SFX.ready(); SFX.resume(); SFX.stageBed(st);
   G.player = makePlayer();
   G.fish.length = 0; G.parts.length = 0;
   G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0;
@@ -1526,15 +1851,24 @@ function finishRun(cleared){
       SAVE.hatch = { sharkId: null, progress: 0 };
     }
   }
-  let gotEgg = false;
-  if (cleared && !SAVE.bossCleared) { SAVE.bossCleared = true; SAVE.eggs += 1; gotEgg = true; }
+  let gotEgg = false, newStage = null;
+  if (cleared) {
+    const first = !stageCleared(G.stage.id);
+    SAVE.stages[G.stage.id] = { cleared: true };
+    if (first) {
+      SAVE.eggs += 1; gotEgg = true;
+      const i = STAGES.findIndex(x => x.id === G.stage.id);
+      if (i >= 0 && i + 1 < STAGES.length) newStage = STAGES[i+1];
+    }
+  }
   SAVE.best.tier  = Math.max(SAVE.best.tier,  p.tier);
   SAVE.best.eaten = Math.max(SAVE.best.eaten, G.eaten);
   writeSave();
 
-  el('overTitle').textContent = cleared ? '바다의 지배자' : '먹이가 되었다';
+  if (!cleared) SFX.dead();
+  el('overTitle').textContent = cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
   el('overSub').textContent = cleared
-    ? '거대 바라쿠다를 쓰러뜨렸다. 더 깊은 바다가 기다린다.'
+    ? G.bossDef.name + '를 쓰러뜨렸다. 더 깊은 바다가 기다린다.'
     : p.hunger <= 0 ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
                     : '더 큰 것은 피하고, 자란 뒤에 돌아와라.';
   el('sTier').textContent  = p.tier;
@@ -1549,6 +1883,7 @@ function finishRun(cleared){
   const msgs = [];
   if (unlocked) msgs.push('부화 완료 — ' + unlocked.name + ' 해금');
   if (gotEgg)   msgs.push('상어알 획득 — 기지의 부화기에 넣어라');
+  if (newStage) msgs.push('새 해역 — ' + newStage.name);
   if (msgs.length) { note.textContent = msgs.join(' · '); note.classList.remove('hidden'); }
   else note.classList.add('hidden');
 
@@ -1603,9 +1938,16 @@ function frame(ts){
 /* 부트 */
 if (location.search.indexOf('debug') >= 0) {
   window.__G = G; window.__SAVE = () => SAVE; window.__spawnBoss = spawnBoss;
+  window.__WORLD = WORLD; window.__SFX = SFX;
 }
 loadSave();
+G.stage = STAGE_BY_ID[SAVE.stage] || STAGES[0];
+WORLD.w = G.stage.world.w; WORLD.h = G.stage.world.h;
+G.pool = G.stage.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
+G.bossDef = BOSSES[G.stage.boss];
+buildTerrain(G.stage);
 document.body.classList.add('menu');     // 시작 화면에서도 게임 HUD 를 감춘다
+addEventListener('pointerdown', () => { SFX.ready(); SFX.resume(); }, { once: true });
 resize();
 G.player = makePlayer();
 G.cam.x = G.player.x; G.cam.y = G.player.y;
