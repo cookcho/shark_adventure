@@ -525,16 +525,19 @@ function stats(){
    ========================================================================== */
 const ART = {
   /* 타이틀 */
-  // 'title.bg':          'title/background.png',
+  'title.bg':             'title/background.jpg',
   // 'title.shark':       'title/shark.png',
   /* 해역 배경 (가로로 이어지는 원경) */
-  // 'stage.shore':       'stage/shore.png',
+  'stage.shore':          'stage/shore.jpg',
   // 'stage.coral':       'stage/coral.png',
   // 'stage.wreck':       'stage/wreck.png',
   /* 플레이어 상어 — shark.<상어id>.<진화단계 0~3> */
   // 'shark.reef.0':      'shark/reef_0.png',
   /* 물고기 — fish.<어종id> */
-  // 'fish.clown':        'fish/clown.png',
+  'fish.anchovy':         'fish/anchovy.png',
+  'fish.barra':           'fish/barra.png',
+  'fish.clown':           'fish/clown.png',
+  'fish.crab':            'fish/crab.png',
   /* 보스 — boss.<보스id> */
   // 'boss.giant_barra':  'boss/giant_barra.png',
 };
@@ -1384,6 +1387,10 @@ function shade(hex, amt){
   r = Math.round(lerp(r,t,a)); g = Math.round(lerp(g,t,a)); b = Math.round(lerp(b,t,a));
   return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
+function hexA(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a + ')';
+}
 function mix(h1, h2, t){
   const a = parseInt(h1.slice(1),16), b = parseInt(h2.slice(1),16);
   const r = Math.round(lerp((a>>16)&255, (b>>16)&255, t));
@@ -1443,9 +1450,19 @@ function drawFar(W, H){
   const bg = art('stage.' + G.stage.id);
   if (bg) {                                        // 가로로 이어지는 원경 배경
     const r = bg.naturalHeight / (bg.naturalWidth || 1);
-    const bh = H, bw = bh / r;
-    const ox = -((G.cam.x*0.35) % bw);
-    for (let x = ox - bw; x < W + bw; x += bw) ctx.drawImage(bg, x, 0, bw, bh);
+    const bh = H, bw = bh / r, span = bw*2;
+    const ox = -((G.cam.x*0.35) % span);
+    for (let x = ox - span; x < W + span; x += span) {
+      ctx.drawImage(bg, x, 0, bw, bh);               // 정방향
+      ctx.save();                                     // 거울상 — 이음매가 생기지 않는다
+      ctx.translate(x + span, 0); ctx.scale(-1, 1);
+      ctx.drawImage(bg, 0, 0, bw, bh);
+      ctx.restore();
+    }
+    const sc = ctx.createLinearGradient(0, 0, 0, H);   // 깊이감 + 대비 확보
+    sc.addColorStop(0, hexA(G.stage.deep[0], 0.26));
+    sc.addColorStop(1, hexA(G.stage.deep[1], 0.62));
+    ctx.fillStyle = sc; ctx.fillRect(0, 0, W, H);
     return;
   }
   ctx.save();
@@ -2127,15 +2144,20 @@ function render(){
   const W = G.cam.w, H = G.cam.h, p = G.player;
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   ctx.clearRect(0, 0, W, H);
-  drawWater(W, H);
-  drawFar(W, H);
-  drawPlankton(W, H);
+  const titleBg = G.attract ? art('title.bg') : null;
+  if (titleBg) {
+    drawCover(titleBg, W, H);                      // 타이틀 — 그림 위로 물고기가 헤엄친다
+  } else {
+    drawWater(W, H);
+    drawFar(W, H);
+    drawPlankton(W, H);
+  }
 
   const sx = G.shake > 0 ? rand(-G.shake, G.shake) : 0;
   const sy = G.shake > 0 ? rand(-G.shake, G.shake) : 0;
   ctx.save();
   ctx.translate(W/2 - G.cam.x + sx, H/2 - G.cam.y + sy);
-  drawSeabed();
+  if (!titleBg) drawSeabed();
   const mx = W*0.5 + 160, my = H*0.5 + 160;
   for (const f of G.fish) {
     if (Math.abs(f.x - G.cam.x) > mx || Math.abs(f.y - G.cam.y) > my) continue;
@@ -2307,11 +2329,15 @@ function attractStep(dt){
   updateCam(dt);
 }
 
+/* 타이틀 배경은 캔버스에 그린다 — DOM 으로 덮으면 헤엄치는 물고기가 가려진다 */
 function applyTitleArt(){
-  const bg = art('title.bg'), sh = art('title.shark');
-  const bgEl = el('titleArt'), shEl = el('titleShark');
-  if (bg && bgEl) { bgEl.style.backgroundImage = 'url("' + bg.src + '")'; bgEl.classList.add('on'); }
+  const sh = art('title.shark'), shEl = el('titleShark');
   if (sh && shEl) shEl.style.backgroundImage = 'url("' + sh.src + '")';
+}
+function drawCover(im, W, H){
+  const k = Math.max(W/im.naturalWidth, H/im.naturalHeight);
+  const w = im.naturalWidth*k, h = im.naturalHeight*k;
+  ctx.drawImage(im, (W - w)/2, (H - h)/2, w, h);
 }
 
 function showTitle(){
