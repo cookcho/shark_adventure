@@ -85,10 +85,25 @@ python3 -m http.server 8000
 ## 구조
 
 ```
-index.html          GitHub Pages 용 리다이렉트
-docs/GAME_PLAN.md   전체 기획서
-demo/index.html     데모 — 단일 파일, 외부 의존성 0
+index.html             GitHub Pages 용 리다이렉트
+docs/GAME_PLAN.md      전체 기획서
+docs/ASSETS.md         이미지 에셋 규격 (경로·크기·형식·등록 방법)
+docs/ASSET_PROMPTS.md  에셋 생성 프롬프트
+demo/index.html        게임 — 단일 파일, 외부 의존성 0
+demo/assets/           이미지 에셋 (비어 있으면 Canvas 렌더링)
 ```
+
+## 이미지 에셋
+
+게임은 **이미지 없이 완전히 동작한다.** 모든 생물과 배경에 Canvas 절차적 렌더링이
+폴백으로 들어 있고, 에셋이 없으면 네트워크 요청이 0건이다.
+
+그림을 `demo/assets/` 에 넣고 `demo/index.html` 의 `ART` 객체에 등록하면 그 그림이 쓰인다.
+로딩에 실패하면 경고 1줄을 남기고 조용히 Canvas 렌더링으로 돌아간다.
+**이미지는 보이는 것만 바꾼다** — 충돌 판정, 속도, 성장 수치, 저장 데이터는 영향받지 않는다.
+
+규격은 [`docs/ASSETS.md`](docs/ASSETS.md), 생성 프롬프트는
+[`docs/ASSET_PROMPTS.md`](docs/ASSET_PROMPTS.md).
 
 **기술 선택**
 - Canvas 2D + 절차적 벡터 렌더링 — **스프라이트 에셋 0장.** 모든 생물이 Path(타원 + 지느러미 삼각형 + 베지에 꼬리)로 그려지고 꼬리 사인파로 애니메이션된다

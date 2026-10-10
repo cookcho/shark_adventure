@@ -7,6 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>바다의 왕 — 코어 데모</title>
 <style>
+  :root{
+    --deep:#062D49; --ocean:#087DB5; --aqua:#14B8D4; --laqua:#A7E7F9;
+    --coral:#FF8A24; --gold:#FFD34F; --ink:#021019;
+    --r-lg:16px; --r-md:12px; --r-sm:9px;
+  }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:#04263d;
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
@@ -169,6 +174,36 @@
     max-width:300px;line-height:1.5}
   .unlock.hidden{display:none}
 
+  /* 타이틀 */
+  .screen.title{justify-content:center;gap:0;padding:0;overflow:hidden;background:none}
+  #titleArt{position:absolute;inset:0;background-size:cover;background-position:center;
+    opacity:0;transition:opacity .4s ease;pointer-events:none}
+  #titleArt.on{opacity:1}
+  .screen.title::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 42%,rgba(4,30,52,0) 30%,rgba(3,20,36,.72) 100%)}
+  .titleWrap{position:relative;z-index:2;display:flex;flex-direction:column;
+    align-items:center;gap:0;padding:0 20px;width:100%}
+  .wordmark{display:flex;flex-direction:column;align-items:center;line-height:.9;
+    filter:drop-shadow(0 4px 14px rgba(0,0,0,.55))}
+  .wordmark span{font-weight:900;letter-spacing:-1px;
+    background:linear-gradient(180deg,#fff 18%,var(--laqua) 55%,var(--aqua) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-text-stroke:2.5px rgba(3,40,66,.9);paint-order:stroke fill}
+  .wordmark .w1{font-size:clamp(38px,13vw,62px)}
+  .wordmark .w2{font-size:clamp(25px,8.4vw,40px);letter-spacing:1px}
+  .tagline{margin-top:10px;color:var(--laqua);font-size:13px;font-weight:700;
+    text-shadow:0 2px 8px rgba(0,0,0,.7)}
+  #titleShark{width:min(74%,300px);aspect-ratio:3/2;margin:4px 0 2px;
+    background-size:contain;background-repeat:no-repeat;background-position:center}
+  .btn.cta{margin-top:10px;padding:16px 46px;font-size:18px;
+    background:linear-gradient(180deg,var(--gold),var(--coral));
+    color:#5a2c00;box-shadow:0 5px 0 #b4590d,0 12px 26px rgba(0,0,0,.4)}
+  .btn.cta:active{box-shadow:0 2px 0 #b4590d}
+  .titleRow{display:flex;gap:10px;margin-top:16px}
+  .pill{padding:9px 18px;border-radius:999px;border:1.5px solid rgba(167,231,249,.45);
+    background:rgba(6,45,73,.62);color:var(--laqua);font-size:12.5px;font-weight:700}
+  .pill.off{opacity:.45;text-decoration:line-through}
+
   /* 토스트 (성장 알림) */
   #toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.8);
     z-index:20;pointer-events:none;opacity:0;text-align:center;
@@ -218,20 +253,35 @@
   <div class="hubGo"><button class="btn" id="diveBtn">출발</button></div>
 </div>
 
-<div id="startScreen" class="screen">
-  <h1>바다의 왕<br><span>King of the Abyss</span></h1>
-  <p><b>코어 데모</b> · 햇살 연안<br>작은 치어로 시작해 먹고, 자라고, 더 큰 것을 먹어라.</p>
+<div id="startScreen" class="screen title">
+  <div id="titleArt"></div>
+  <div class="titleWrap">
+    <div class="wordmark"><span class="w1">SHARK</span><span class="w2">ADVENTURE</span></div>
+    <p class="tagline">작은 상어에서 바다의 최강자로!</p>
+    <div id="titleShark"></div>
+    <button class="btn cta" id="startBtn">▶ 모험 시작</button>
+    <div class="titleRow">
+      <button class="pill" id="titleHelp">조작법</button>
+      <button class="pill" id="titleMute">♪ 소리</button>
+    </div>
+  </div>
+</div>
+
+<div id="helpScreen" class="screen hidden">
+  <h1>조작법</h1>
   <div class="hintRow">
-    <div><b>왼쪽 드래그</b>어디든 끌어서<br>유영 방향 조종</div>
+    <div><b>화면 드래그</b>어디든 끌어서<br>유영 방향 조종</div>
     <div><b>자동 포식</b>나보다 낮은 티어는<br>닿으면 그냥 먹힌다</div>
     <div><b>BOOST</b>추격 · 껍질 파괴<br>· 위험 탈출</div>
   </div>
-  <p style="font-size:11.5px;opacity:.8">테두리 색이 규칙이다 —
+  <p style="font-size:12px">테두리 색이 규칙이다<br>
   <b style="color:#7dffd0">없음</b> 먹이 ·
-  <b style="color:#ffd84d">노랑</b> 동급(물어야 함) ·
+  <b style="color:#ffd84d">노랑</b> 동급(물어야 함)<br>
   <b style="color:#ff6b7f">빨강</b> 포식자 ·
   <b style="color:#6fe0ff">하늘</b> 부스트 필요</p>
-  <button class="btn" id="startBtn">시작</button>
+  <p style="font-size:12px">보스는 <b style="color:#7dffd0">꼬리가 안전</b>하고
+  <b style="color:#ff6b7f">머리가 위험</b>하다.<br>노란 고리가 뜨면 달려들어라.</p>
+  <button class="btn" id="helpBack">닫기</button>
 </div>
 
 <div id="overScreen" class="screen hidden">
@@ -289,39 +339,39 @@ const evoName = (shark, i) =>
 /* ---------------- 물고기 정의 — 1종 = 1줄 ----------------
    depth: 세로 서식 범위(0=수면, 1=바닥) / behavior: school|drift|flee|bottom|aggro|float   */
 const FISH = [
-  { id:'anchovy',  name:'멸치',      tier:1, len:15, body:'#e4f3fa', fin:'#9cc6da', behavior:'school', speed:54, depth:[.05,.5], school:true },
-  { id:'shrimp',   name:'새우',      tier:1, len:12, body:'#ff9b7a', fin:'#df6949', behavior:'drift',  speed:30, depth:[.5,.95] },
-  { id:'clown',    name:'흰동가리',  tier:1, len:17, body:'#ff8a1f', fin:'#fff4e3', behavior:'flee',   speed:70, depth:[.3,.8], stripes:true },
-  { id:'mackerel', name:'고등어',    tier:2, len:27, body:'#5fd3c8', fin:'#249c92', behavior:'school', speed:64, depth:[.1,.6], school:true },
-  { id:'puffer',   name:'복어',      tier:2, len:23, body:'#ffd93d', fin:'#cfa500', behavior:'drift',  speed:26, depth:[.4,.9], toxic:true },
-  { id:'seabass',  name:'농어',      tier:3, len:42, body:'#bcc94e', fin:'#7d8a24', behavior:'flee',   speed:80, depth:[.2,.8] },
-  { id:'crab',     name:'게',        tier:3, len:30, body:'#ff5436', fin:'#bf2c14', behavior:'bottom', speed:24, depth:[.9,.99], shell:true },
-  { id:'ray',      name:'가오리',    tier:4, len:60, body:'#a678d8', fin:'#6c45a0', behavior:'drift',  speed:46, depth:[.6,.97] },
-  { id:'barra',    name:'바라쿠다',  tier:5, len:84, body:'#eef4f6', fin:'#8ba3ad', behavior:'aggro',  speed:96, depth:[.15,.75] },
-  { id:'jelly',    name:'해파리',    tier:9, len:26, body:'#e9b6ff', fin:'#bb7ddb', behavior:'float',  speed:16, depth:[.1,.85], shock:true },
+  { shape:'dart', id:'anchovy',  name:'멸치',      tier:1, len:15, body:'#e4f3fa', fin:'#9cc6da', behavior:'school', speed:54, depth:[.05,.5], school:true },
+  { shape:'shrimp', id:'shrimp',   name:'새우',      tier:1, len:12, body:'#ff9b7a', fin:'#df6949', behavior:'drift',  speed:30, depth:[.5,.95] },
+  { shape:'disc', id:'clown',    name:'흰동가리',  tier:1, len:17, body:'#ff8a1f', fin:'#fff4e3', behavior:'flee',   speed:70, depth:[.3,.8], stripes:true },
+  { shape:'fish', id:'mackerel', name:'고등어',    tier:2, len:27, body:'#5fd3c8', fin:'#249c92', behavior:'school', speed:64, depth:[.1,.6], school:true },
+  { shape:'puffer', id:'puffer',   name:'복어',      tier:2, len:23, body:'#ffd93d', fin:'#cfa500', behavior:'drift',  speed:26, depth:[.4,.9], toxic:true },
+  { shape:'fish', id:'seabass',  name:'농어',      tier:3, len:42, body:'#bcc94e', fin:'#7d8a24', behavior:'flee',   speed:80, depth:[.2,.8] },
+  { shape:'crab', id:'crab',     name:'게',        tier:3, len:30, body:'#ff5436', fin:'#bf2c14', behavior:'bottom', speed:24, depth:[.9,.99], shell:true },
+  { shape:'ray', id:'ray',      name:'가오리',    tier:4, len:60, body:'#a678d8', fin:'#6c45a0', behavior:'drift',  speed:46, depth:[.6,.97] },
+  { shape:'predator', id:'barra',    name:'바라쿠다',  tier:5, len:84, body:'#eef4f6', fin:'#8ba3ad', behavior:'aggro',  speed:96, depth:[.15,.75] },
+  { shape:'jelly', id:'jelly',    name:'해파리',    tier:9, len:26, body:'#e9b6ff', fin:'#bb7ddb', behavior:'float',  speed:16, depth:[.1,.85], shock:true },
 
   /* --- 산호 정원 --- */
-  { id:'parrot',   name:'비늘돔',    tier:2, len:30, body:'#3ad6a0', fin:'#ff9ad0', behavior:'drift',  speed:48, depth:[.2,.75] },
-  { id:'butterfly',name:'나비고기',  tier:2, len:22, body:'#ffe14d', fin:'#2b3a52', behavior:'flee',   speed:72, depth:[.15,.6], stripes:true },
-  { id:'wrasse',   name:'청줄놀래기',tier:2, len:24, body:'#4db8ff', fin:'#ffd24d', behavior:'school', speed:66, depth:[.2,.7], school:true },
-  { id:'lionfish', name:'쏠배감펭',  tier:3, len:34, body:'#ff6b3d', fin:'#fff0e0', behavior:'drift',  speed:30, depth:[.3,.85], toxic:true, stripes:true },
-  { id:'striped',  name:'돌돔',      tier:3, len:38, body:'#dde6ea', fin:'#2b3a52', behavior:'flee',   speed:76, depth:[.25,.8], stripes:true },
-  { id:'squid',    name:'오징어',    tier:4, len:46, body:'#ffb3c7', fin:'#d4718f', behavior:'drift',  speed:58, depth:[.2,.8] },
-  { id:'moraykid', name:'곰치 치어', tier:4, len:52, body:'#8aa83c', fin:'#5d7524', behavior:'aggro',  speed:70, depth:[.5,.95] },
-  { id:'reefpup',  name:'상어 치어', tier:5, len:64, body:'#9fb4c4', fin:'#6b8294', behavior:'aggro',  speed:88, depth:[.2,.8] },
-  { id:'clam',     name:'대왕조개',  tier:5, len:40, body:'#e0cdf5', fin:'#9a7fc0', behavior:'bottom', speed:0,  depth:[.92,.99], shell:true },
-  { id:'urchin',   name:'성게',      tier:9, len:22, body:'#4a2f6b', fin:'#2a1a40', behavior:'bottom', speed:0,  depth:[.93,.99], shock:true },
+  { shape:'disc', id:'parrot',   name:'비늘돔',    tier:2, len:30, body:'#3ad6a0', fin:'#ff9ad0', behavior:'drift',  speed:48, depth:[.2,.75] },
+  { shape:'disc', id:'butterfly',name:'나비고기',  tier:2, len:22, body:'#ffe14d', fin:'#2b3a52', behavior:'flee',   speed:72, depth:[.15,.6], stripes:true },
+  { shape:'fish', id:'wrasse',   name:'청줄놀래기',tier:2, len:24, body:'#4db8ff', fin:'#ffd24d', behavior:'school', speed:66, depth:[.2,.7], school:true },
+  { shape:'lion', id:'lionfish', name:'쏠배감펭',  tier:3, len:34, body:'#ff6b3d', fin:'#fff0e0', behavior:'drift',  speed:30, depth:[.3,.85], toxic:true, stripes:true },
+  { shape:'disc', id:'striped',  name:'돌돔',      tier:3, len:38, body:'#dde6ea', fin:'#2b3a52', behavior:'flee',   speed:76, depth:[.25,.8], stripes:true },
+  { shape:'squid', id:'squid',    name:'오징어',    tier:4, len:46, body:'#ffb3c7', fin:'#d4718f', behavior:'drift',  speed:58, depth:[.2,.8] },
+  { shape:'eel', id:'moraykid', name:'곰치 치어', tier:4, len:52, body:'#8aa83c', fin:'#5d7524', behavior:'aggro',  speed:70, depth:[.5,.95] },
+  { shape:'predator', id:'reefpup',  name:'상어 치어', tier:5, len:64, body:'#9fb4c4', fin:'#6b8294', behavior:'aggro',  speed:88, depth:[.2,.8] },
+  { shape:'clam', id:'clam',     name:'대왕조개',  tier:5, len:40, body:'#e0cdf5', fin:'#9a7fc0', behavior:'bottom', speed:0,  depth:[.92,.99], shell:true },
+  { shape:'urchin', id:'urchin',   name:'성게',      tier:9, len:22, body:'#4a2f6b', fin:'#2a1a40', behavior:'bottom', speed:0,  depth:[.93,.99], shock:true },
 
   /* --- 난파선 해구 --- */
-  { id:'sardine',  name:'정어리',    tier:3, len:20, body:'#cfe0e8', fin:'#8fa7b5', behavior:'school', speed:62, depth:[.1,.6], school:true },
-  { id:'yellowray',name:'노랑가오리',tier:3, len:48, body:'#e8c24a', fin:'#a8862a', behavior:'drift',  speed:42, depth:[.6,.95] },
-  { id:'angler',   name:'아귀',      tier:4, len:50, body:'#4a4038', fin:'#2b241e', behavior:'aggro',  speed:44, depth:[.55,.95], lure:true },
-  { id:'conger',   name:'붕장어',    tier:4, len:62, body:'#7d8a6b', fin:'#55603f', behavior:'drift',  speed:52, depth:[.5,.95] },
-  { id:'tuna',     name:'참치',      tier:5, len:70, body:'#5c7fa8', fin:'#35506e', behavior:'flee',   speed:120, depth:[.1,.7] },
-  { id:'swordfish',name:'황새치',    tier:5, len:82, body:'#7a6fa8', fin:'#4c4470', behavior:'aggro',  speed:104, depth:[.15,.7] },
-  { id:'hammer',   name:'귀상어',    tier:6, len:92, body:'#a8b6bf', fin:'#74838d', behavior:'aggro',  speed:98, depth:[.2,.8] },
-  { id:'blueshark',name:'청새리상어',tier:6, len:88, body:'#6e92c4', fin:'#45628d', behavior:'aggro',  speed:102, depth:[.2,.85] },
-  { id:'mine',     name:'기뢰',      tier:9, len:30, body:'#3b4046', fin:'#20242a', behavior:'float',  speed:0,  depth:[.2,.9], shock:true, mine:true },
+  { shape:'dart', id:'sardine',  name:'정어리',    tier:3, len:20, body:'#cfe0e8', fin:'#8fa7b5', behavior:'school', speed:62, depth:[.1,.6], school:true },
+  { shape:'ray', id:'yellowray',name:'노랑가오리',tier:3, len:48, body:'#e8c24a', fin:'#a8862a', behavior:'drift',  speed:42, depth:[.6,.95] },
+  { shape:'angler', id:'angler',   name:'아귀',      tier:4, len:50, body:'#4a4038', fin:'#2b241e', behavior:'aggro',  speed:44, depth:[.55,.95], lure:true },
+  { shape:'eel', id:'conger',   name:'붕장어',    tier:4, len:62, body:'#7d8a6b', fin:'#55603f', behavior:'drift',  speed:52, depth:[.5,.95] },
+  { shape:'predator', id:'tuna',     name:'참치',      tier:5, len:70, body:'#5c7fa8', fin:'#35506e', behavior:'flee',   speed:120, depth:[.1,.7] },
+  { shape:'sword', id:'swordfish',name:'황새치',    tier:5, len:82, body:'#7a6fa8', fin:'#4c4470', behavior:'aggro',  speed:104, depth:[.15,.7] },
+  { shape:'predator', id:'hammer',   name:'귀상어',    tier:6, len:92, body:'#a8b6bf', fin:'#74838d', behavior:'aggro',  speed:98, depth:[.2,.8] },
+  { shape:'predator', id:'blueshark',name:'청새리상어',tier:6, len:88, body:'#6e92c4', fin:'#45628d', behavior:'aggro',  speed:102, depth:[.2,.85] },
+  { shape:'mine', id:'mine',     name:'기뢰',      tier:9, len:30, body:'#3b4046', fin:'#20242a', behavior:'float',  speed:0,  depth:[.2,.9], shock:true, mine:true },
 ];
 const FISH_BY_ID = {}; FISH.forEach(d => FISH_BY_ID[d.id] = d);
 
@@ -465,6 +515,66 @@ function stats(){
 }
 
 /* ==========================================================================
+   이미지 에셋 — 교체 가능 레이어
+   --------------------------------------------------------------------------
+   ART 에 등록된 키만 로드한다. 비어 있으면 요청이 0건이고 전부 Canvas 로 그린다.
+   그림 파일을 demo/assets/ 아래 넣고 여기에 한 줄 추가하면 그 그림이 쓰인다.
+   로딩에 실패하면 조용히 Canvas 렌더링으로 되돌아간다 — 게임은 멈추지 않는다.
+   규칙·판정·수치는 이미지 유무와 무관하다. 이미지는 보이는 것만 바꾼다.
+   자세한 규격은 docs/ASSETS.md 참고.
+   ========================================================================== */
+const ART = {
+  /* 타이틀 */
+  // 'title.bg':          'title/background.png',
+  // 'title.shark':       'title/shark.png',
+  /* 해역 배경 (가로로 이어지는 원경) */
+  // 'stage.shore':       'stage/shore.png',
+  // 'stage.coral':       'stage/coral.png',
+  // 'stage.wreck':       'stage/wreck.png',
+  /* 플레이어 상어 — shark.<상어id>.<진화단계 0~3> */
+  // 'shark.reef.0':      'shark/reef_0.png',
+  /* 물고기 — fish.<어종id> */
+  // 'fish.clown':        'fish/clown.png',
+  /* 보스 — boss.<보스id> */
+  // 'boss.giant_barra':  'boss/giant_barra.png',
+};
+const ART_BASE  = 'assets/';
+const SPRITE_SPAN = 1.5;        // 이미지 가로폭 = 생물 몸길이(len) × 1.5
+const IMGS = {};
+let artPending = 0;
+
+function loadArt(){
+  for (const key in ART) {
+    const im = new Image();
+    artPending++;
+    im.onload  = () => {
+      if (im.naturalWidth > 0) IMGS[key] = im;
+      artPending--;
+      if (key.indexOf('title.') === 0 && typeof applyTitleArt === 'function') applyTitleArt();
+    };
+    im.onerror = () => { artPending--; console.warn('[art] 로드 실패, Canvas 로 대체:', ART[key]); };
+    im.src = ART_BASE + ART[key];
+  }
+}
+const art = key => IMGS[key] || null;
+
+/* 스프라이트는 len 기준으로만 크기가 정해진다 — 판정에 영향을 주지 않는다 */
+function drawSprite(im, L, span){
+  const w = L*(span || SPRITE_SPAN);
+  const r = im.naturalHeight / (im.naturalWidth || 1);
+  ctx.drawImage(im, -w/2, -w*r/2, w, w*r);
+}
+/* 그림을 써도 티어 규칙(외곽선 색)은 유지돼야 한다 */
+function spriteRing(L, H, color){
+  if (!color) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = clamp(L*0.05, 1.4, 3);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, L*0.56, Math.max(H*1.25, L*0.2), 0, 0, 6.2832);
+  ctx.stroke();
+}
+
+/* ==========================================================================
    사운드 — 전부 WebAudio 합성. 오디오 파일 0개.
    브라우저 정책상 첫 사용자 입력 전에는 소리가 나지 않으므로 그때 깨운다.
    ========================================================================== */
@@ -571,7 +681,7 @@ const G = {
   cam:{ x:0, y:0, w:0, h:0 },
   shake:0, danger:0, eaten:0, evolveFlash:0,
   boss:null, bossSpawned:false, cleared:false, pearls:0, endTimer:0,
-  stage:null, pool:[], bossDef:null,
+  stage:null, pool:[], bossDef:null, attract:false,
 };
 
 function makePlayer(){
@@ -799,6 +909,7 @@ function hurtPlayer(dmg, nx, ny, cd){
 
 /* nx,ny = 물고기 → 플레이어 방향 (플레이어 넉백 방향) */
 function handleContact(f, nx, ny){
+  if (G.attract) return;                 // 타이틀 연출 중에는 아무 일도 일어나지 않는다
   const p = G.player, def = f.def;
 
   if (def.shock) { hurtPlayer(12, nx, ny, 0.95); p.slow = 1.0; return; }
@@ -1013,6 +1124,22 @@ function drawBoss(){
 
   ctx.save();
   ctx.translate(b.x, b.y);
+
+  const bsp = art('boss.' + G.stage.boss);
+  if (bsp) {
+    faceHeading(b.vx || b.dx, b.vy);
+    if (b.flash > 0) { ctx.globalAlpha = 0.75; }
+    drawSprite(bsp, L, 1.3);
+    ctx.restore();
+    if (b.state === 'stagger') {                  // 경직 표시는 그림 위에도 유지
+      ctx.strokeStyle = 'rgba(255,216,77,.75)'; ctx.lineWidth = 3;
+      ctx.setLineDash([9, 9]);
+      ctx.beginPath(); ctx.arc(b.x, b.y, L*0.42, 0, 6.2832); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    return;
+  }
+
   faceHeading(b.vx || b.dx, b.vy);
   const sw = Math.sin(b.t*7)*0.5;
   const hurt = b.flash > 0;
@@ -1313,6 +1440,14 @@ function drawWater(W, H){
 }
 
 function drawFar(W, H){
+  const bg = art('stage.' + G.stage.id);
+  if (bg) {                                        // 가로로 이어지는 원경 배경
+    const r = bg.naturalHeight / (bg.naturalWidth || 1);
+    const bh = H, bw = bh / r;
+    const ox = -((G.cam.x*0.35) % bw);
+    for (let x = ox - bw; x < W + bw; x += bw) ctx.drawImage(bg, x, 0, bw, bh);
+    return;
+  }
   ctx.save();
   ctx.translate(W/2 - G.cam.x*0.55, H/2 - G.cam.y);   // x축만 패럴랙스
   ctx.fillStyle = G.stage.rock;
@@ -1406,7 +1541,12 @@ function outlineFor(def, p){
   if (def.tier === p.tier) return '#ffd84d';
   return null;
 }
-const RATIO = { puffer: .76, ray: .62, crab: .58, shrimp: .36, jelly: .9 };
+/* 종별 몸높이 비율 (몸길이 대비 전체 높이) */
+const RATIO = {
+  dart:.30, fish:.42, disc:.86, puffer:.95, predator:.30, eel:.24, lion:.70,
+  ray:.62, crab:.58, shrimp:.40, jelly:.95, squid:.56, angler:.80,
+  clam:.72, urchin:1.0, mine:1.0, sword:.30,
+};
 const MAX_PITCH = 0.55;                        // 약 32° — 이보다 세우면 알약처럼 보인다
 /* 진행 방향을 바라보되 과하게 서지 않도록. 좌향일 때 scale(1,-1) 로 배를 바로잡는다 */
 function faceHeading(vx, vy){
@@ -1417,104 +1557,361 @@ function faceHeading(vx, vy){
   return left;
 }
 
+/* ---- 공통 조각 ---- */
+/* 등은 어둡고 배는 밝게 — 3단 그라디언트가 입체감의 대부분을 만든다 */
+function bodyGrad(color, H){
+  const g = ctx.createLinearGradient(0, -H, 0, H);
+  g.addColorStop(0,    shade(color, 0.30));
+  g.addColorStop(0.42, color);
+  g.addColorStop(1,    shade(color, -0.34));
+  return g;
+}
+function eye(x, y, r){
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#0d1b24';
+  ctx.beginPath(); ctx.arc(x + r*0.22, y, r*0.56, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.9)';        // 눈동자 하이라이트
+  ctx.beginPath(); ctx.arc(x - r*0.22, y - r*0.3, r*0.3, 0, 6.2832); ctx.fill();
+}
+function rimLight(L, H){                          // 등을 따라 흐르는 반사광
+  ctx.strokeStyle = 'rgba(255,255,255,.22)';
+  ctx.lineWidth = Math.max(1, H*0.18);
+  ctx.beginPath();
+  ctx.moveTo(-L*0.22, -H*0.68);
+  ctx.quadraticCurveTo(L*0.08, -H*0.95, L*0.34, -H*0.5);
+  ctx.stroke();
+}
+function tailFin(L, H, sw, spread){
+  const k = spread === undefined ? 0.8 : spread;
+  ctx.beginPath();
+  ctx.moveTo(-L*0.40, 0);
+  ctx.lineTo(-L*0.72, -H*k + sw*H*0.55);
+  ctx.lineTo(-L*0.56, 0);
+  ctx.lineTo(-L*0.72,  H*k + sw*H*0.55);
+  ctx.closePath(); ctx.fill();
+}
+
 function drawCreature(f, p){
-  const def = f.def, L = def.len, H = L*(RATIO[def.id] || 0.42)*0.5;   // H = 반높이
+  const def = f.def, L = def.len;
+  const shape = def.shape || 'fish';
+  const H = L*(RATIO[shape] || 0.42)*0.5;          // H = 반높이
   const oc = outlineFor(def, p);
+  const lw = clamp(L*0.055, 1.4, 3.2);
   ctx.save();
   ctx.translate(f.x, f.y);
 
-  if (def.behavior === 'float') {                  // 해파리
-    const pulse = 1 + Math.sin(f.phase*0.6)*0.12;
-    ctx.strokeStyle = 'rgba(214,188,238,.65)'; ctx.lineWidth = 2;
-    for (let i = -2; i <= 2; i++) {
-      ctx.beginPath(); ctx.moveTo(i*L*0.14, H*0.35);
-      ctx.quadraticCurveTo(i*L*0.2 + Math.sin(f.phase + i)*7, H*0.9, i*L*0.16, H*1.5);
-      ctx.stroke();
-    }
-    ctx.fillStyle = 'rgba(220,188,238,.72)';
-    ctx.beginPath(); ctx.ellipse(0, 0, L*0.5*pulse, H*0.5*pulse, 0, Math.PI, 0); ctx.fill();
-    ctx.lineWidth = 2.2; ctx.strokeStyle = oc; ctx.stroke();
+  const sp = art('fish.' + def.id);
+  if (sp) {                                        // 그림이 있으면 그림으로
+    const fixed = shape === 'jelly' || shape === 'urchin' || shape === 'mine' || shape === 'clam';
+    if (!fixed) faceHeading(f.vx, f.vy);
+    drawSprite(sp, L);
+    spriteRing(L, H, oc);
     ctx.restore(); return;
   }
 
-  const flipped = faceHeading(f.vx, f.vy);
+  /* ===== 방향을 갖지 않는 것들 ===== */
+  if (shape === 'jelly') {
+    const pulse = 1 + Math.sin(f.phase*0.6)*0.14;
+    ctx.strokeStyle = 'rgba(214,188,238,.6)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath(); ctx.moveTo(i*L*0.13, H*0.3);
+      ctx.quadraticCurveTo(i*L*0.2 + Math.sin(f.phase + i)*8, H*0.95, i*L*0.15, H*1.6);
+      ctx.stroke();
+    }
+    const gj = ctx.createRadialGradient(0, -H*0.3, 1, 0, 0, L*0.55*pulse);
+    gj.addColorStop(0, '#ffffff');
+    gj.addColorStop(0.55, def.body);
+    gj.addColorStop(1, shade(def.body, -0.25));
+    ctx.fillStyle = gj; ctx.globalAlpha = 0.92;
+    ctx.beginPath();
+    ctx.ellipse(0, H*0.1, L*0.5*pulse, H*0.78*pulse, 0, Math.PI, 0);
+    ctx.quadraticCurveTo(0, H*0.4, L*0.5*pulse, H*0.1);
+    ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 1;
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.restore(); return;
+  }
+  if (shape === 'urchin') {
+    ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(1.6, L*0.05); ctx.lineCap = 'round';
+    for (let i = 0; i < 14; i++) {
+      const a = i/14*6.2832 + f.phase*0.1;
+      ctx.beginPath(); ctx.moveTo(Math.cos(a)*L*0.22, Math.sin(a)*L*0.22);
+      ctx.lineTo(Math.cos(a)*L*0.52, Math.sin(a)*L*0.52); ctx.stroke();
+    }
+    ctx.fillStyle = bodyGrad(def.body, L*0.26);
+    ctx.beginPath(); ctx.arc(0, 0, L*0.26, 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.restore(); return;
+  }
+  if (shape === 'mine') {
+    ctx.fillStyle = def.fin;
+    for (let i = 0; i < 8; i++) {
+      const a = i/8*6.2832;
+      ctx.save(); ctx.rotate(a);
+      ctx.beginPath(); ctx.moveTo(-L*0.07, -L*0.26); ctx.lineTo(0, -L*0.47);
+      ctx.lineTo(L*0.07, -L*0.26); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = bodyGrad(def.body, L*0.28);
+    ctx.beginPath(); ctx.arc(0, 0, L*0.28, 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.fillStyle = 'rgba(255,90,90,' + (0.45 + 0.45*Math.sin(G.t*5 + f.phase)) + ')';
+    ctx.beginPath(); ctx.arc(0, 0, L*0.1, 0, 6.2832); ctx.fill();
+    ctx.restore(); return;
+  }
+  if (shape === 'clam') {
+    const open = 0.18 + Math.sin(f.phase*0.5)*0.1;
+    ctx.fillStyle = bodyGrad(def.body, H);
+    for (const sgn of [-1, 1]) {
+      ctx.save(); ctx.rotate(sgn*open);
+      ctx.beginPath(); ctx.ellipse(0, sgn*H*0.42, L*0.46, H*0.5, 0, 0, 6.2832); ctx.fill();
+      if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+      ctx.restore();
+    }
+    ctx.restore(); return;
+  }
+
+  /* ===== 방향을 갖는 것들 ===== */
+  faceHeading(f.vx, f.vy);
   const sw = Math.sin(f.phase)*0.5;
 
-  if (def.id === 'ray') {                          // 가오리 — 마름모 + 날개짓
-    const flap = Math.sin(f.phase*0.55)*0.32;
+  if (shape === 'ray') {
+    const flap = Math.sin(f.phase*0.55)*0.34;
     ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(1.6, L*0.035); ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(-L*0.34, 0); ctx.lineTo(-L*0.95, Math.sin(f.phase*0.7)*H*0.3); ctx.stroke();
-    const g2 = ctx.createLinearGradient(0, -H, 0, H);
-    g2.addColorStop(0, shade(def.body, 0.2)); g2.addColorStop(1, shade(def.body, -0.3));
-    ctx.fillStyle = g2;
+    ctx.beginPath(); ctx.moveTo(-L*0.34, 0);
+    ctx.lineTo(-L*0.95, Math.sin(f.phase*0.7)*H*0.3); ctx.stroke();
+    ctx.fillStyle = bodyGrad(def.body, H);
     ctx.beginPath();
     ctx.moveTo(L*0.5, 0);
     ctx.quadraticCurveTo(L*0.05, -H*1.5*(1+flap), -L*0.4, -H*0.45*(1+flap*0.5));
     ctx.quadraticCurveTo(-L*0.46, 0, -L*0.4, H*0.45*(1-flap*0.5));
     ctx.quadraticCurveTo(L*0.05,  H*1.5*(1-flap), L*0.5, 0);
     ctx.closePath(); ctx.fill();
-    if (oc) { ctx.lineWidth = clamp(L*0.045, 1.5, 3.2); ctx.strokeStyle = oc; ctx.stroke(); }
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
     ctx.fillStyle = '#10212b';
     ctx.beginPath(); ctx.arc(L*0.26, -H*0.26, Math.max(1.2, L*0.035), 0, 6.2832); ctx.fill();
     ctx.beginPath(); ctx.arc(L*0.26,  H*0.26, Math.max(1.2, L*0.035), 0, 6.2832); ctx.fill();
     ctx.restore(); return;
   }
 
-  if (def.shell) {                                 // 게
+  if (shape === 'crab') {
     ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(2, L*0.07); ctx.lineCap = 'round';
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -1; i <= 1; i++) {                 // 다리
       ctx.beginPath(); ctx.moveTo(i*L*0.2, H*0.2);
-      ctx.lineTo(i*L*0.3 + sw*4, H*0.75); ctx.stroke();
+      ctx.lineTo(i*L*0.3 + sw*5, H*0.85); ctx.stroke();
     }
-    ctx.beginPath(); ctx.moveTo(L*0.3, -H*0.1); ctx.lineTo(L*0.62, -H*0.5); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(L*0.3,  H*0.1); ctx.lineTo(L*0.62,  H*0.45); ctx.stroke();
-    ctx.fillStyle = def.body;
+    for (const sgn of [-1, 1]) {                    // 집게발
+      const o = sgn*0.14 + Math.sin(f.phase*0.6)*0.06;
+      ctx.beginPath(); ctx.moveTo(L*0.28, sgn*H*0.1); ctx.lineTo(L*0.58, sgn*H*0.5); ctx.stroke();
+      ctx.fillStyle = def.fin;
+      ctx.save(); ctx.translate(L*0.62, sgn*H*0.55); ctx.rotate(sgn*0.5);
+      ctx.beginPath(); ctx.ellipse(0, 0, L*0.12, L*0.07, o, 0, 6.2832); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = bodyGrad(def.body, H*0.62);
     ctx.beginPath(); ctx.ellipse(0, 0, L*0.46, H*0.62, 0, 0, 6.2832); ctx.fill();
-    if (oc) { ctx.lineWidth = clamp(L*0.06, 1.6, 3.2); ctx.strokeStyle = oc; ctx.stroke(); }
-    ctx.fillStyle = '#10212b';
-    ctx.beginPath(); ctx.arc(L*0.2, -H*0.22, Math.max(1.2, L*0.045), 0, 6.2832); ctx.fill();
-    ctx.beginPath(); ctx.arc(L*0.2,  H*0.22, Math.max(1.2, L*0.045), 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    eye(L*0.2, -H*0.26, Math.max(1.3, L*0.05));
+    eye(L*0.2,  H*0.26, Math.max(1.3, L*0.05));
     ctx.restore(); return;
   }
 
-  // 꼬리
+  if (shape === 'shrimp') {
+    ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(1, L*0.04); ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) {                   // 다리
+      ctx.beginPath(); ctx.moveTo(L*(0.1 - i*0.14), H*0.5);
+      ctx.lineTo(L*(0.05 - i*0.14) + sw*3, H*1.1); ctx.stroke();
+    }
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath();                                 // 굽은 몸통
+    ctx.moveTo(L*0.44, -H*0.1);
+    ctx.quadraticCurveTo(L*0.05, -H*1.05, -L*0.34, -H*0.1);
+    ctx.quadraticCurveTo(-L*0.42, H*0.2, -L*0.26, H*0.5);
+    ctx.quadraticCurveTo(L*0.05, H*0.2, L*0.44, H*0.35);
+    ctx.closePath(); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(0.8, L*0.03);
+    ctx.beginPath(); ctx.moveTo(L*0.42, -H*0.2); ctx.lineTo(L*0.78, -H*0.6); ctx.stroke();
+    eye(L*0.32, -H*0.2, Math.max(1.1, L*0.055));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'squid') {
+    ctx.strokeStyle = shade(def.body, -0.15); ctx.lineWidth = Math.max(1.4, L*0.045);
+    ctx.lineCap = 'round';
+    for (let i = -3; i <= 3; i++) {                  // 촉수
+      ctx.beginPath(); ctx.moveTo(-L*0.18, i*H*0.16);
+      ctx.quadraticCurveTo(-L*0.5, i*H*0.22 + Math.sin(f.phase + i)*5,
+                           -L*0.82, i*H*0.3 + Math.sin(f.phase*1.2 + i)*8);
+      ctx.stroke();
+    }
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath();                                 // 외투막
+    ctx.moveTo(L*0.52, 0);
+    ctx.quadraticCurveTo(L*0.1, -H*1.0, -L*0.2, -H*0.5);
+    ctx.lineTo(-L*0.2, H*0.5);
+    ctx.quadraticCurveTo(L*0.1, H*1.0, L*0.52, 0);
+    ctx.closePath(); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.fillStyle = def.fin;                         // 지느러미
+    ctx.beginPath(); ctx.ellipse(L*0.4, 0, L*0.12, H*0.9, 0, 0, 6.2832); ctx.fill();
+    eye(L*0.05, -H*0.34, Math.max(1.4, L*0.07));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'angler') {
+    ctx.strokeStyle = shade(def.body, 0.2); ctx.lineWidth = Math.max(1.2, L*0.03);
+    ctx.beginPath();                                 // 유인등 줄기
+    ctx.moveTo(L*0.1, -H*0.7);
+    ctx.quadraticCurveTo(L*0.5, -H*1.9, L*0.62, -H*1.2);
+    ctx.stroke();
+    const lg = ctx.createRadialGradient(L*0.62, -H*1.2, 1, L*0.62, -H*1.2, L*0.2);
+    lg.addColorStop(0, 'rgba(255,245,170,.95)'); lg.addColorStop(1, 'rgba(255,220,90,0)');
+    ctx.fillStyle = lg;
+    ctx.beginPath(); ctx.arc(L*0.62, -H*1.2, L*0.2, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath();                                 // 큰 머리 + 좁은 꼬리
+    ctx.moveTo(L*0.46, H*0.1);
+    ctx.quadraticCurveTo(L*0.2, -H*1.0, -L*0.12, -H*0.7);
+    ctx.quadraticCurveTo(-L*0.46, -H*0.2, -L*0.5, 0);
+    ctx.quadraticCurveTo(-L*0.46, H*0.3, -L*0.12, H*0.8);
+    ctx.quadraticCurveTo(L*0.2, H*1.0, L*0.46, H*0.1);
+    ctx.closePath(); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.fillStyle = '#fff';                          // 이빨
+    for (let i = 0; i < 5; i++) {
+      const tx = L*0.4 - i*L*0.1;
+      ctx.beginPath(); ctx.moveTo(tx, H*0.12); ctx.lineTo(tx - L*0.03, H*0.42);
+      ctx.lineTo(tx + L*0.04, H*0.38); ctx.closePath(); ctx.fill();
+    }
+    eye(L*0.22, -H*0.36, Math.max(1.4, L*0.065));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'eel') {
+    ctx.strokeStyle = def.fin; ctx.lineWidth = H*0.7; ctx.lineCap = 'round';
+    ctx.beginPath();                                 // 등 띠
+    for (let i = 0; i <= 14; i++) {
+      const u = i/14, x = L*0.45 - u*L*1.1;
+      const y = Math.sin(f.phase - u*5)*H*1.4*u - H*0.35;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = bodyGrad(def.body, H); ctx.lineWidth = H*1.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 14; i++) {
+      const u = i/14, x = L*0.45 - u*L*1.1;
+      const y = Math.sin(f.phase - u*5)*H*1.4*u;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath(); ctx.ellipse(L*0.4, 0, L*0.14, H*1.05, 0, 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    eye(L*0.42, -H*0.35, Math.max(1.2, L*0.045));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'puffer') {
+    ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(1.2, L*0.035); ctx.lineCap = 'round';
+    for (let i = 0; i < 12; i++) {                   // 가시
+      const a = i/12*6.2832;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a)*L*0.4, Math.sin(a)*H*0.9);
+      ctx.lineTo(Math.cos(a)*L*0.56, Math.sin(a)*H*1.25); ctx.stroke();
+    }
+    ctx.fillStyle = def.fin;
+    tailFin(L, H*0.5, sw, 0.6);
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath(); ctx.ellipse(0, 0, L*0.42, H*0.95, 0, 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    rimLight(L*0.8, H*0.9);
+    eye(L*0.24, -H*0.26, Math.max(1.6, L*0.08));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'lion') {                            // 쏠배감펭 — 부채 가시
+    ctx.strokeStyle = def.fin; ctx.lineWidth = Math.max(1.2, L*0.03); ctx.lineCap = 'round';
+    for (let i = -4; i <= 4; i++) {
+      const a = i/4*1.1;
+      ctx.beginPath(); ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(a - 1.57)*L*0.1 - L*0.05, -H*1.1 - Math.abs(i)*H*0.08);
+      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-L*0.1, 0);
+      ctx.lineTo(-L*0.1 + i*L*0.05, H*1.2); ctx.stroke();
+    }
+    ctx.fillStyle = def.fin; tailFin(L, H*0.7, sw, 0.7);
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath(); ctx.ellipse(0, 0, L*0.44, H*0.78, 0, 0, 6.2832); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    ctx.save(); ctx.clip();                          // 줄무늬
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    for (let i = -2; i <= 2; i++) ctx.fillRect(i*L*0.14 - L*0.025, -H, L*0.05, H*2);
+    ctx.restore();
+    eye(L*0.26, -H*0.26, Math.max(1.4, L*0.06));
+    ctx.restore(); return;
+  }
+
+  if (shape === 'predator' || shape === 'sword') {
+    ctx.fillStyle = def.fin;
+    ctx.beginPath();                                 // 초승달 꼬리
+    ctx.moveTo(-L*0.38, 0);
+    ctx.quadraticCurveTo(-L*0.56, -H*1.0 + sw*H, -L*0.74, -H*2.4 + sw*H);
+    ctx.quadraticCurveTo(-L*0.54, -H*0.7, -L*0.5, 0);
+    ctx.quadraticCurveTo(-L*0.54,  H*0.7, -L*0.72,  H*2.0 + sw*H);
+    ctx.quadraticCurveTo(-L*0.54,  H*0.8, -L*0.38, 0);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();                                 // 등지느러미
+    ctx.moveTo(L*0.0, -H*1.1); ctx.lineTo(-L*0.14, -H*2.5); ctx.lineTo(-L*0.3, -H*1.0);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();                                 // 가슴지느러미
+    ctx.moveTo(L*0.1, H*0.8); ctx.lineTo(-L*0.06, H*2.0); ctx.lineTo(-L*0.16, H*0.7);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = bodyGrad(def.body, H);
+    ctx.beginPath();
+    ctx.moveTo(L*0.52, 0);
+    ctx.quadraticCurveTo(L*0.2, -H*1.5, -L*0.14, -H*1.1);
+    ctx.quadraticCurveTo(-L*0.4, -H*0.6, -L*0.44, 0);
+    ctx.quadraticCurveTo(-L*0.4,  H*0.7, -L*0.14,  H*1.2);
+    ctx.quadraticCurveTo(L*0.2,  H*1.5, L*0.52, 0);
+    ctx.closePath(); ctx.fill();
+    if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
+    if (shape === 'sword') {                         // 주둥이 칼
+      ctx.strokeStyle = shade(def.body, -0.2); ctx.lineWidth = Math.max(1.6, L*0.035);
+      ctx.beginPath(); ctx.moveTo(L*0.5, 0); ctx.lineTo(L*0.84, -H*0.1); ctx.stroke();
+    }
+    rimLight(L, H*1.2);
+    eye(L*0.3, -H*0.45, Math.max(1.4, L*0.05));
+    ctx.restore(); return;
+  }
+
+  /* dart / fish / disc — 공통 물고기 */
+  const bodyW = shape === 'disc' ? 0.44 : 0.5;
   ctx.fillStyle = def.fin;
-  ctx.beginPath();
-  ctx.moveTo(-L*0.40, 0);
-  ctx.lineTo(-L*0.72, -H*0.8 + sw*H*0.55);
-  ctx.lineTo(-L*0.58, 0);
-  ctx.lineTo(-L*0.72,  H*0.8 + sw*H*0.55);
+  tailFin(L, H, sw, shape === 'disc' ? 0.6 : 0.8);
+  ctx.beginPath();                                   // 등지느러미
+  ctx.moveTo(-L*0.04, -H*(shape === 'disc' ? 1.15 : 0.95));
+  ctx.lineTo(L*0.12, -H*0.25); ctx.lineTo(-L*0.26, -H*0.25);
   ctx.closePath(); ctx.fill();
-  // 등지느러미 / 가슴지느러미
-  ctx.beginPath();
-  ctx.moveTo(-L*0.04, -H*0.95); ctx.lineTo(L*0.12, -H*0.25); ctx.lineTo(-L*0.26, -H*0.25);
+  ctx.beginPath();                                   // 가슴지느러미
+  ctx.moveTo(L*0.06, H*0.25);
+  ctx.lineTo(-L*0.1, H*(shape === 'disc' ? 1.15 : 0.95) + sw*H*0.3);
+  ctx.lineTo(-L*0.2, H*0.2);
   ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(L*0.06, H*0.25); ctx.lineTo(-L*0.1, H*0.95 + sw*H*0.3); ctx.lineTo(-L*0.2, H*0.2);
-  ctx.closePath(); ctx.fill();
-  // 몸통
-  const g = ctx.createLinearGradient(0, -H, 0, H);
-  g.addColorStop(0, shade(def.body, 0.18));
-  g.addColorStop(1, shade(def.body, -0.3));
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, L*0.5, H, 0, 0, 6.2832);
-  ctx.fill();
-  if (oc) { ctx.lineWidth = clamp(L*0.055, 1.4, 3.2); ctx.strokeStyle = oc; ctx.stroke(); }
+  ctx.fillStyle = bodyGrad(def.body, H);
+  ctx.beginPath(); ctx.ellipse(0, 0, L*bodyW, H, 0, 0, 6.2832); ctx.fill();
+  if (oc) { ctx.lineWidth = lw; ctx.strokeStyle = oc; ctx.stroke(); }
   if (def.stripes) {
     ctx.save(); ctx.clip();
     ctx.fillStyle = def.fin;
-    for (let i = -1; i <= 1; i++) ctx.fillRect(i*L*0.18 - L*0.03, -H, L*0.07, H*2);
+    for (let i = -1; i <= 1; i++) ctx.fillRect(i*L*0.17 - L*0.035, -H, L*0.075, H*2);
     ctx.restore();
   }
-  // 눈
-  const er = Math.max(1.3, L*0.055);
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(L*0.3, -H*0.22, er, 0, 6.2832); ctx.fill();
-  ctx.fillStyle = '#10212b';
-  ctx.beginPath(); ctx.arc(L*0.32, -H*0.22, er*0.55, 0, 6.2832); ctx.fill();
-  // 동급 체력바
-  if (f.hp < f.maxHp) {
+  if (L > 24) rimLight(L, H);
+  eye(L*0.3, -H*0.22, Math.max(1.3, L*0.055));
+
+  if (f.hp < f.maxHp) {                              // 동급 체력바
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.translate(G.cam.w/2 - G.cam.x + f.x, G.cam.h/2 - G.cam.y + f.y);
     ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(-L*0.3, -H - 11, L*0.6, 3.5);
@@ -1524,78 +1921,131 @@ function drawCreature(f, p){
 }
 
 function drawShark(p){
-  const L = p.len, H = L*0.33;
+  const L = p.len, H = L*0.30, st = p.stage;
+  const skin = p.st.shark.skin;
   ctx.save();
   ctx.translate(p.x, p.y);
   if (p.iframe > 0) ctx.globalAlpha = 0.45 + 0.55*Math.abs(Math.sin(G.t*32));
 
+  // 최종 단계 — 희귀한 아우라
+  if (st >= 3) {
+    const au = ctx.createRadialGradient(0, 0, L*0.3, 0, 0, L*0.95);
+    au.addColorStop(0, 'rgba(150,230,255,.22)');
+    au.addColorStop(1, 'rgba(150,230,255,0)');
+    ctx.fillStyle = au;
+    ctx.beginPath(); ctx.arc(0, 0, L*0.95, 0, 6.2832); ctx.fill();
+  }
+
   // 흡입 반경 — 규칙을 눈으로 알려주는 보조선
-  const sucR = suctionR(p);
-  ctx.strokeStyle = 'rgba(160,236,255,' + (p.boosting ? 0.22 : 0.1) + ')';
-  ctx.lineWidth = 1.4; ctx.setLineDash([6, 8]);
-  ctx.beginPath(); ctx.arc(0, 0, sucR, 0, 6.2832); ctx.stroke();
-  ctx.setLineDash([]);
+  if (!G.attract) {
+    const sucR = suctionR(p);
+    ctx.strokeStyle = 'rgba(160,236,255,' + (p.boosting ? 0.22 : 0.1) + ')';
+    ctx.lineWidth = 1.4; ctx.setLineDash([6, 8]);
+    ctx.beginPath(); ctx.arc(0, 0, sucR, 0, 6.2832); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  const sp = art('shark.' + SAVE.active + '.' + st);
+  if (sp) {
+    faceHeading(p.vx, p.vy);
+    drawSprite(sp, L);
+    ctx.restore(); return;
+  }
 
   faceHeading(p.vx, p.vy);
   const sw = Math.sin(p.phase)*0.6;
+  const hurt = p.hurtFlash > 0;
+  const back  = hurt ? '#ff8d9e' : shade(skin, -0.18);
+  const belly = hurt ? '#ffd9df' : '#eef7fb';
 
-  const skin = p.st.shark.skin;
-  const bodyTop = p.hurtFlash > 0 ? '#ff8d9e' : skin;
-  const bodyBot = p.hurtFlash > 0 ? '#ffd9df' : '#e9f4f9';
+  // 단계가 오를수록 지느러미가 커지고 몸이 날렵해진다
+  const finK  = 1 + st*0.22;
+  const snout = 0.52 + st*0.03;
 
-  // 초승달 꼬리
-  ctx.fillStyle = shade(bodyTop, -0.12);
-  ctx.beginPath();
+  if (p.boosting) {                                  // 부스트 잔상
+    for (let i = 1; i <= 3; i++) {
+      ctx.globalAlpha = 0.1/i;
+      ctx.fillStyle = skin;
+      ctx.beginPath(); ctx.ellipse(-L*0.22*i, 0, L*0.42, H*0.8, 0, 0, 6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = p.iframe > 0 ? 0.45 + 0.55*Math.abs(Math.sin(G.t*32)) : 1;
+  }
+
+  ctx.fillStyle = hurt ? '#ff9fb0' : shade(skin, -0.3);
+  ctx.beginPath();                                   // 초승달 꼬리
   ctx.moveTo(-L*0.42, 0);
-  ctx.quadraticCurveTo(-L*0.62, -H*0.5 + sw*H*0.7, -L*0.82, -H*1.5 + sw*H*0.9);
-  ctx.quadraticCurveTo(-L*0.6, -H*0.35 + sw*H*0.5, -L*0.56, 0);
-  ctx.quadraticCurveTo(-L*0.6,  H*0.35 + sw*H*0.5, -L*0.78,  H*1.2 + sw*H*0.9);
-  ctx.quadraticCurveTo(-L*0.6,  H*0.4 + sw*H*0.7, -L*0.42, 0);
+  ctx.quadraticCurveTo(-L*0.60, -H*0.9 + sw*H*0.8, -L*0.80, -H*2.3*finK + sw*H);
+  ctx.quadraticCurveTo(-L*0.58, -H*0.6 + sw*H*0.5, -L*0.54, 0);
+  ctx.quadraticCurveTo(-L*0.58,  H*0.7 + sw*H*0.5, -L*0.76,  H*1.7*finK + sw*H);
+  ctx.quadraticCurveTo(-L*0.58,  H*0.7 + sw*H*0.7, -L*0.42, 0);
   ctx.closePath(); ctx.fill();
-  // 등지느러미
-  ctx.beginPath();
-  ctx.moveTo(L*0.02, -H*0.8);
-  ctx.lineTo(-L*0.1, -H*2.0 + sw*H*0.2);
-  ctx.lineTo(-L*0.26, -H*0.75);
+  ctx.beginPath();                                   // 등지느러미
+  ctx.moveTo(L*0.04, -H*0.85);
+  ctx.quadraticCurveTo(-L*0.06, -H*2.2*finK, -L*0.2, -H*2.0*finK);
+  ctx.lineTo(-L*0.3, -H*0.8);
   ctx.closePath(); ctx.fill();
-  // 가슴지느러미
-  ctx.beginPath();
-  ctx.moveTo(L*0.12, H*0.4);
-  ctx.lineTo(-L*0.08, H*1.5 + sw*H*0.4);
-  ctx.lineTo(-L*0.16, H*0.35);
+  ctx.beginPath();                                   // 가슴지느러미
+  ctx.moveTo(L*0.14, H*0.5);
+  ctx.quadraticCurveTo(L*0.0, H*1.9*finK, -L*0.12, H*1.6*finK);
+  ctx.lineTo(-L*0.2, H*0.45);
   ctx.closePath(); ctx.fill();
-  // 몸통 (뾰족한 주둥이)
-  const g = ctx.createLinearGradient(0, -H, 0, H*1.05);
-  g.addColorStop(0, bodyTop);
-  g.addColorStop(0.62, mix(skin, '#e9f4f9', 0.35));
-  g.addColorStop(1, bodyBot);
+
+  const g = ctx.createLinearGradient(0, -H*1.3, 0, H*1.3);
+  g.addColorStop(0,    back);
+  g.addColorStop(0.46, hurt ? '#ffb3c0' : skin);
+  g.addColorStop(0.62, hurt ? '#ffc9d3' : mix(skin, '#eef7fb', 0.45));
+  g.addColorStop(1,    belly);
   ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.moveTo(L*0.56, 0);
-  ctx.quadraticCurveTo(L*0.2, -H*1.0, -L*0.18, -H*0.72);
-  ctx.quadraticCurveTo(-L*0.4, -H*0.4, -L*0.44, 0);
-  ctx.quadraticCurveTo(-L*0.4,  H*0.45, -L*0.18,  H*0.76);
-  ctx.quadraticCurveTo(L*0.2,  H*1.0, L*0.56, 0);
+  ctx.beginPath();                                   // 몸통 — 뾰족한 주둥이
+  ctx.moveTo(L*snout, -H*0.06);
+  ctx.quadraticCurveTo(L*0.22, -H*1.22, -L*0.16, -H*0.95);
+  ctx.quadraticCurveTo(-L*0.4, -H*0.5, -L*0.44, 0);
+  ctx.quadraticCurveTo(-L*0.4,  H*0.55, -L*0.16,  H*1.0);
+  ctx.quadraticCurveTo(L*0.22,  H*1.22, L*snout, H*0.1);
   ctx.closePath(); ctx.fill();
-  // 아가미
-  ctx.strokeStyle = 'rgba(20,50,70,.3)'; ctx.lineWidth = Math.max(1, L*0.016);
+
+  ctx.save(); ctx.clip();                            // 아래는 몸통 안쪽에만
+  ctx.strokeStyle = 'rgba(255,255,255,.3)';          // 등 반사광
+  ctx.lineWidth = H*0.3;
+  ctx.beginPath();
+  ctx.moveTo(-L*0.18, -H*0.82);
+  ctx.quadraticCurveTo(L*0.12, -H*1.1, L*0.4, -H*0.5);
+  ctx.stroke();
+  if (st >= 3) {                                     // 최상위 — 등 무늬
+    ctx.fillStyle = 'rgba(255,255,255,.18)';
+    for (let i = 0; i < 4; i++)
+      ctx.fillRect(-L*0.24 + i*L*0.16, -H*1.3, L*0.05, H*1.1);
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = 'rgba(20,50,70,.26)';            // 아가미
+  ctx.lineWidth = Math.max(1, L*0.016);
   for (let i = 0; i < 3; i++) {
     ctx.beginPath();
-    ctx.moveTo(L*0.1 - i*L*0.055, -H*0.5);
-    ctx.quadraticCurveTo(L*0.06 - i*L*0.055, 0, L*0.1 - i*L*0.055, H*0.3);
+    ctx.moveTo(L*0.08 - i*L*0.055, -H*0.55);
+    ctx.quadraticCurveTo(L*0.04 - i*L*0.055, 0, L*0.08 - i*L*0.055, H*0.35);
     ctx.stroke();
   }
-  // 입
-  ctx.strokeStyle = 'rgba(16,33,43,.55)'; ctx.lineWidth = Math.max(1.2, L*0.022);
+
+  ctx.strokeStyle = 'rgba(16,33,43,.55)';            // 입
+  ctx.lineWidth = Math.max(1.2, L*0.022);
   ctx.beginPath();
-  ctx.moveTo(L*0.5, H*0.1);
-  ctx.quadraticCurveTo(L*0.3, H*0.34, L*0.12, H*0.26);
+  ctx.moveTo(L*(snout - 0.04), H*0.16);
+  ctx.quadraticCurveTo(L*0.3, H*0.44, L*0.1, H*0.34);
   ctx.stroke();
-  // 눈
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(L*0.33, -H*0.3, Math.max(1.6, L*0.045), 0, 6.2832); ctx.fill();
-  ctx.fillStyle = '#0d1b24';
-  ctx.beginPath(); ctx.arc(L*0.35, -H*0.3, Math.max(0.9, L*0.024), 0, 6.2832); ctx.fill();
+  if (st >= 2) {                                     // 이빨은 자란 뒤에 보인다
+    ctx.fillStyle = '#fff';
+    for (let i = 0; i < 4; i++) {
+      const tx = L*(snout - 0.08) - i*L*0.07;
+      ctx.beginPath(); ctx.moveTo(tx, H*0.26);
+      ctx.lineTo(tx - L*0.02, H*0.5); ctx.lineTo(tx + L*0.025, H*0.46);
+      ctx.closePath(); ctx.fill();
+    }
+  }
+
+  // 눈 — 어릴수록 크고 둥글다
+  const er = Math.max(1.8, L*(0.062 - st*0.007));
+  eye(L*0.3, -H*0.4, er);
   ctx.restore();
 }
 
@@ -1843,7 +2293,39 @@ el('hatchBox').addEventListener('click', e => {
   writeSave(); SFX.ui(); renderHub();
 });
 
+/* 타이틀 연출 — 상어가 천천히 헤엄치고 물고기가 산다. 판정은 꺼져 있다. */
+function attractStep(dt){
+  const p = G.player;
+  G.t += dt;
+  p.vx = 86 + Math.sin(G.t*0.31)*26;
+  p.vy = Math.sin(G.t*0.53)*24;
+  p.x += p.vx*dt; p.y += p.vy*dt;
+  if (p.x > WORLD.w - 320) p.x = 320;
+  p.phase += (1.1 + Math.hypot(p.vx, p.vy)/70)*dt*6;
+  updateFish(dt);
+  updateParts(dt);
+  updateCam(dt);
+}
+
+function applyTitleArt(){
+  const bg = art('title.bg'), sh = art('title.shark');
+  const bgEl = el('titleArt'), shEl = el('titleShark');
+  if (bg && bgEl) { bgEl.style.backgroundImage = 'url("' + bg.src + '")'; bgEl.classList.add('on'); }
+  if (sh && shEl) shEl.style.backgroundImage = 'url("' + sh.src + '")';
+}
+
+function showTitle(){
+  G.running = false; G.attract = true;
+  document.body.classList.add('menu');
+  UI.hub.classList.add('hidden');
+  UI.over.classList.add('hidden');
+  el('helpScreen').classList.add('hidden');
+  UI.start.classList.remove('hidden');
+  applyTitleArt();
+}
+
 function openHub(){
+  G.attract = false;
   G.running = false;
   document.body.classList.add('menu');
   UI.start.classList.add('hidden');
@@ -1855,6 +2337,7 @@ function openHub(){
 
 /* ---------------- 런 시작 / 정산 ---------------- */
 function startRun(){
+  G.attract = false;
   const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
   G.stage = st;
   WORLD.w = st.world.w; WORLD.h = st.world.h;
@@ -1942,7 +2425,19 @@ function finishRun(cleared){
   document.body.classList.add('menu');
 }
 
-el('startBtn').addEventListener('click', openHub);
+el('startBtn').addEventListener('click', () => { SFX.ready(); SFX.resume(); SFX.ui(); openHub(); });
+el('titleHelp').addEventListener('click', () => {
+  SFX.ui(); UI.start.classList.add('hidden'); el('helpScreen').classList.remove('hidden');
+});
+el('helpBack').addEventListener('click', () => {
+  SFX.ui(); el('helpScreen').classList.add('hidden'); UI.start.classList.remove('hidden');
+});
+el('titleMute').addEventListener('click', () => {
+  SAVE.muted = !SAVE.muted; writeSave();
+  SFX.setMuted(SAVE.muted);
+  if (!SAVE.muted) { SFX.ready(); SFX.resume(); SFX.ui(); }
+  el('titleMute').classList.toggle('off', SAVE.muted);
+});
 el('diveBtn').addEventListener('click', startRun);
 el('retryBtn').addEventListener('click', openHub);
 
@@ -1979,6 +2474,11 @@ function frame(ts){
     while (acc >= STEP && n < 5) { step(STEP); acc -= STEP; n++; }
     if (acc > STEP*5) acc = 0;
     updateHUD();
+  } else if (G.attract && G.player) {
+    acc += real;
+    let n = 0;
+    while (acc >= STEP && n < 5) { attractStep(STEP); acc -= STEP; n++; }
+    if (acc > STEP*5) acc = 0;
   } else if (G.player) {
     updateParts(real);                               // 정지 — 파티클만 흘린다
   }
@@ -1988,9 +2488,11 @@ function frame(ts){
 /* 부트 */
 if (location.search.indexOf('debug') >= 0) {
   window.__G = G; window.__SAVE = () => SAVE; window.__spawnBoss = spawnBoss;
-  window.__WORLD = WORLD; window.__SFX = SFX;
+  window.__WORLD = WORLD; window.__SFX = SFX; window.__FISH = FISH; window.__SHARKS = SHARKS;
+  window.__ART = ART; window.__IMGS = IMGS; window.__loadArt = loadArt;
 }
 loadSave();
+loadArt();
 G.stage = STAGE_BY_ID[SAVE.stage] || STAGES[0];
 WORLD.w = G.stage.world.w; WORLD.h = G.stage.world.h;
 G.pool = G.stage.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
@@ -2001,7 +2503,11 @@ addEventListener('pointerdown', () => { SFX.ready(); SFX.resume(); }, { once: tr
 resize();
 G.player = makePlayer();
 G.cam.x = G.player.x; G.cam.y = G.player.y;
-while (G.fish.length < 40) spawnFish();              // 시작 화면 배경용
+while (G.fish.length < 40) spawnFish();              // 타이틀 배경용
+G.attract = true;
+G.player.stage = 3; G.player.len = EVO[3].len*1.5;   // 타이틀 간판용 — 플레이에는 영향 없음
+el('titleMute').classList.toggle('off', SAVE.muted);
+applyTitleArt();
 requestAnimationFrame(frame);
 
 })();
