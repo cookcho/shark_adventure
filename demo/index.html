@@ -532,7 +532,10 @@ const ART = {
   // 'stage.coral':       'stage/coral.png',
   // 'stage.wreck':       'stage/wreck.png',
   /* 플레이어 상어 — shark.<상어id>.<진화단계 0~3> */
-  // 'shark.reef.0':      'shark/reef_0.png',
+  'shark.reef.0':         'shark/reef_0.png',
+  'shark.reef.1':         'shark/reef_1.png',
+  'shark.reef.2':         'shark/reef_2.png',
+  'shark.reef.3':         'shark/reef_3.png',
   /* 물고기 — fish.<어종id> */
   'fish.anchovy':         'fish/anchovy.png',
   'fish.barra':           'fish/barra.png',
@@ -544,6 +547,7 @@ const ART = {
   'fish.ray':             'fish/ray.png',
   /* 보스 — boss.<보스id> */
   'boss.giant_barra':     'boss/giant_barra.png',
+  'boss.giant_moray':     'boss/giant_moray.png',
 };
 const ART_BASE  = 'assets/';
 const SPRITE_SPAN = 1.5;        // 이미지 가로폭 = 생물 몸길이(len) × 1.5
@@ -1978,7 +1982,23 @@ function drawShark(p){
   const sp = art('shark.' + SAVE.active + '.' + st);
   if (sp) {
     faceHeading(p.vx, p.vy);
-    drawSprite(sp, L);
+    if (p.boosting) {                               // 잔상으로 속도감
+      const a0 = ctx.globalAlpha;
+      for (let i = 3; i >= 1; i--) {
+        ctx.globalAlpha = a0 * (0.13/i);
+        ctx.save(); ctx.translate(-L*0.3*i, 0); drawSprite(sp, L); ctx.restore();
+      }
+      ctx.globalAlpha = a0;
+    }
+    if (p.hurtFlash > 0) {                          // 피격 — 붉게 번쩍
+      drawSprite(sp, L);
+      ctx.save(); ctx.globalAlpha = p.hurtFlash*0.55;
+      ctx.fillStyle = '#ff5a72';
+      ctx.globalCompositeOperation = 'source-atop';
+      const bx = L*SPRITE_SPAN;
+      ctx.fillRect(-bx, -bx, bx*2, bx*2);
+      ctx.restore();
+    } else drawSprite(sp, L);
     ctx.restore(); return;
   }
 
