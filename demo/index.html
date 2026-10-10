@@ -538,8 +538,12 @@ const ART = {
   'fish.barra':           'fish/barra.png',
   'fish.clown':           'fish/clown.png',
   'fish.crab':            'fish/crab.png',
+  'fish.jelly':           'fish/jelly.png',
+  'fish.mackerel':        'fish/mackerel.png',
+  'fish.puffer':          'fish/puffer.png',
+  'fish.ray':             'fish/ray.png',
   /* 보스 — boss.<보스id> */
-  // 'boss.giant_barra':  'boss/giant_barra.png',
+  'boss.giant_barra':     'boss/giant_barra.png',
 };
 const ART_BASE  = 'assets/';
 const SPRITE_SPAN = 1.5;        // 이미지 가로폭 = 생물 몸길이(len) × 1.5
@@ -564,16 +568,17 @@ const art = key => IMGS[key] || null;
 /* 스프라이트는 len 기준으로만 크기가 정해진다 — 판정에 영향을 주지 않는다 */
 function drawSprite(im, L, span){
   const w = L*(span || SPRITE_SPAN);
-  const r = im.naturalHeight / (im.naturalWidth || 1);
-  ctx.drawImage(im, -w/2, -w*r/2, w, w*r);
+  const h = w * (im.naturalHeight / (im.naturalWidth || 1));
+  ctx.drawImage(im, -w/2, -h/2, w, h);
+  return { w, h };
 }
-/* 그림을 써도 티어 규칙(외곽선 색)은 유지돼야 한다 */
-function spriteRing(L, H, color){
+/* 그림을 써도 티어 규칙(외곽선 색)은 유지돼야 한다 — 실제 그려진 크기를 따라간다 */
+function spriteRing(box, color){
   if (!color) return;
   ctx.strokeStyle = color;
-  ctx.lineWidth = clamp(L*0.05, 1.4, 3);
+  ctx.lineWidth = clamp(Math.min(box.w, box.h)*0.06, 1.4, 3);
   ctx.beginPath();
-  ctx.ellipse(0, 0, L*0.56, Math.max(H*1.25, L*0.2), 0, 0, 6.2832);
+  ctx.ellipse(0, 0, box.w*0.44, box.h*0.44, 0, 0, 6.2832);
   ctx.stroke();
 }
 
@@ -1132,7 +1137,16 @@ function drawBoss(){
   if (bsp) {
     faceHeading(b.vx || b.dx, b.vy);
     if (b.flash > 0) { ctx.globalAlpha = 0.75; }
-    drawSprite(bsp, L, 1.3);
+    const box = drawSprite(bsp, L, 1.3);
+    if (b.state !== 'stagger') {                  // 부위 표시 — 빨강 위험 / 초록 약점
+      const hw = box.w, hh = box.h;
+      const hg = ctx.createRadialGradient(hw*0.3, 0, 2, hw*0.3, 0, hw*0.22);
+      hg.addColorStop(0, 'rgba(255,70,90,.38)'); hg.addColorStop(1, 'rgba(255,70,90,0)');
+      ctx.fillStyle = hg; ctx.fillRect(0, -hh, hw*0.6, hh*2);
+      const tg = ctx.createRadialGradient(-hw*0.36, 0, 2, -hw*0.36, 0, hw*0.2);
+      tg.addColorStop(0, 'rgba(110,255,190,.42)'); tg.addColorStop(1, 'rgba(110,255,190,0)');
+      ctx.fillStyle = tg; ctx.fillRect(-hw*0.6, -hh, hw*0.5, hh*2);
+    }
     ctx.restore();
     if (b.state === 'stagger') {                  // 경직 표시는 그림 위에도 유지
       ctx.strokeStyle = 'rgba(255,216,77,.75)'; ctx.lineWidth = 3;
@@ -1622,8 +1636,7 @@ function drawCreature(f, p){
   if (sp) {                                        // 그림이 있으면 그림으로
     const fixed = shape === 'jelly' || shape === 'urchin' || shape === 'mine' || shape === 'clam';
     if (!fixed) faceHeading(f.vx, f.vy);
-    drawSprite(sp, L);
-    spriteRing(L, H, oc);
+    spriteRing(drawSprite(sp, L), oc);
     ctx.restore(); return;
   }
 
