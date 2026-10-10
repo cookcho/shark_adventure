@@ -91,6 +91,8 @@
   #bossBar.hidden{display:none}
   #bossBar .bn{color:#ffd0d8;font-size:11px;font-weight:800;letter-spacing:2px;
     margin-bottom:4px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+  #bossBar .bh{margin-top:5px;color:#9fd8c4;font-size:10px;font-weight:600;
+    letter-spacing:.3px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
   #bossTrack{height:11px;border-radius:7px;background:rgba(30,6,12,.6);
     border:1.5px solid rgba(255,140,160,.5);overflow:hidden;position:relative}
   #bossFill{display:block;height:100%;width:100%;transform-origin:left center;
@@ -200,6 +202,7 @@
 <div id="bossBar" class="hidden">
   <div class="bn" id="bossName">거대 바라쿠다</div>
   <div id="bossTrack"><i id="bossFill"></i><u style="left:66%"></u><u style="left:33%"></u></div>
+  <div class="bh">꼬리는 안전하다 · 머리를 조심해라</div>
 </div>
 
 <div id="toast"><div class="t1">E V O L V E</div><div class="t2">리프 샤크</div></div>
@@ -697,6 +700,9 @@ function burst(x, y, color, n, spd, kind){
       life: rand(0.35, 0.8), max: 0.8, r: rand(1.6, 4.2), color, kind: kind||'chunk' });
   }
 }
+function floatText(x, y, text, color){
+  G.parts.push({ x, y, vx: 0, vy: -48, life: 0.75, max: 0.75, r: 0, color, kind: 'text', text });
+}
 function ring(x, y){
   G.parts.push({ x, y, vx:0, vy:0, life:0.75, max:0.75, r:10, color:'#9dffd8', kind:'ring' });
 }
@@ -887,6 +893,25 @@ function bossDown(){
   G.cleared = true; G.endTimer = 1.5;
 }
 
+/* 보스 부위 — 어디를 무는지가 중요하다.
+   머리로 돌진하면 벌을 받고, 돌아 들어가 꼬리를 물면 보상을 받는다. */
+const ZONES = {
+  head: { taken: 1.0,  deal: 0.6, label: '머리', color: '#ff6b7f' },
+  body: { taken: 0.5,  deal: 1.0, label: '몸통', color: '#ffd84d' },
+  tail: { taken: 0.0,  deal: 1.3, label: '꼬리', color: '#7dffd0' },
+};
+function bossFacing(b){
+  let fx = b.vx, fy = b.vy;
+  if (Math.abs(fx) + Math.abs(fy) < 1) { fx = b.dx; fy = b.dy; }
+  const m = Math.hypot(fx, fy) || 1;
+  return { x: fx/m, y: fy/m };
+}
+function bossZone(b, p){
+  const f = bossFacing(b);
+  const u = ((p.x - b.x)*f.x + (p.y - b.y)*f.y) / (G.bossDef.len*0.5);
+  return u > 0.3 ? ZONES.head : u < -0.3 ? ZONES.tail : ZONES.body;
+}
+
 function updateBoss(dt){
   const b = G.boss, p = G.player;
   if (!b || b.state === 'dead') return;
@@ -947,15 +972,20 @@ function updateBoss(dt){
 
   if (dist < G.bossDef.len*0.34 + p.len*0.45) {
     const staggered = b.state === 'stagger';
+    const z = bossZone(b, p);
     if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      b.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1) * (staggered ? G.bossDef.staggerMul : 1);
+      b.hp -= BITE_DMG * p.st.bite * z.deal
+            * (p.boosting ? 2.5 : 1) * (staggered ? G.bossDef.staggerMul : 1);
       b.flash = 1; SFX.bossHit();
-      burst(p.x, p.y, staggered ? '#ffd84d' : G.bossDef.body, staggered ? 7 : 4, 100);
+      burst(p.x, p.y, staggered ? '#ffd84d' : z.color, staggered ? 7 : 4, 100);
+      floatText(p.x, p.y - p.len*0.7, z.label, z.color);
       G.shake = Math.max(G.shake, staggered ? 6 : 3);
       if (b.hp <= 0) { bossDown(); return; }
     }
-    if (!staggered) hurtPlayer(G.bossDef.contact, nx, ny, HIT_CD);   // 경직 중엔 안전하게 때린다
+    // 경직 중이거나 꼬리를 물고 있으면 반격을 받지 않는다
+    const dmg = G.bossDef.contact * (staggered ? 0 : z.taken);
+    if (dmg > 0) hurtPlayer(dmg, nx, ny, HIT_CD);
   }
 }
 
@@ -1054,6 +1084,15 @@ function drawBoss(){
     ctx.quadraticCurveTo(-L*0.38,  H*0.5, -L*0.16,  H*0.85);
     ctx.quadraticCurveTo(L*0.24,  H*1.05, L*0.52, 0);
     ctx.closePath(); ctx.fill();
+  }
+
+  if (b.state !== 'stagger') {                      // 부위 표시 — 빨강 위험 / 초록 약점
+    const hg = ctx.createRadialGradient(L*0.34, 0, 2, L*0.34, 0, L*0.26);
+    hg.addColorStop(0, 'rgba(255,70,90,.34)'); hg.addColorStop(1, 'rgba(255,70,90,0)');
+    ctx.fillStyle = hg; ctx.fillRect(L*0.05, -H*3.2, L*0.6, H*6.4);
+    const tg = ctx.createRadialGradient(-L*0.44, 0, 2, -L*0.44, 0, L*0.26);
+    tg.addColorStop(0, 'rgba(110,255,190,.38)'); tg.addColorStop(1, 'rgba(110,255,190,0)');
+    ctx.fillStyle = tg; ctx.fillRect(-L*0.9, -H*3.2, L*0.6, H*6.4);
   }
 
   ctx.fillStyle = '#fff';                           // 이빨
@@ -1567,6 +1606,17 @@ function drawParts(){
       ctx.strokeStyle = 'rgba(157,255,216,' + (a*0.75) + ')';
       ctx.lineWidth = 3 + a*5;
       ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.2832); ctx.stroke();
+      continue;
+    }
+    if (q.kind === 'text') {
+      ctx.globalAlpha = a;
+      ctx.font = '800 15px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,20,30,.65)';
+      ctx.strokeText(q.text, q.x, q.y);
+      ctx.fillStyle = q.color;
+      ctx.fillText(q.text, q.x, q.y);
+      ctx.textAlign = 'left';
       continue;
     }
     ctx.globalAlpha = a;
