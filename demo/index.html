@@ -80,6 +80,86 @@
   .hintRow div{color:#9ec8dd;font-size:11px;line-height:1.6}
   .hintRow b{display:block;color:#6fe0ff;font-size:12px;margin-bottom:2px}
 
+  /* 메뉴가 떠 있는 동안 게임 HUD 를 감춘다 */
+  body.menu #hud, body.menu #topRight, body.menu #growWrap,
+  body.menu #boost, body.menu #bossBar{display:none}
+
+  /* 보스 체력바 */
+  #bossBar{position:fixed;left:50%;transform:translateX(-50%);
+    top:calc(env(safe-area-inset-top) + 124px);width:min(76%,340px);z-index:11;
+    pointer-events:none;text-align:center}
+  #bossBar.hidden{display:none}
+  #bossBar .bn{color:#ffd0d8;font-size:11px;font-weight:800;letter-spacing:2px;
+    margin-bottom:4px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+  #bossTrack{height:11px;border-radius:7px;background:rgba(30,6,12,.6);
+    border:1.5px solid rgba(255,140,160,.5);overflow:hidden;position:relative}
+  #bossFill{display:block;height:100%;width:100%;transform-origin:left center;
+    background:linear-gradient(90deg,#ff3b5c,#ff8da1);transition:transform .14s linear}
+  #bossTrack u{position:absolute;top:0;bottom:0;width:2px;background:rgba(0,0,0,.45)}
+
+  /* 허브 */
+  .screen.hub{justify-content:flex-start;align-items:stretch;overflow-y:auto;
+    padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 96px);
+    text-align:left;gap:0}
+  .hubTop{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+  .hubTop h2{color:#eaf9ff;font-size:19px;font-weight:800;letter-spacing:-.3px}
+  .hubTop .pl{color:#ffe08a;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+  .hubSec{margin-bottom:20px}
+  .hubSec h3{color:#7fb6d0;font-size:10.5px;font-weight:700;letter-spacing:1.6px;
+    margin-bottom:9px;text-transform:uppercase}
+  .cards{display:flex;flex-direction:column;gap:8px}
+  .card{display:flex;gap:11px;align-items:center;padding:11px 13px;border-radius:12px;
+    background:rgba(8,38,60,.6);border:1.5px solid rgba(255,255,255,.1)}
+  .card.on{border-color:#3fd8ff;background:rgba(16,68,98,.72)}
+  .card.lock{opacity:.42}
+  .card .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+  .card .tx{flex:1;min-width:0}
+  .card .nm{color:#eaf9ff;font-size:14px;font-weight:700}
+  .card .nm em{font-style:normal;color:#6fe0ff;font-size:10px;font-weight:700;
+    letter-spacing:1px;margin-left:6px}
+  .card .ds{color:#9ec8dd;font-size:11px;line-height:1.5;margin-top:2px}
+  .card .st{color:#6fe0ff;font-size:10.5px;font-weight:700;flex:0 0 auto}
+
+  .upg{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;
+    background:rgba(8,38,60,.55);border:1.5px solid rgba(255,255,255,.08);margin-bottom:7px}
+  .upg .nm{color:#eaf9ff;font-size:13px;font-weight:700;width:62px;flex:0 0 auto}
+  .upg .pips{display:flex;gap:3px;flex:1}
+  .upg .pips i{height:6px;flex:1;border-radius:3px;background:rgba(255,255,255,.14)}
+  .upg .pips i.f{background:linear-gradient(90deg,#3fd8ff,#aef2ff)}
+  .upg button{flex:0 0 auto;padding:6px 11px;border:none;border-radius:8px;
+    background:#1189c4;color:#eaffff;font-size:11.5px;font-weight:800;
+    font-variant-numeric:tabular-nums}
+  .upg button:disabled{background:rgba(255,255,255,.1);color:#6b8ea3}
+  .upg .mx{color:#5ee8a8;font-size:11px;font-weight:800;flex:0 0 auto}
+
+  .hatch{padding:13px;border-radius:12px;background:rgba(8,38,60,.6);
+    border:1.5px solid rgba(255,255,255,.1)}
+  .hatch .hl{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .hatch .hn{color:#eaf9ff;font-size:13.5px;font-weight:700}
+  .hatch .he{color:#ffe08a;font-size:12px;font-weight:700}
+  .hatch .ht{height:8px;border-radius:5px;background:rgba(2,20,34,.6);overflow:hidden}
+  .hatch .ht i{display:block;height:100%;border-radius:5px;
+    background:linear-gradient(90deg,#5ee8a8,#d6ffe9)}
+  .hatch p{color:#9ec8dd;font-size:11px;line-height:1.6;margin-top:8px;max-width:none}
+  .hatch button{margin-top:10px;width:100%;padding:10px;border:none;border-radius:10px;
+    background:#1189c4;color:#eaffff;font-size:13px;font-weight:800}
+  .hatch button:disabled{background:rgba(255,255,255,.1);color:#6b8ea3}
+
+  .hubGo{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 18px);
+    z-index:31}
+  .hubGo .btn{width:100%;margin:0}
+
+  /* 정산 */
+  .gains{display:flex;flex-direction:column;gap:6px;width:min(100%,300px);margin-top:2px}
+  .gain{display:flex;justify-content:space-between;padding:9px 14px;border-radius:10px;
+    background:rgba(8,38,60,.55);border:1px solid rgba(255,255,255,.1)}
+  .gain span{color:#9ec8dd;font-size:12px}
+  .gain b{color:#ffe08a;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+  .unlock{padding:11px 16px;border-radius:11px;background:rgba(20,90,70,.5);
+    border:1.5px solid #5ee8a8;color:#d6ffe9;font-size:12.5px;font-weight:700;
+    max-width:300px;line-height:1.5}
+  .unlock.hidden{display:none}
+
   /* 토스트 (성장 알림) */
   #toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.8);
     z-index:20;pointer-events:none;opacity:0;text-align:center;
@@ -110,7 +190,20 @@
 </div>
 <div id="boost">BOOST</div>
 
+<div id="bossBar" class="hidden">
+  <div class="bn">거대 바라쿠다</div>
+  <div id="bossTrack"><i id="bossFill"></i><u style="left:66%"></u><u style="left:33%"></u></div>
+</div>
+
 <div id="toast"><div class="t1">E V O L V E</div><div class="t2">리프 샤크</div></div>
+
+<div id="hubScreen" class="screen hub hidden">
+  <div class="hubTop"><h2>해저 기지</h2><div class="pl">◈ <span id="hubPearls">0</span></div></div>
+  <div class="hubSec"><h3>상어</h3><div id="sharkList" class="cards"></div></div>
+  <div class="hubSec"><h3>능력치</h3><div id="upgList"></div></div>
+  <div class="hubSec"><h3>부화기</h3><div id="hatchBox" class="hatch"></div></div>
+  <div class="hubGo"><button class="btn" id="diveBtn">출발</button></div>
+</div>
 
 <div id="startScreen" class="screen">
   <h1>바다의 왕<br><span>King of the Abyss</span></h1>
@@ -134,10 +227,14 @@
   <dl class="stats">
     <dt>최종 티어</dt><dd id="sTier">1</dd>
     <dt>먹은 물고기</dt><dd id="sEaten">0</dd>
-    <dt>진화 단계</dt><dd id="sStage">1 / 4</dd>
     <dt>생존 시간</dt><dd id="sTime">0:00</dd>
   </dl>
-  <button class="btn" id="retryBtn">다시 도전</button>
+  <div class="gains">
+    <div class="gain"><span>획득 진주</span><b id="gPearls">+0</b></div>
+    <div class="gain" id="gHatchRow"><span>부화 진행</span><b id="gHatch">+0%</b></div>
+  </div>
+  <div id="unlockNote" class="unlock hidden"></div>
+  <button class="btn" id="retryBtn">계속</button>
 </div>
 
 <script>
@@ -189,6 +286,88 @@ const FISH = [
 ];
 const FISH_BY_ID = {}; FISH.forEach(d => FISH_BY_ID[d.id] = d);
 
+/* ---------------- 보스 ---------------- */
+const BOSS = {
+  name: '거대 바라쿠다', tier: 6, len: 140, hp: 500,
+  body: '#e8f1f5', fin: '#758c97',
+  contact: 11,          // 경직 중이 아닐 때 접촉 피해 (HIT_CD 간격)
+  staggerMul: 2.0,      // 경직 중 물기 데미지 배수
+};
+const BOSS_TRIGGER_STAGE = 2;   // 티어 4(리프 샤크) 도달 시 등장
+
+/* ---------------- 상어 로스터 ---------------- */
+const SHARKS = [
+  { id:'reef',   name:'리프 샤크', tag:'균형',
+    desc:'모든 면에서 평균. 무엇을 하든 무난하다',
+    hp:1.0,  speed:1.0,  suction:1.0, shellBreaker:false, skin:'#52788f' },
+  { id:'saw',    name:'톱상어',   tag:'파괴',
+    desc:'톱날 주둥이 — 껍질을 부스트 없이 부순다. 체력이 높고 조금 느리다',
+    hp:1.25, speed:0.92, suction:1.0, shellBreaker:true,  skin:'#5f7a63' },
+  { id:'hammer', name:'귀상어',   tag:'포식',
+    desc:'광각 감각 — 흡입 반경 1.8배. 지나가기만 해도 빨려든다',
+    hp:0.9,  speed:1.05, suction:1.8, shellBreaker:false, skin:'#5a6c8e' },
+];
+const SHARK_BY_ID = {}; SHARKS.forEach(x => SHARK_BY_ID[x.id] = x);
+
+/* ---------------- 능력치 업그레이드 ---------------- */
+const UPGRADES = [
+  { id:'bite',     name:'턱',       desc:'물기 데미지',  step:'+15%' },
+  { id:'fin',      name:'지느러미', desc:'이동 속도',    step:'+8%'  },
+  { id:'vitality', name:'체력',     desc:'최대 체력',    step:'+12%' },
+  { id:'lung',     name:'폐',       desc:'부스트 지속',  step:'+20%' },
+  { id:'sense',    name:'감각',     desc:'흡입 반경',    step:'+25%' },
+];
+const UPG_MAX  = 5;
+const upgCost  = lv => 80 * Math.pow(2, lv);      // 80 / 160 / 320 / 640 / 1280
+const EGG_PER_FISH = 2;                           // 물고기 1마리 = 부화 +2%
+const BOSS_PEARLS  = 150;
+
+/* ==========================================================================
+   메타 저장 — localStorage. 읽기/쓰기 모두 실패할 수 있으므로 전부 감싼다.
+   ========================================================================== */
+const SAVE_KEY = 'seaking.save.v1';
+const freshSave = () => ({
+  v: 1, pearls: 0, eggs: 0, active: 'reef',
+  sharks: { reef: true },
+  upg: { bite:0, fin:0, vitality:0, lung:0, sense:0 },
+  hatch: { sharkId: null, progress: 0 },
+  bossCleared: false,
+  best: { tier: 0, eaten: 0 },
+});
+let SAVE = freshSave();
+
+function loadSave(){
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    if (!o || o.v !== 1) return;
+    const f = freshSave();
+    SAVE = { ...f, ...o,
+      sharks: { ...f.sharks, ...(o.sharks || {}) },
+      upg:    { ...f.upg,    ...(o.upg    || {}) },
+      hatch:  { ...f.hatch,  ...(o.hatch  || {}) },
+      best:   { ...f.best,   ...(o.best   || {}) } };
+    if (!SHARK_BY_ID[SAVE.active] || !SAVE.sharks[SAVE.active]) SAVE.active = 'reef';
+  } catch (e) { SAVE = freshSave(); }     // 손상된 저장은 조용히 초기화
+}
+function writeSave(){
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {}
+}
+
+/* 현재 상어 + 업그레이드에서 나오는 배수들 */
+function stats(){
+  const sh = SHARK_BY_ID[SAVE.active] || SHARKS[0], u = SAVE.upg;
+  return {
+    shark:   sh,
+    hp:      sh.hp      * (1 + 0.12*u.vitality),
+    speed:   sh.speed   * (1 + 0.08*u.fin),
+    bite:    1 + 0.15*u.bite,
+    suction: sh.suction * (1 + 0.25*u.sense),
+    stam:    1 + 0.20*u.lung,          // 부스트 지속 → 소모량을 나눈다
+  };
+}
+
 /* ---------------- 유틸 ---------------- */
 const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
 const lerp  = (a,b,t) => a + (b-a)*t;
@@ -205,18 +384,22 @@ const G = {
   player:null, fish:[], parts:[],
   cam:{ x:0, y:0, w:0, h:0 },
   shake:0, danger:0, eaten:0, evolveFlash:0,
+  boss:null, bossSpawned:false, cleared:false, pearls:0, endTimer:0,
 };
 
 function makePlayer(){
-  const e = EVO[0];
+  const e = EVO[0], st = stats();
+  const maxHp = Math.round(100 * st.hp);
   return {
     x: WORLD.w*0.5, y: WORLD.h*0.32, vx: 40, vy: 0,
     stage:0, tier:e.tier, len:e.len,
-    hp:100, maxHp:100, hunger:100, stam:100,
+    hp:maxHp, maxHp, hunger:100, stam:100,
     growth:0, boosting:false, slow:0, iframe:0, biteCd:0,
-    phase:0, hurtFlash:0,
+    phase:0, hurtFlash:0, st,
   };
 }
+/* 흡입 반경 — 감각 업그레이드와 귀상어 능력이 여기로 들어온다 */
+const suctionR = p => (p.len*0.95 + 18) * p.st.suction;
 
 /* ---------------- 입력 ---------------- */
 const IN = { active:false, dx:0, dy:0, mag:0, id:-1, ox:0, oy:0, boost:false, keys:{} };
@@ -347,12 +530,12 @@ function updatePlayer(dt){
 
   // 부스트: 스태미나가 바닥이면 시작 불가 (이미 켜져 있으면 0까지 소진)
   p.boosting = IN.boost && mag > 0.1 && p.stam > (p.boosting ? 0.5 : STAM_MIN);
-  if (p.boosting) p.stam = Math.max(0, p.stam - STAM_USE*dt);
+  if (p.boosting) p.stam = Math.max(0, p.stam - (STAM_USE/p.st.stam)*dt);
   else            p.stam = Math.min(100, p.stam + STAM_REGEN*dt);
 
   const slowF = p.slow > 0 ? 0.55 : 1;
   p.slow = Math.max(0, p.slow - dt);
-  const speed = e.speed * (p.boosting ? BOOST_MULT : 1) * slowF;
+  const speed = e.speed * p.st.speed * (p.boosting ? BOOST_MULT : 1) * slowF;
 
   const acc = mag > 0 ? 7.5 : 2.0;
   p.vx = lerp(p.vx, dx*speed*mag, clamp(acc*dt, 0, 1));
@@ -381,6 +564,7 @@ function eatFish(f){
   const p = G.player, def = f.def;
   f.dead = true;
   G.eaten++;
+  G.pearls += def.tier;
   p.hunger = Math.min(100, p.hunger + def.tier*4);
   p.growth += Math.pow(def.tier, 1.6);
   burst(f.x, f.y, def.body, 6 + def.tier*2, 90 + def.tier*18);
@@ -399,13 +583,14 @@ function evolve(){
   p.stage++;
   const e = EVO[p.stage];
   p.tier = e.tier; p.len = e.len;
-  p.maxHp = Math.round(100 * (1 + 0.2*p.stage));
+  p.maxHp = Math.round(100 * (1 + 0.2*p.stage) * p.st.hp);
   p.hp = p.maxHp;
   p.hunger = Math.min(100, p.hunger + 25);
   G.slowmo = 0.45; G.evolveFlash = 1;
   ring(p.x, p.y);
   burst(p.x, p.y, 'rgba(180,255,228,.9)', 28, 190, 'bubble');
   showToast(e.name);
+  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned) spawnBoss();
 }
 
 function hurtPlayer(dmg, nx, ny, cd){
@@ -425,7 +610,9 @@ function handleContact(f, nx, ny){
   if (def.shock) { hurtPlayer(12, nx, ny, 0.95); p.slow = 1.0; return; }
 
   if (def.shell) {                       // 게: 부스트로만 깬다 — 부스트에 용도를 준다
-    if (p.boosting && p.tier >= def.tier) { eatFish(f); G.shake = Math.max(G.shake, 8); }
+    if ((p.boosting || p.st.shark.shellBreaker) && p.tier >= def.tier) {
+      eatFish(f); G.shake = Math.max(G.shake, 8);
+    }
     else {
       f.vx -= nx*140; f.vy -= ny*140;
       if (def.tier > p.tier) hurtPlayer((def.tier - p.tier)*6, nx, ny, HIT_CD);
@@ -438,7 +625,7 @@ function handleContact(f, nx, ny){
   if (def.tier === p.tier) {             // 동급: 물어서 체력을 깎아야 포식 가능
     if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      f.hp -= BITE_DMG * (p.boosting ? 2.5 : 1);
+      f.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1);
       burst(f.x, f.y, def.body, 5, 85);
       G.shake = Math.max(G.shake, p.boosting ? 7 : 3);
       if (f.hp <= 0) { eatFish(f); return; }
@@ -450,6 +637,208 @@ function handleContact(f, nx, ny){
   // 포식자 — 부스트 중이면 밀어내고 탈출할 여지를 준다
   if (p.boosting && p.stam > 18) { f.vx -= nx*220; f.vy -= ny*220; }
   hurtPlayer(Math.min(def.tier - p.tier, 3)*7, nx, ny, HIT_CD);
+}
+
+/* ==========================================================================
+   보스 — 거대 바라쿠다. 3페이즈 상태기계.
+   설계의 핵심: 페이즈 2부터 잡어를 소환하고 플레이어는 그걸 먹어 회복한다.
+   위협이 곧 생명줄이라, 장기전에서 포만감이 말라 억울하게 죽는 일이 없다.
+   ========================================================================== */
+function spawnBoss(){
+  const p = G.player;
+  const side = p.x < WORLD.w*0.5 ? 1 : -1;
+  G.boss = {
+    x: clamp(p.x + side*(G.cam.w*0.5 + 280), 140, WORLD.w - 140),
+    y: clamp(p.y, 180, WORLD.h - 180),
+    vx: -side*50, vy: 0,
+    hp: BOSS.hp, maxHp: BOSS.hp,
+    state: 'intro', t: 0, phase: 1, cd: 1.0,
+    dx: -side, dy: 0, flash: 0,
+  };
+  G.bossSpawned = true;
+  showToast(BOSS.name, '경  고');
+  G.shake = Math.max(G.shake, 10);
+}
+
+function bossSummon(b){
+  const pool = FISH.filter(d => d.tier <= 2 && !d.shock && !d.toxic);
+  const n = b.phase === 3 ? 10 : 7;
+  for (let i = 0; i < n; i++) {
+    const def = pick(pool);
+    const a = (i/n)*6.2832 + rand(-0.25, 0.25), r = rand(80, 170);
+    G.fish.push({ def,
+      x: clamp(b.x + Math.cos(a)*r, 30, WORLD.w - 30),
+      y: clamp(b.y + Math.sin(a)*r, 25, WORLD.h - 25),
+      vx: Math.cos(a)*def.speed, vy: Math.sin(a)*def.speed,
+      hp: def.tier*16, maxHp: def.tier*16,
+      phase: rand(0, 6.28), wob: 1, dead: false,
+      tx: 0, ty: 0, retarget: 0, lead: null });
+  }
+  burst(b.x, b.y, 'rgba(158,216,255,.9)', 18, 150, 'bubble');
+}
+
+function pickPattern(b, nx, ny){
+  const k = pick(b.phase === 1 ? ['dash']
+              :  b.phase === 2 ? ['dash', 'dash', 'summon']
+              :                  ['dash', 'summon', 'vortex']);
+  b.t = 0;
+  if (k === 'dash')   { b.state = 'telegraph'; b.dx = nx; b.dy = ny; return; }
+  if (k === 'summon') { b.state = 'summon'; bossSummon(b); return; }
+  b.state = 'vortex';
+}
+
+function bossDown(){
+  const b = G.boss;
+  b.state = 'dead';
+  burst(b.x, b.y, BOSS.body, 42, 270);
+  ring(b.x, b.y);
+  G.shake = 16; G.slowmo = 0.8;
+  G.cleared = true; G.endTimer = 1.5;
+}
+
+function updateBoss(dt){
+  const b = G.boss, p = G.player;
+  if (!b || b.state === 'dead') return;
+  b.t += dt;
+  b.flash = Math.max(0, b.flash - dt*4);
+
+  const ddx = p.x - b.x, ddy = p.y - b.y;
+  const dist = Math.hypot(ddx, ddy) || 1;
+  const nx = ddx/dist, ny = ddy/dist;      // 보스 → 플레이어
+
+  const want = b.hp/b.maxHp > 0.66 ? 1 : b.hp/b.maxHp > 0.33 ? 2 : 3;
+  if (want > b.phase) {
+    b.phase = want;
+    G.shake = Math.max(G.shake, 11);
+    burst(b.x, b.y, '#ffd84d', 26, 210);
+  }
+
+  switch (b.state) {
+    case 'intro':
+      b.vx = lerp(b.vx, nx*70, 0.03); b.vy = lerp(b.vy, ny*50, 0.03);
+      if (b.t > 2.0) { b.state = 'idle'; b.t = 0; b.cd = 0.9; }
+      break;
+    case 'idle': {
+      const k = dist > 320 ? 1 : dist < 180 ? -0.6 : 0;   // 간격을 재며 맴돈다
+      b.vx = lerp(b.vx, nx*62*k, 0.04);
+      b.vy = lerp(b.vy, ny*46*k, 0.04);
+      b.cd -= dt;
+      if (b.cd <= 0) pickPattern(b, nx, ny);
+      break; }
+    case 'telegraph':                                     // 0.7초 예고 — 뒤로 당긴다
+      b.vx = lerp(b.vx, -b.dx*55, 0.12); b.vy = lerp(b.vy, -b.dy*40, 0.12);
+      if (b.t > 0.7) { b.state = 'dash'; b.t = 0; }
+      break;
+    case 'dash':
+      b.vx = b.dx*640; b.vy = b.dy*640;
+      if (b.t > 0.55) { b.state = 'stagger'; b.t = 0; }
+      break;
+    case 'stagger':                                       // 약점 창 1.5초
+      b.vx = lerp(b.vx, 0, 0.08); b.vy = lerp(b.vy, 0, 0.08);
+      if (b.t > 1.7) { b.state = 'idle'; b.t = 0; b.cd = rand(0.8, 1.4); }
+      break;
+    case 'summon':
+      b.vx = lerp(b.vx, 0, 0.06); b.vy = lerp(b.vy, 0, 0.06);
+      if (b.t > 0.9) { b.state = 'idle'; b.t = 0; b.cd = rand(0.9, 1.5); }
+      break;
+    case 'vortex': {                                      // 끌어당김 — 부스트로 벗어난다
+      const pull = clamp(1 - dist/560, 0, 1) * 460;
+      p.vx -= nx*pull*dt; p.vy -= ny*pull*dt;
+      b.vx = lerp(b.vx, 0, 0.06); b.vy = lerp(b.vy, 0, 0.06);
+      if (b.t > 2.4) { b.state = 'idle'; b.t = 0; b.cd = rand(1.0, 1.6); }
+      break; }
+  }
+
+  b.x = clamp(b.x + b.vx*dt, 100, WORLD.w - 100);
+  b.y = clamp(b.y + b.vy*dt, 90,  WORLD.h - 90);
+
+  if (b.state === 'intro') return;
+
+  if (dist < BOSS.len*0.34 + p.len*0.45) {
+    const staggered = b.state === 'stagger';
+    if (p.biteCd <= 0) {
+      p.biteCd = BITE_CD;
+      b.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1) * (staggered ? BOSS.staggerMul : 1);
+      b.flash = 1;
+      burst(p.x, p.y, staggered ? '#ffd84d' : BOSS.body, staggered ? 7 : 4, 100);
+      G.shake = Math.max(G.shake, staggered ? 6 : 3);
+      if (b.hp <= 0) { bossDown(); return; }
+    }
+    if (!staggered) hurtPlayer(BOSS.contact, nx, ny, HIT_CD);   // 경직 중엔 안전하게 때린다
+  }
+}
+
+function drawBoss(){
+  const b = G.boss;
+  if (!b || b.state === 'dead') return;
+  const L = BOSS.len, H = L*0.17;
+
+  if (b.state === 'telegraph') {                    // 돌진 예고선
+    const a = 0.25 + 0.4*Math.sin(b.t*22);
+    ctx.strokeStyle = 'rgba(255,70,90,' + a + ')';
+    ctx.lineWidth = 5; ctx.setLineDash([16, 12]);
+    ctx.beginPath(); ctx.moveTo(b.x, b.y);
+    ctx.lineTo(b.x + b.dx*760, b.y + b.dy*760); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  if (b.state === 'vortex') {                       // 소용돌이
+    for (let i = 1; i <= 3; i++) {
+      const r = 180*i - (b.t*170) % 180;
+      ctx.strokeStyle = 'rgba(140,210,255,' + (0.3*(1 - r/560)) + ')';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(b.x, b.y, Math.max(r, 1), 0, 6.2832); ctx.stroke();
+    }
+  }
+
+  ctx.save();
+  ctx.translate(b.x, b.y);
+  faceHeading(b.vx || b.dx, b.vy);
+  const sw = Math.sin(b.t*7)*0.5;
+  const hurt = b.flash > 0;
+  const body = hurt ? '#ffd3da' : BOSS.body;
+
+  ctx.fillStyle = hurt ? '#ffa7b4' : BOSS.fin;      // 꼬리
+  ctx.beginPath();
+  ctx.moveTo(-L*0.42, 0);
+  ctx.lineTo(-L*0.70, -H*1.5 + sw*H);
+  ctx.lineTo(-L*0.58, 0);
+  ctx.lineTo(-L*0.70,  H*1.5 + sw*H);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();                                  // 등지느러미
+  ctx.moveTo(-L*0.02, -H*1.9); ctx.lineTo(L*0.12, -H*0.7); ctx.lineTo(-L*0.24, -H*0.7);
+  ctx.closePath(); ctx.fill();
+
+  const g = ctx.createLinearGradient(0, -H, 0, H);  // 길쭉한 몸통
+  g.addColorStop(0, shade(body, 0.12));
+  g.addColorStop(1, shade(body, -0.34));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(L*0.52, 0);
+  ctx.quadraticCurveTo(L*0.24, -H*1.05, -L*0.16, -H*0.85);
+  ctx.quadraticCurveTo(-L*0.38, -H*0.5, -L*0.44, 0);
+  ctx.quadraticCurveTo(-L*0.38,  H*0.5, -L*0.16,  H*0.85);
+  ctx.quadraticCurveTo(L*0.24,  H*1.05, L*0.52, 0);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#fff';                           // 이빨
+  for (let i = 0; i < 7; i++) {
+    const tx = L*0.46 - i*L*0.042;
+    ctx.beginPath();
+    ctx.moveTo(tx, H*0.1); ctx.lineTo(tx - L*0.016, H*0.34); ctx.lineTo(tx + L*0.016, H*0.3);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = b.state === 'stagger' ? '#ffd84d' : '#fff';
+  ctx.beginPath(); ctx.arc(L*0.3, -H*0.4, L*0.045, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#0d1b24';
+  ctx.beginPath(); ctx.arc(L*0.32, -H*0.4, L*0.022, 0, 6.2832); ctx.fill();
+  ctx.restore();
+
+  if (b.state === 'stagger') {                      // 경직 표시 — 지금 때려라
+    ctx.strokeStyle = 'rgba(255,216,77,.75)'; ctx.lineWidth = 3;
+    ctx.setLineDash([9, 9]);
+    ctx.beginPath(); ctx.arc(b.x, b.y, L*0.42, 0, 6.2832); ctx.stroke();
+    ctx.setLineDash([]);
+  }
 }
 
 function wander(f, dt){
@@ -525,7 +914,7 @@ function updateFish(dt){
     }
 
     // 흡입 — 하위 티어는 반경 안에 들면 끌려온다
-    const sucR = p.len*0.95 + 18;
+    const sucR = suctionR(p);
     if (def.tier < p.tier && !def.shock && !def.shell && dist < sucR) {
       const pull = (1 - dist/sucR)*800;
       f.vx += nx*pull*dt; f.vy += ny*pull*dt;
@@ -558,8 +947,11 @@ function updateParts(dt){
 
 const CAM_OVER = 300;     // 월드 밖으로 허용하는 여유 — 가장자리에서도 상어가 중앙에 남는다
 function updateCam(dt){
-  const p = G.player, c = G.cam;
-  const tx = p.x + p.vx*0.14, ty = p.y + p.vy*0.14;
+  const p = G.player, c = G.cam, b = G.boss;
+  let tx = p.x + p.vx*0.14, ty = p.y + p.vy*0.14;
+  if (b && b.state !== 'dead' && Math.hypot(b.x - p.x, b.y - p.y) < 760) {
+    tx = lerp(tx, b.x, 0.3); ty = lerp(ty, b.y, 0.3);   // 보스를 화면에 붙잡아 둔다
+  }
   const loX = Math.min(c.w/2 - CAM_OVER, WORLD.w/2), hiX = Math.max(WORLD.w - c.w/2 + CAM_OVER, WORLD.w/2);
   const loY = Math.min(c.h/2 - CAM_OVER, WORLD.h/2), hiY = Math.max(WORLD.h - c.h/2 + CAM_OVER, WORLD.h/2);
   c.x = lerp(c.x, clamp(tx, loX, hiX), clamp(dt*4.5, 0, 1));
@@ -661,14 +1053,16 @@ function drawSeabed(){
   ctx.fillRect(G.cam.x - G.cam.w, WORLD.h - 180, G.cam.w*2, 200);
   // 해초
   const x0 = G.cam.x - G.cam.w*0.6, x1 = G.cam.x + G.cam.w*0.6;
-  ctx.strokeStyle = 'rgba(42,122,88,.75)'; ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(38,104,78,.42)'; ctx.lineCap = 'round';
   for (const k of KELP) {
     if (k.x < x0 || k.x > x1) continue;
-    const sway = Math.sin(G.t*0.9 + k.ph)*26;
-    ctx.lineWidth = k.w;
+    const sway = Math.sin(G.t*0.8 + k.ph)*30;
+    ctx.lineWidth = k.w*0.55;
     ctx.beginPath();
     ctx.moveTo(k.x, WORLD.h);
-    ctx.quadraticCurveTo(k.x + sway*0.5, WORLD.h - k.h*0.6, k.x + sway, WORLD.h - k.h);
+    ctx.bezierCurveTo(k.x + sway*0.15, WORLD.h - k.h*0.45,
+                      k.x + sway*0.75, WORLD.h - k.h*0.78,
+                      k.x + sway,      WORLD.h - k.h);
     ctx.stroke();
   }
 }
@@ -820,7 +1214,7 @@ function drawShark(p){
   if (p.iframe > 0) ctx.globalAlpha = 0.45 + 0.55*Math.abs(Math.sin(G.t*32));
 
   // 흡입 반경 — 규칙을 눈으로 알려주는 보조선
-  const sucR = L*0.95 + 18;
+  const sucR = suctionR(p);
   ctx.strokeStyle = 'rgba(160,236,255,' + (p.boosting ? 0.22 : 0.1) + ')';
   ctx.lineWidth = 1.4; ctx.setLineDash([6, 8]);
   ctx.beginPath(); ctx.arc(0, 0, sucR, 0, 6.2832); ctx.stroke();
@@ -829,7 +1223,8 @@ function drawShark(p){
   faceHeading(p.vx, p.vy);
   const sw = Math.sin(p.phase)*0.6;
 
-  const bodyTop = p.hurtFlash > 0 ? '#ff8d9e' : '#52788f';
+  const skin = p.st.shark.skin;
+  const bodyTop = p.hurtFlash > 0 ? '#ff8d9e' : skin;
   const bodyBot = p.hurtFlash > 0 ? '#ffd9df' : '#e9f4f9';
 
   // 초승달 꼬리
@@ -856,7 +1251,7 @@ function drawShark(p){
   // 몸통 (뾰족한 주둥이)
   const g = ctx.createLinearGradient(0, -H, 0, H*1.05);
   g.addColorStop(0, bodyTop);
-  g.addColorStop(0.62, mix('#52788f', '#e9f4f9', 0.35));
+  g.addColorStop(0.62, mix(skin, '#e9f4f9', 0.35));
   g.addColorStop(1, bodyBot);
   ctx.fillStyle = g;
   ctx.beginPath();
@@ -956,6 +1351,7 @@ function render(){
     if (Math.abs(f.x - G.cam.x) > mx || Math.abs(f.y - G.cam.y) > my) continue;
     drawCreature(f, p);
   }
+  drawBoss();
   drawShark(p);
   drawParts();
   ctx.restore();
@@ -973,7 +1369,9 @@ const UI = {
   tier: el('tierNum'), eaten: el('eaten'),
   grow: el('growFill'), growLabel: el('growLabel'),
   toast: el('toast'), toastName: el('toast').querySelector('.t2'),
-  start: el('startScreen'), over: el('overScreen'),
+  toastLabel: el('toast').querySelector('.t1'),
+  start: el('startScreen'), over: el('overScreen'), hub: el('hubScreen'),
+  bossBar: el('bossBar'), bossFill: el('bossFill'),
 };
 let toastTimer = 0;
 
@@ -993,46 +1391,175 @@ function updateHUD(){
     : EVO[p.stage].name + ' → ' + EVO[p.stage+1].name;
   boostBtn.classList.toggle('on', p.boosting);
   boostBtn.classList.toggle('dry', p.stam < STAM_MIN && !p.boosting);
+  if (G.boss && G.boss.state !== 'dead') {
+    UI.bossBar.classList.remove('hidden');
+    setBar(UI.bossFill, G.boss.hp/G.boss.maxHp);
+  } else UI.bossBar.classList.add('hidden');
 }
 
-function showToast(name){
+function showToast(name, label){
+  UI.toastLabel.textContent = label || 'E V O L V E';
   UI.toastName.textContent = name;
   UI.toast.classList.add('show');
   toastTimer = 1.6;
 }
 
-function gameOver(){
-  if (G.over) return;
-  G.over = true; G.running = false;
-  const p = G.player;
-  burst(p.x, p.y, '#ff6b7f', 30, 220);
-  el('sTier').textContent  = p.tier;
-  el('sEaten').textContent = G.eaten;
-  el('sStage').textContent = (p.stage + 1) + ' / ' + EVO.length;
-  const m = Math.floor(G.t/60), s = Math.floor(G.t%60);
-  el('sTime').textContent  = m + ':' + String(s).padStart(2, '0');
-  el('overTitle').textContent = p.stage >= EVO.length - 1 ? '왕좌의 문턱에서' : '먹이가 되었다';
-  el('overSub').textContent = p.hunger <= 0
-    ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
-    : '더 큰 것은 피하고, 자란 뒤에 돌아와라.';
-  UI.over.classList.remove('hidden');
+/* ---------------- 허브 ---------------- */
+function renderHub(){
+  el('hubPearls').textContent = SAVE.pearls;
+
+  el('sharkList').innerHTML = SHARKS.map(sh => {
+    const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
+    return '<div class="card' + (on ? ' on' : '') + (owned ? '' : ' lock') +
+      '" data-shark="' + sh.id + '">' +
+      '<i class="dot" style="background:' + sh.skin + '"></i>' +
+      '<div class="tx"><div class="nm">' + sh.name + '<em>' + sh.tag + '</em></div>' +
+      '<div class="ds">' + (owned ? sh.desc : '상어알을 부화시켜 해금') + '</div></div>' +
+      '<div class="st">' + (on ? '사용 중' : owned ? '선택' : '잠김') + '</div></div>';
+  }).join('');
+
+  el('upgList').innerHTML = UPGRADES.map(u => {
+    const lv = SAVE.upg[u.id], maxed = lv >= UPG_MAX, cost = upgCost(lv);
+    let pips = '';
+    for (let i = 0; i < UPG_MAX; i++) pips += '<i class="' + (i < lv ? 'f' : '') + '"></i>';
+    return '<div class="upg"><div class="nm">' + u.name + '</div>' +
+      '<div class="pips">' + pips + '</div>' +
+      (maxed ? '<div class="mx">MAX</div>'
+             : '<button data-upg="' + u.id + '"' +
+               (SAVE.pearls < cost ? ' disabled' : '') + '>◈ ' + cost + '</button>') +
+      '</div>';
+  }).join('');
+
+  const h = SAVE.hatch, locked = SHARKS.filter(x => !SAVE.sharks[x.id]);
+  let html;
+  if (h.sharkId) {
+    html = '<div class="hl"><div class="hn">' + SHARK_BY_ID[h.sharkId].name + ' 알</div>' +
+      '<div class="he">' + Math.floor(h.progress) + '%</div></div>' +
+      '<div class="ht"><i style="width:' + clamp(h.progress, 0, 100) + '%"></i></div>' +
+      '<p>런에서 물고기를 먹으면 진행됩니다 (1마리 = +' + EGG_PER_FISH + '%). 100%에서 부화합니다.</p>';
+  } else if (!locked.length) {
+    html = '<div class="hl"><div class="hn">모든 상어 해금</div></div>' +
+      '<p>더 부화시킬 상어가 없습니다.</p>';
+  } else {
+    html = '<div class="hl"><div class="hn">비어 있음</div>' +
+      '<div class="he">보유 알 ' + SAVE.eggs + '</div></div>' +
+      '<p>보스를 처음 쓰러뜨리면 상어알을 얻습니다. 알을 넣으면 다음 런부터 부화가 진행됩니다.</p>' +
+      '<button id="putEgg"' + (SAVE.eggs < 1 ? ' disabled' : '') + '>알 넣기</button>';
+  }
+  el('hatchBox').innerHTML = html;
 }
 
-function startGame(){
+el('sharkList').addEventListener('click', e => {
+  const card = e.target.closest('[data-shark]');
+  if (!card) return;
+  const id = card.dataset.shark;
+  if (!SAVE.sharks[id]) return;
+  SAVE.active = id; writeSave(); renderHub();
+});
+el('upgList').addEventListener('click', e => {
+  const b = e.target.closest('[data-upg]');
+  if (!b) return;
+  const id = b.dataset.upg, lv = SAVE.upg[id];
+  if (lv >= UPG_MAX) return;
+  const cost = upgCost(lv);
+  if (SAVE.pearls < cost) return;
+  SAVE.pearls -= cost; SAVE.upg[id] = lv + 1;
+  writeSave(); renderHub();
+});
+el('hatchBox').addEventListener('click', e => {
+  if (e.target.id !== 'putEgg' || SAVE.eggs < 1) return;
+  const locked = SHARKS.filter(x => !SAVE.sharks[x.id]);
+  if (!locked.length) return;
+  SAVE.eggs -= 1;
+  SAVE.hatch = { sharkId: locked[0].id, progress: 0 };
+  writeSave(); renderHub();
+});
+
+function openHub(){
+  G.running = false;
+  document.body.classList.add('menu');
+  UI.start.classList.add('hidden');
+  UI.over.classList.add('hidden');
+  UI.bossBar.classList.add('hidden');
+  renderHub();
+  UI.hub.classList.remove('hidden');
+}
+
+/* ---------------- 런 시작 / 정산 ---------------- */
+function startRun(){
   G.player = makePlayer();
   G.fish.length = 0; G.parts.length = 0;
-  G.t = 0; G.eaten = 0; G.shake = 0; G.danger = 0;
+  G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0;
   G.timeScale = 1; G.slowmo = 0; G.evolveFlash = 0;
+  G.boss = null; G.bossSpawned = false; G.cleared = false; G.endTimer = 0;
   G.cam.x = G.player.x; G.cam.y = G.player.y;
   IN.active = false; IN.mag = 0; IN.id = -1; IN.boost = false;
   while (G.fish.length < TARGET_FISH) spawnFish();
   UI.start.classList.add('hidden');
   UI.over.classList.add('hidden');
+  UI.hub.classList.add('hidden');
+  UI.bossBar.classList.add('hidden');
+  document.body.classList.remove('menu');
   G.over = false; G.running = true;
 }
 
-el('startBtn').addEventListener('click', startGame);
-el('retryBtn').addEventListener('click', startGame);
+/* 보스를 잡은 직후 1.5초 연출 중에 굶거나 물려 죽어도 클리어는 클리어다 */
+function gameOver(){ finishRun(G.cleared); }
+
+function finishRun(cleared){
+  if (G.over) return;
+  G.over = true; G.running = false;
+  const p = G.player;
+
+  let pearls = G.pearls;
+  if (cleared) pearls += BOSS_PEARLS;
+  SAVE.pearls += pearls;
+
+  let hatchGain = 0, unlocked = null;
+  const h = SAVE.hatch;
+  if (h.sharkId) {
+    hatchGain = G.eaten * EGG_PER_FISH;
+    h.progress += hatchGain;
+    if (h.progress >= 100) {
+      SAVE.sharks[h.sharkId] = true;
+      unlocked = SHARK_BY_ID[h.sharkId];
+      SAVE.hatch = { sharkId: null, progress: 0 };
+    }
+  }
+  let gotEgg = false;
+  if (cleared && !SAVE.bossCleared) { SAVE.bossCleared = true; SAVE.eggs += 1; gotEgg = true; }
+  SAVE.best.tier  = Math.max(SAVE.best.tier,  p.tier);
+  SAVE.best.eaten = Math.max(SAVE.best.eaten, G.eaten);
+  writeSave();
+
+  el('overTitle').textContent = cleared ? '바다의 지배자' : '먹이가 되었다';
+  el('overSub').textContent = cleared
+    ? '거대 바라쿠다를 쓰러뜨렸다. 더 깊은 바다가 기다린다.'
+    : p.hunger <= 0 ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
+                    : '더 큰 것은 피하고, 자란 뒤에 돌아와라.';
+  el('sTier').textContent  = p.tier;
+  el('sEaten').textContent = G.eaten;
+  const m = Math.floor(G.t/60), sec = Math.floor(G.t%60);
+  el('sTime').textContent  = m + ':' + String(sec).padStart(2, '0');
+  el('gPearls').textContent = '+' + pearls + (cleared ? ' (보스 +' + BOSS_PEARLS + ')' : '');
+  el('gHatchRow').hidden = !hatchGain;
+  el('gHatch').textContent = '+' + hatchGain + '%';
+
+  const note = el('unlockNote');
+  const msgs = [];
+  if (unlocked) msgs.push('부화 완료 — ' + unlocked.name + ' 해금');
+  if (gotEgg)   msgs.push('상어알 획득 — 기지의 부화기에 넣어라');
+  if (msgs.length) { note.textContent = msgs.join(' · '); note.classList.remove('hidden'); }
+  else note.classList.add('hidden');
+
+  UI.bossBar.classList.add('hidden');
+  UI.over.classList.remove('hidden');
+  document.body.classList.add('menu');
+}
+
+el('startBtn').addEventListener('click', openHub);
+el('diveBtn').addEventListener('click', startRun);
+el('retryBtn').addEventListener('click', openHub);
 
 /* 고정 timestep — 프레임이 흔들려도 물리는 일정하게 */
 const STEP = 1/60;
@@ -1042,10 +1569,12 @@ function step(dt){
   G.t += dt;
   updatePlayer(dt);
   updateFish(dt);
+  if (G.boss) updateBoss(dt);
   updateParts(dt);
   updateCam(dt);
   G.shake = Math.max(0, G.shake - dt*28);
   G.evolveFlash = Math.max(0, G.evolveFlash - dt*3);
+  if (G.endTimer > 0) { G.endTimer -= dt; if (G.endTimer <= 0) finishRun(true); }
 }
 
 function frame(ts){
@@ -1072,7 +1601,11 @@ function frame(ts){
 }
 
 /* 부트 */
-if (location.search.indexOf('debug') >= 0) window.__G = G;   // 자동 테스트용 상태 훅
+if (location.search.indexOf('debug') >= 0) {
+  window.__G = G; window.__SAVE = () => SAVE; window.__spawnBoss = spawnBoss;
+}
+loadSave();
+document.body.classList.add('menu');     // 시작 화면에서도 게임 HUD 를 감춘다
 resize();
 G.player = makePlayer();
 G.cam.x = G.player.x; G.cam.y = G.player.y;
