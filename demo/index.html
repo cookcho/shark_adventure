@@ -4,10 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#04263d">
+<!-- 이미 어두운 화면이라고 선언한다. 없으면 삼성 인터넷/크롬의 자동 다크모드가
+     CSS 색을 멋대로 어둡게 칠해 버튼과 체력바가 검붉게 보인다 -->
+<meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>바다의 왕 — 코어 데모</title>
 <style>
   :root{
+    color-scheme:dark;
     --deep:#062D49; --ocean:#087DB5; --aqua:#14B8D4; --laqua:#A7E7F9;
     --coral:#FF8A24; --gold:#FFD34F; --ink:#021019;
     --r-lg:16px; --r-md:12px; --r-sm:9px;
@@ -23,20 +27,26 @@
   /* HUD — 밝은 아트 위에서도 읽히도록 어두운 유리판 위에 얹는다 */
   #hud{position:fixed;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;
     pointer-events:none;z-index:10}
-  .bars{display:flex;flex-direction:column;gap:6px;max-width:208px;
-    padding:9px 11px 10px;border-radius:var(--r-md);
-    background:linear-gradient(180deg,rgba(6,45,73,.72),rgba(2,22,38,.66));
-    border:1px solid rgba(167,231,249,.18);
-    box-shadow:0 3px 14px rgba(0,8,16,.38)}
-  .bars .row{display:flex;align-items:center;gap:7px}
-  .bars .row>b{flex:0 0 34px;font-size:8.5px;font-weight:800;letter-spacing:.2px;
-    color:rgba(199,232,246,.92);text-align:right}
-  .bar{flex:1;height:9px;border-radius:5px;background:rgba(2,16,28,.72);overflow:hidden}
+  .bars{display:flex;flex-direction:column;gap:9px;width:min(64%,252px);
+    padding:13px 15px 14px;border-radius:var(--r-lg);
+    background:linear-gradient(180deg,rgba(8,52,84,.82),rgba(2,20,35,.76));
+    border:1px solid rgba(167,231,249,.24);
+    box-shadow:0 5px 20px rgba(0,8,16,.46),inset 0 1px 0 rgba(255,255,255,.12)}
+  .bars .row{display:flex;align-items:center;gap:10px}
+  .bars .row>b{flex:0 0 44px;font-size:11.5px;font-weight:800;letter-spacing:-.2px;
+    color:#d6eefb;text-align:right;text-shadow:0 1px 2px rgba(0,8,16,.65)}
+  /* 유리관처럼 — 안쪽 그림자로 파이고, 위에 하이라이트 한 줄 */
+  .bar{position:relative;flex:1;height:15px;border-radius:8px;
+    background:rgba(1,13,24,.82);overflow:hidden;
+    box-shadow:inset 0 2px 3px rgba(0,0,0,.55)}
   .bar>i{display:block;height:100%;width:100%;transform-origin:left center;
-    transition:transform .12s linear;border-radius:5px}
-  #hpFill{background:linear-gradient(90deg,#ff3f63,#ff93a6)}
-  #hungerFill{background:linear-gradient(90deg,var(--coral),var(--gold))}
-  #stamFill{background:linear-gradient(90deg,var(--aqua),var(--laqua))}
+    transition:transform .12s linear;border-radius:8px}
+  .bar::after{content:'';position:absolute;left:3px;right:3px;top:2px;height:5px;
+    border-radius:4px;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0))}
+  #hpFill{background:linear-gradient(180deg,#ff7d92,#e4123d)}
+  #hungerFill{background:linear-gradient(180deg,#ffd168,#ef7a10)}
+  #stamFill{background:linear-gradient(180deg,#6ae4f7,#0b94c4)}
 
   #topRight{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:12px;
     text-align:right;pointer-events:none;z-index:10}
@@ -1463,6 +1473,7 @@ function updateParts(dt){
 }
 
 const CAM_OVER = 300;     // 월드 밖으로 허용하는 여유 — 가장자리에서도 상어가 중앙에 남는다
+const CAM_UNDER = 110;    // 바닥 쪽 여유. 바닥 칠이 덮는 범위 안이어야 한다
 function updateCam(dt){
   const p = G.player, c = G.cam, b = G.boss;
   let tx = p.x + p.vx*0.14, ty = p.y + p.vy*0.14;
@@ -1470,7 +1481,9 @@ function updateCam(dt){
     tx = lerp(tx, b.x, 0.3); ty = lerp(ty, b.y, 0.3);   // 보스를 화면에 붙잡아 둔다
   }
   const loX = Math.min(c.w/2 - CAM_OVER, WORLD.w/2), hiX = Math.max(WORLD.w - c.w/2 + CAM_OVER, WORLD.w/2);
-  const loY = Math.min(c.h/2 - CAM_OVER, WORLD.h/2), hiY = Math.max(WORLD.h - c.h/2 + CAM_OVER, WORLD.h/2);
+  /* 아래쪽 여유는 좁게 — 넓게 주면 그려둔 해저가 위로 밀려나고 그 밑으로
+     원경 배경이 드러나 바다가 두 겹으로 보인다. 이 여유만큼은 바닥 칠이 덮는다 */
+  const loY = Math.min(c.h/2 - CAM_OVER, WORLD.h/2), hiY = Math.max(WORLD.h - c.h/2 + CAM_UNDER, WORLD.h/2);
   c.x = lerp(c.x, clamp(tx, loX, hiX), clamp(dt*4.5, 0, 1));
   c.y = lerp(c.y, clamp(ty, loY, hiY), clamp(dt*4.5, 0, 1));
 }
@@ -1608,7 +1621,7 @@ function drawSeabed(){
   g.addColorStop(0, 'rgba(10,45,62,0)');
   g.addColorStop(1, 'rgba(14,52,48,.95)');
   ctx.fillStyle = g;
-  ctx.fillRect(G.cam.x - G.cam.w, WORLD.h - 180, G.cam.w*2, 200);
+  ctx.fillRect(G.cam.x - G.cam.w, WORLD.h - 180, G.cam.w*2, 600);   // 흔들림 여유
   // 해초
   const x0 = G.cam.x - G.cam.w*0.6, x1 = G.cam.x + G.cam.w*0.6;
   const kind = G.stage.terrain;
@@ -2315,7 +2328,8 @@ function render(){
     drawCreature(f, p);
   }
   drawBoss();
-  drawShark(p);
+  /* 타이틀 상어 그림이 있으면 캔버스 상어는 그리지 않는다 — 둘이 겹쳐 보인다 */
+  if (!(G.attract && art('title.shark'))) drawShark(p);
   drawParts();
   ctx.restore();
 
