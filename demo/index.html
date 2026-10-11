@@ -597,6 +597,11 @@ const ART = {
   'fish.seabass':         'fish/seabass.png',
   'fish.shrimp':          'fish/shrimp.png',
   'fish.reefpup':         'fish/reefpup.png',
+  'fish.butterfly':       'fish/butterfly.png',
+  'fish.clam':            'fish/clam.png',
+  'fish.lionfish':        'fish/lionfish.png',
+  'fish.moraykid':        'fish/moraykid.png',
+  'fish.parrot':          'fish/parrot.png',
   /* 보스 — boss.<보스id> */
   'boss.giant_barra':     'boss/giant_barra.png',
   'boss.giant_moray':     'boss/giant_moray.png',
@@ -1739,7 +1744,9 @@ function drawCreature(f, p){
     const fixed = shape === 'jelly' || shape === 'urchin' || shape === 'mine' || shape === 'clam';
     if (!fixed) faceHeading(f.vx, f.vy);
     const dp = Math.hypot(f.x - p.x, f.y - p.y);
-    spriteAura(sp, L, 1, oc, def.tier > p.tier, dp);
+    /* 외곽선은 스프라이트와 같은 배율로 그려야 한다. span 을 다르게 주면
+       외곽선이 그림 안쪽으로 들어가 전혀 보이지 않는다 */
+    spriteAura(sp, L, SPRITE_SPAN, oc, def.tier > p.tier, dp);
     drawSprite(sp, L);
     ctx.restore(); return;
   }

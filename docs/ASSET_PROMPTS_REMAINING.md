@@ -1,6 +1,7 @@
-# 남은 에셋 30장 — 생성 프롬프트
+# 남은 에셋 25장 — 생성 프롬프트
 
-2026-10-11 기준. 적용 완료 23장, 남은 것 30장. (배치 A 완료)
+2026-10-11 기준. 적용 완료 28장, 남은 것 25장.
+(배치 A 완료 · 배치 B 중 5종 완료)
 규격·등록 방법은 [`ASSETS.md`](ASSETS.md), 이미 만든 것들의 프롬프트는
 [`ASSET_PROMPTS.md`](ASSET_PROMPTS.md).
 
@@ -9,7 +10,7 @@
 | 배치 | 내용 | 장수 |
 |---|---|---|
 | ~~A~~ | ~~타이틀 상어~~ | ✅ 완료 |
-| B | 산호 정원 물고기 | 9 |
+| B | 산호 정원 물고기 | 4 *(5종 완료)* |
 | C | 난파선 해구 물고기 | 9 |
 | D | 해금 상어 3종 × 4단계 | 12 |
 
@@ -70,20 +71,20 @@ hero angle is wanted here. Still facing RIGHT-ish. Transparent background.
 
 ---
 
-## 배치 B — 산호 정원 물고기 9종
+## 배치 B — 산호 정원 물고기 9종 *(5종 적용 완료, 남은 4종)*
 
 공통: `assets/fish/<id>.png` · 1536×1024 권장 · 투명 필수 · 오른쪽 정측면
 
 | id | 이름 | 티어 | 프롬프트 |
 |---|---|---|---|
-| `parrot` | 비늘돔 | 2 | `A parrotfish. Chunky oval body with a blunt rounded forehead and a distinctive beak-like fused mouth. Brilliant emerald green body with pink and turquoise scale edges, a pink stripe along the cheek, broad rounded fins. Cheerful expression.` |
-| `butterfly` | 나비고기 | 2 | `A butterflyfish. Very tall, flat, disc-shaped body (almost as tall as it is long). Bright lemon yellow with bold black vertical stripes and a black band masking the eye. Small pointed snout, delicate trailing fins.` |
+| ~~`parrot`~~ ✅ | ~~비늘돔~~ | 2 | `A parrotfish. Chunky oval body with a blunt rounded forehead and a distinctive beak-like fused mouth. Brilliant emerald green body with pink and turquoise scale edges, a pink stripe along the cheek, broad rounded fins. Cheerful expression.` |
+| ~~`butterfly`~~ ✅ | ~~나비고기~~ | 2 | `A butterflyfish. Very tall, flat, disc-shaped body (almost as tall as it is long). Bright lemon yellow with bold black vertical stripes and a black band masking the eye. Small pointed snout, delicate trailing fins.` |
 | `wrasse` | 청줄놀래기 | 2 | `A cleaner wrasse. Slender elongated torpedo body. Electric blue upper half fading to pale cream below, with one sharp black horizontal stripe running nose to tail. Small pointed head, bright yellow accents on the fins.` |
-| `lionfish` | 쏠배감펭 | 3 | `A lionfish. Oval body covered in bold red-orange and white vertical stripes, surrounded by a dramatic fan of long feathery venomous spines radiating from the dorsal and pectoral fins. Spiky and dangerous looking but cartoon-stylized.` |
+| ~~`lionfish`~~ ✅ | ~~쏠배감펭~~ | 3 | `A lionfish. Oval body covered in bold red-orange and white vertical stripes, surrounded by a dramatic fan of long feathery venomous spines radiating from the dorsal and pectoral fins. Spiky and dangerous looking but cartoon-stylized.` |
 | `striped` | 돌돔 | 3 | `A striped knifejaw fish. Deep oval compressed body, silvery white with seven bold black vertical bands from top to bottom, small powerful beak-like mouth, stiff spiny dorsal fin. Sturdy and alert.` |
 | `squid` | 오징어 | 4 | `A squid. Long torpedo-shaped mantle with two triangular fins at the rear tip, large expressive eye, and a bundle of eight trailing tentacles plus two longer feeding arms streaming behind. Translucent pink and coral iridescent skin. Mantle pointing RIGHT, tentacles trailing LEFT.` |
-| `moraykid` | 곰치 치어 | 4 | `A young moray eel. Long slender serpentine body in a gentle S curve, olive green and yellow mottled skin, continuous fin ridge along the spine, small head with a slightly open mouth showing tiny teeth, beady eye. Juvenile — less bulky than an adult moray. Head RIGHT, tail curving LEFT.` |
-| `clam` | 대왕조개 | 5 | `A giant clam, slightly open. Two thick ribbed fan-shaped shells in pale lavender and cream, revealing a vivid iridescent purple-blue mantle inside with wavy frilled edges. Resting upright on its base. NOT facing a direction — draw it upright and symmetrical.` |
+| ~~`moraykid`~~ ✅ | ~~곰치 치어~~ | 4 | `A young moray eel. Long slender serpentine body in a gentle S curve, olive green and yellow mottled skin, continuous fin ridge along the spine, small head with a slightly open mouth showing tiny teeth, beady eye. Juvenile — less bulky than an adult moray. Head RIGHT, tail curving LEFT.` |
+| ~~`clam`~~ ✅ | ~~대왕조개~~ | 5 | `A giant clam, slightly open. Two thick ribbed fan-shaped shells in pale lavender and cream, revealing a vivid iridescent purple-blue mantle inside with wavy frilled edges. Resting upright on its base. NOT facing a direction — draw it upright and symmetrical.` |
 | `urchin` | 성게 | 위험 | `A sea urchin. Dark purple spherical body completely covered in long sharp radiating black-purple spines pointing in every direction. Menacing and prickly. NOT facing a direction — draw it as a symmetrical ball of spines.` |
 
 ---
