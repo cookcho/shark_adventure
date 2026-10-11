@@ -104,9 +104,9 @@ demo/assets/           이미지 에셋 (비어 있으면 Canvas 렌더링)
 
 규격은 [`docs/ASSETS.md`](docs/ASSETS.md).
 생성 프롬프트는 [`docs/ASSET_PROMPTS.md`](docs/ASSET_PROMPTS.md) (완료분),
-**남은 25장은 [`docs/ASSET_PROMPTS_REMAINING.md`](docs/ASSET_PROMPTS_REMAINING.md)**.
+**남은 21장은 [`docs/ASSET_PROMPTS_REMAINING.md`](docs/ASSET_PROMPTS_REMAINING.md)**.
 
-### 적용 현황 (28/53)
+### 적용 현황 (32/53)
 
 | 분류 | 상태 |
 |---|---|
@@ -115,7 +115,7 @@ demo/assets/           이미지 에셋 (비어 있으면 Canvas 렌더링)
 | **보스 3체** | ✅ **전부 완료** |
 | **햇살 연안 물고기 10종** | ✅ **전부 완료** |
 | 리프 샤크 4단계 | ✅ |
-| 산호 정원 물고기 | 6종 ✅ (상어치어·비늘돔·나비고기·쏠배감펭·곰치치어·대왕조개) · 4종 ⬜ |
+| **산호 정원 물고기 10종** | ✅ **전부 완료** |
 | 난파선 해구 물고기 | ⬜ 10종 |
 | 상어 3종 × 4단계 | ⬜ 12장 |
 
