@@ -706,6 +706,8 @@ const SFX = {
       this.master.gain.value = 0.5;
       this.master.connect(this.ac.destination);
       this.startBed();
+      BGM.attach(this.ac, this.master);
+      BGM.wake();
     } catch (e) { this.ac = null; }
   },
   resume(){ if (this.ac && this.ac.state === 'suspended') this.ac.resume().catch(()=>{}); },
@@ -722,7 +724,7 @@ const SFX = {
     src.buffer = buf; src.loop = true;
     const f = ac.createBiquadFilter();
     f.type = 'lowpass'; f.frequency.value = 320; f.Q.value = 0.7;
-    const gn = ac.createGain(); gn.gain.value = 0.055;
+    const gn = ac.createGain(); gn.gain.value = 0.022;   // BGM 밑에 깔리는 정도만
     src.connect(f); f.connect(gn); gn.connect(this.master);
     src.start();
     this.bed = src; this.bedFilter = f;
@@ -779,6 +781,210 @@ const SFX = {
   buy(){     this.tone(540, 0.09, 'triangle', 0.15); setTimeout(()=>this.tone(810,0.12,'triangle',0.14), 80); },
   dead(){    this.tone(240, 1.0, 'sawtooth', 0.2, 55); },
 };
+
+/* ==========================================================================
+   BGM — 칩튠. 오디오 파일 0개, 전부 코드로 연주한다.
+   리드(사각파) · 베이스(삼각파) · 드럼(노이즈) 3채널 = NES 구성.
+
+   악보는 16분음표 한 칸짜리 토큰 배열이다.
+     'A4'  음을 친다      '.'  앞 음을 이어간다(쉼표 겸용)
+     'k' 킥   's' 스네어   'h' 하이햇
+   채널마다 길이가 달라도 되고 각자 자기 길이로 돈다 — 드럼 16칸만 써도 된다.
+   ========================================================================== */
+const SEMI = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
+function noteHz(tok){
+  const m = /^([A-G])(#?)(-?\d)$/.exec(tok);
+  if (!m) return 0;
+  const midi = SEMI[m[1]] + (m[2] ? 1 : 0) + (+m[3] + 1)*12;
+  return 440 * Math.pow(2, (midi - 69)/12);
+}
+const bar = s => s.trim().split(/\s+/);
+
+const TRACKS = {
+  /* 타이틀 — Am F C G. 모험을 떠나는 기분 */
+  title: { bpm:140, lead:bar(`
+    A4 .  C5 .  E5 .  A5 .  G5 .  E5 .  .  .  .  .
+    F5 .  .  .  E5 .  C5 .  A4 .  .  .  .  .  .  .
+    G4 .  C5 .  E5 .  G5 .  E5 .  C5 .  .  .  .  .
+    D5 .  .  .  G5 .  .  .  B4 .  D5 .  .  .  .  . `),
+    bass:bar(`
+    A2 . A3 . A2 . A3 . A2 . A3 . A2 . A3 .
+    F2 . F3 . F2 . F3 . F2 . F3 . F2 . F3 .
+    C3 . C4 . C3 . C4 . C3 . C4 . C3 . C4 .
+    G2 . G3 . G2 . G3 . G2 . G3 . G2 . G3 . `),
+    drum:bar(`k . h . s . h . k . h . s . h .`) },
+
+  /* 기지 — C Am F G. 느리고 성기게 */
+  hub: { bpm:96, lead:bar(`
+    E5 .  .  .  G5 .  .  .  .  .  .  .  C5 .  .  .
+    A4 .  .  .  C5 .  .  .  .  .  .  .  E5 .  .  .
+    F5 .  .  .  E5 .  .  .  C5 .  .  .  .  .  .  .
+    D5 .  .  .  G4 .  .  .  .  .  .  .  .  .  .  . `),
+    bass:bar(`
+    C2 . . . . . . . G2 . . . . . . .
+    A2 . . . . . . . E2 . . . . . . .
+    F2 . . . . . . . C3 . . . . . . .
+    G2 . . . . . . . D3 . . . . . . . `),
+    drum:bar(`h . . . h . . . h . . . h . . .`) },
+
+  /* 햇살 연안 — C G Am F. 밝고 통통 튀게 */
+  shore: { bpm:128, lead:bar(`
+    C5 . E5 . G5 . E5 . C5 . E5 . G5 . .  .
+    B4 . D5 . G5 . D5 . B4 . D5 . G5 . A5 .
+    A4 . C5 . E5 . C5 . A4 . C5 . E5 . .  .
+    F4 . A4 . C5 . A4 . F4 . A4 . C5 . D5 . `),
+    bass:bar(`
+    C2 . C3 . C2 . C3 . C2 . C3 . C2 . C3 .
+    G2 . G3 . G2 . G3 . G2 . G3 . G2 . G3 .
+    A2 . A3 . A2 . A3 . A2 . A3 . A2 . A3 .
+    F2 . F3 . F2 . F3 . F2 . F3 . F2 . F3 . `),
+    drum:bar(`k . h . s . h . k . h . s . h .`) },
+
+  /* 산호 정원 — F C Dm G. 더 밝고 장난스럽게 */
+  coral: { bpm:136, lead:bar(`
+    A4 . C5 . F5 . C5 . A4 . C5 . F5 . .  .
+    G4 . C5 . E5 . C5 . G4 . C5 . E5 . G5 .
+    A4 . D5 . F5 . D5 . A4 . D5 . F5 . .  .
+    B4 . D5 . G5 . D5 . B4 . D5 . G5 . A5 . `),
+    bass:bar(`
+    F2 . F3 . F2 . F3 . F2 . F3 . F2 . F3 .
+    C3 . C4 . C3 . C4 . C3 . C4 . C3 . C4 .
+    D3 . D4 . D3 . D4 . D3 . D4 . D3 . D4 .
+    G2 . G3 . G2 . G3 . G2 . G3 . G2 . G3 . `),
+    drum:bar(`k . h . s . h . k . h h s . h .`) },
+
+  /* 난파선 해구 — Dm A#(Bb) F A. 어둡고 느리게 */
+  wreck: { bpm:112, lead:bar(`
+    D5  . .  . F5  . .  . A4 . .  . D5 . . .
+    A#4 . .  . D5  . .  . F5 . .  . .  . . .
+    C5  . .  . F5  . .  . A4 . .  . C5 . . .
+    A4  . .  . C#5 . .  . E5 . .  . .  . . . `),
+    bass:bar(`
+    D2  . . . D2  . . . D3  . . . D2  . . .
+    A#1 . . . A#1 . . . A#2 . . . A#1 . . .
+    F2  . . . F2  . . . F3  . . . F2  . . .
+    A2  . . . A2  . . . A3  . . . A2  . . . `),
+    drum:bar(`k . . . . . h . k . . . s . . .`) },
+
+  /* 보스 — Em C D B. 빠르고 몰아치게 */
+  boss: { bpm:152, lead:bar(`
+    B4 . B4 . E5 .  D5  . B4 . B4 . G4 .  A4 .
+    C5 . C5 . G5 .  E5  . C5 . C5 . B4 .  C5 .
+    D5 . D5 . A5 .  F#5 . D5 . D5 . C5 .  D5 .
+    B4 . D5 . F#5 . B5  . A5 . F#5 . D5 . B4 . `),
+    bass:bar(`
+    E2 E3 E2 E3 E2 E3 E2 E3 E2 E3 E2 E3 E2 E3 E2 E3
+    C2 C3 C2 C3 C2 C3 C2 C3 C2 C3 C2 C3 C2 C3 C2 C3
+    D2 D3 D2 D3 D2 D3 D2 D3 D2 D3 D2 D3 D2 D3 D2 D3
+    B1 B2 B1 B2 B1 B2 B1 B2 B1 B2 B1 B2 B1 B2 B1 B2 `),
+    drum:bar(`k . h . s . h . k . k . s . h h`) },
+};
+
+/* 한 칸짜리 음이 몇 칸 이어지는지 — '.' 가 이어짐이므로 다음 토큰까지 센다 */
+function holdLen(ch, i){
+  let n = 1;
+  while (n < 8 && ch[(i + n) % ch.length] === '.') n++;
+  return n;
+}
+
+const BGM = {
+  name:null, track:null, step:0, next:0, timer:0, gain:null,
+  vol:0.22,                       // 효과음 밑에 깔리는 정도
+
+  attach(ac, master){
+    this.gain = ac.createGain();
+    this.gain.gain.value = this.vol;
+    this.gain.connect(master);
+  },
+  play(name){
+    if (this.name === name) return;
+    this.name = name;
+    this.track = TRACKS[name] || null;
+    this.step = 0;
+    if (!SFX.ac || !this.track) return;
+    if (!this.gain) this.attach(SFX.ac, SFX.master);
+    this.next = SFX.ac.currentTime + 0.06;
+    if (!this.timer) this.timer = setInterval(() => this.tick(), 25);
+  },
+  stop(){
+    if (this.timer) { clearInterval(this.timer); this.timer = 0; }
+    this.name = null; this.track = null;
+  },
+  /* 컨텍스트가 늦게 깨어났을 때 (첫 터치 전에는 소리를 낼 수 없다) */
+  wake(){ const n = this.name; if (n && !this.timer) { this.name = null; this.play(n); } },
+
+  /* 앞질러 예약한다 — setInterval 지터가 박자에 묻어나지 않게 */
+  tick(){
+    const ac = SFX.ac, tr = this.track;
+    if (!ac || !tr) return;
+    const sp = 60 / tr.bpm / 4;                   // 16분음표 한 칸
+    if (this.next < ac.currentTime) this.next = ac.currentTime + 0.02;
+    while (this.next < ac.currentTime + 0.12) {
+      emitStep(ac, this.gain, tr, this.step, this.next, sp);
+      this.step++;
+      this.next += sp;
+    }
+  },
+};
+
+/* 한 칸을 연주한다. 오프라인 렌더에서도 그대로 쓰려고 ac/dest 를 받는다 */
+function emitStep(ac, dest, tr, step, t, sp){
+  const L = tr.lead[step % tr.lead.length];
+  if (L && L !== '.') voiceLead(ac, dest, noteHz(L), t, holdLen(tr.lead, step % tr.lead.length)*sp);
+  const B = tr.bass[step % tr.bass.length];
+  if (B && B !== '.') voiceBass(ac, dest, noteHz(B), t, holdLen(tr.bass, step % tr.bass.length)*sp);
+  const D = tr.drum[step % tr.drum.length];
+  if (D === 'k') voiceKick(ac, dest, t);
+  else if (D === 's') voiceSnare(ac, dest, t);
+  else if (D === 'h') voiceHat(ac, dest, t);
+}
+
+function voiceLead(ac, dest, f, t, dur){
+  if (!f) return;
+  const d = Math.min(dur*0.92, 0.5);
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'square'; o.frequency.setValueAtTime(f, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.16, t + 0.006);
+  g.gain.setValueAtTime(0.16, t + d*0.6);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + d + 0.02);
+}
+function voiceBass(ac, dest, f, t, dur){
+  if (!f) return;
+  const d = Math.min(dur*0.9, 0.45);
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'triangle'; o.frequency.setValueAtTime(f, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.30, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + d + 0.02);
+}
+function voiceKick(ac, dest, t){
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(150, t);
+  o.frequency.exponentialRampToValueAtTime(45, t + 0.11);
+  g.gain.setValueAtTime(0.42, t);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + 0.14);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + 0.16);
+}
+function drumNoise(ac, dest, t, dur, type, hz, vol){
+  const len = Math.max(1, (ac.sampleRate*dur)|0);
+  const buf = ac.createBuffer(1, len, ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random()*2 - 1) * (1 - i/len);
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = hz; f.Q.value = 0.9;
+  const g = ac.createGain(); g.gain.value = vol;
+  src.connect(f); f.connect(g); g.connect(dest);
+  src.start(t); src.stop(t + dur + 0.01);
+}
+function voiceSnare(ac, dest, t){ drumNoise(ac, dest, t, 0.10, 'bandpass', 1900, 0.20); }
+function voiceHat(ac, dest, t){   drumNoise(ac, dest, t, 0.03, 'highpass', 7200, 0.10); }
 
 /* ---------------- 유틸 ---------------- */
 const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
@@ -1080,6 +1286,7 @@ function spawnBoss(){
   G.bossSpawned = true;
   showToast(G.bossDef.name, '경  고');
   SFX.bossIn(); SFX.stageBed(G.stage);
+  BGM.play('boss');
   UI.bossName.textContent = G.bossDef.name;
   G.shake = Math.max(G.shake, 10);
 }
@@ -2507,6 +2714,7 @@ function drawCover(im, W, H){
 
 function showTitle(){
   G.running = false; G.attract = true;
+  BGM.play('title');
   document.body.classList.add('menu');
   UI.hub.classList.add('hidden');
   UI.over.classList.add('hidden');
@@ -2517,6 +2725,7 @@ function showTitle(){
 
 function openHub(){
   G.attract = false;
+  BGM.play('hub');
   G.running = false;
   document.body.classList.add('menu');
   UI.start.classList.add('hidden');
@@ -2536,6 +2745,7 @@ function startRun(){
   G.bossDef = BOSSES[st.boss];
   buildTerrain(st);
   SFX.ready(); SFX.resume(); SFX.stageBed(st);
+  BGM.play(st.id);
   G.player = makePlayer();
   G.fish.length = 0; G.parts.length = 0;
   G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0;
@@ -2558,6 +2768,7 @@ function gameOver(){ finishRun(G.cleared); }
 function finishRun(cleared){
   if (G.over) return;
   G.over = true; G.running = false;
+  BGM.play('hub');                 // 정산 화면까지 보스 곡이 이어지지 않게
   const p = G.player;
 
   let pearls = G.pearls;
@@ -2681,6 +2892,8 @@ if (location.search.indexOf('debug') >= 0) {
   window.__G = G; window.__SAVE = () => SAVE; window.__spawnBoss = spawnBoss;
   window.__WORLD = WORLD; window.__SFX = SFX; window.__FISH = FISH; window.__SHARKS = SHARKS;
   window.__ART = ART; window.__IMGS = IMGS; window.__loadArt = loadArt;
+  window.__TRACKS = TRACKS; window.__BGM = BGM;
+  window.__emitStep = emitStep; window.__noteHz = noteHz;
 }
 loadSave();
 loadArt();
@@ -2699,6 +2912,7 @@ G.attract = true;
 G.player.stage = 3; G.player.len = EVO[3].len*1.5;   // 타이틀 간판용 — 플레이에는 영향 없음
 el('titleMute').classList.toggle('off', SAVE.muted);
 applyTitleArt();
+BGM.play('title');          // 첫 터치로 오디오가 깨어날 때 이 곡부터 흐른다
 requestAnimationFrame(frame);
 
 })();
