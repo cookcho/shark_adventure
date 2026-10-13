@@ -24,54 +24,73 @@
   canvas{display:block;width:100%;height:100%}
 
   /* ---------- HUD ---------- */
-  /* HUD — 밝은 아트 위에서도 읽히도록 어두운 유리판 위에 얹는다 */
-  #hud{position:fixed;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;
+  /* HUD — 판은 옅게 깔아 바다가 비치게 하고, 대신 글씨와 막대를 키워 읽히게 한다.
+     판이 옅은 만큼 글씨 그림자를 진하게 줘서 밝은 배경 위에서도 묻히지 않는다 */
+  #hud{position:fixed;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top) + 10px) 10px 0;
     pointer-events:none;z-index:10}
-  .bars{display:flex;flex-direction:column;gap:9px;width:min(64%,252px);
-    padding:13px 15px 14px;border-radius:var(--r-lg);
-    background:linear-gradient(180deg,rgba(8,52,84,.82),rgba(2,20,35,.76));
-    border:1px solid rgba(167,231,249,.24);
-    box-shadow:0 5px 20px rgba(0,8,16,.46),inset 0 1px 0 rgba(255,255,255,.12)}
-  .bars .row{display:flex;align-items:center;gap:10px}
-  .bars .row>b{flex:0 0 44px;font-size:11.5px;font-weight:800;letter-spacing:-.2px;
-    color:#d6eefb;text-align:right;text-shadow:0 1px 2px rgba(0,8,16,.65)}
+  .bars{display:flex;flex-direction:column;gap:8px;width:min(61%,290px);
+    padding:10px 12px 11px 8px;border-radius:var(--r-lg);
+    background:linear-gradient(180deg,rgba(4,36,60,.42),rgba(2,18,32,.34));
+    border:1px solid rgba(167,231,249,.16);
+    box-shadow:0 4px 16px rgba(0,8,16,.22)}
+  .bars .row{display:flex;align-items:center;gap:8px}
+  .bars .row>b{flex:0 0 54px;font-size:14px;font-weight:900;letter-spacing:-.4px;
+    text-align:right;color:#fff;
+    text-shadow:0 1px 2px rgba(0,8,16,.95),0 0 6px rgba(0,8,16,.7)}
+  #hud .lHp{color:#ffd0d8} #hud .lHunger{color:#ffe2b0} #hud .lStam{color:#c8f4ff}
   /* 유리관처럼 — 안쪽 그림자로 파이고, 위에 하이라이트 한 줄 */
-  .bar{position:relative;flex:1;height:15px;border-radius:8px;
-    background:rgba(1,13,24,.82);overflow:hidden;
-    box-shadow:inset 0 2px 3px rgba(0,0,0,.55)}
+  .bar{position:relative;flex:1;height:19px;border-radius:10px;
+    background:rgba(1,13,24,.55);overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:inset 0 2px 3px rgba(0,0,0,.45)}
   .bar>i{display:block;height:100%;width:100%;transform-origin:left center;
-    transition:transform .12s linear;border-radius:8px}
-  .bar::after{content:'';position:absolute;left:3px;right:3px;top:2px;height:5px;
+    transition:transform .12s linear;border-radius:9px}
+  .bar::after{content:'';position:absolute;left:3px;right:3px;top:2px;height:6px;
     border-radius:4px;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0))}
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0))}
+  /* 막대 위 숫자 — 얼마나 남았는지 바로 읽힌다 */
+  .bar>span{position:absolute;right:7px;top:0;bottom:0;display:flex;align-items:center;
+    color:#fff;font-size:11.5px;font-weight:900;font-variant-numeric:tabular-nums;
+    text-shadow:0 1px 2px rgba(0,0,0,.9);z-index:1}
   #hpFill{background:linear-gradient(180deg,#ff7d92,#e4123d)}
   #hungerFill{background:linear-gradient(180deg,#ffd168,#ef7a10)}
   #stamFill{background:linear-gradient(180deg,#6ae4f7,#0b94c4)}
+  /* 체력·포만감이 바닥나면 막대가 깜빡인다 — 숫자보다 먼저 눈에 들어온다 */
+  .bar.low{animation:lowBlink .55s ease-in-out infinite alternate}
+  @keyframes lowBlink{from{border-color:rgba(255,255,255,.14)}to{border-color:#ff6b7f;box-shadow:0 0 10px rgba(255,80,110,.75)}}
 
-  #topRight{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:12px;
-    text-align:right;pointer-events:none;z-index:10}
+  #topRight{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:10px;
+    display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    pointer-events:none;z-index:13}
+  #pauseBtn{pointer-events:auto;width:44px;height:44px;border-radius:50%;
+    border:1.5px solid rgba(167,231,249,.5);
+    background:rgba(4,36,60,.5);color:#eaf9ff;font-size:15px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;letter-spacing:-2px;
+    box-shadow:0 3px 12px rgba(0,8,16,.35);touch-action:none}
+  #pauseBtn:active{transform:scale(.92)}
+  #pauseBtn i{display:block;width:5px;height:16px;margin:0 2.5px;border-radius:2px;background:#eaf9ff}
   #tierTag{display:inline-flex;align-items:baseline;gap:5px;
-    background:linear-gradient(180deg,rgba(6,45,73,.82),rgba(2,22,38,.78));
-    border:1px solid rgba(167,231,249,.28);
+    background:linear-gradient(180deg,rgba(4,36,60,.5),rgba(2,18,32,.42));
+    border:1px solid rgba(167,231,249,.24);
     border-radius:999px;padding:5px 13px;color:var(--laqua);
-    font-size:10px;font-weight:800;letter-spacing:1.4px;
-    box-shadow:0 3px 12px rgba(0,8,16,.4)}
-  #tierTag em{font-style:normal;color:#fff;font-size:16px;font-weight:900;letter-spacing:0;
+    font-size:12px;font-weight:900;letter-spacing:1px;
+    text-shadow:0 1px 2px rgba(0,8,16,.9)}
+  #tierTag em{font-style:normal;color:#fff;font-size:21px;font-weight:900;letter-spacing:0;
     font-variant-numeric:tabular-nums}
-  #eaten{margin-top:6px;color:var(--laqua);font-size:10.5px;font-weight:700;opacity:.92;
-    font-variant-numeric:tabular-nums;text-shadow:0 1px 3px rgba(0,8,16,.8)}
+  #eaten{color:#e6f7ff;font-size:13px;font-weight:800;
+    font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,8,16,.95),0 0 6px rgba(0,8,16,.6)}
 
   /* 성장 게이지 */
   #growWrap{position:fixed;left:50%;transform:translateX(-50%);
     bottom:calc(env(safe-area-inset-bottom) + 13px);width:min(62%,268px);z-index:10;
     pointer-events:none;text-align:center}
-  #growBar{height:5px;border-radius:3px;background:rgba(2,16,28,.62);
+  #growBar{height:8px;border-radius:4px;background:rgba(2,16,28,.55);
     overflow:hidden;box-shadow:0 1px 6px rgba(0,8,16,.5)}
   #growFill{display:block;height:100%;width:100%;transform-origin:left center;
     background:linear-gradient(90deg,#4fe0a0,#d6ffe9);transition:transform .12s linear;
     box-shadow:0 0 8px rgba(93,232,168,.6)}
-  #growLabel{text-align:center;margin-top:5px;color:#bfeede;font-size:10px;font-weight:600;
-    letter-spacing:.4px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+  #growLabel{text-align:center;margin-top:5px;color:#d6ffe9;font-size:12px;font-weight:800;
+    letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.5)}
 
   /* 부스트 버튼 */
   #boost{position:fixed;right:calc(env(safe-area-inset-right) + 18px);
@@ -117,11 +136,11 @@
 
   /* 메뉴가 떠 있는 동안 게임 HUD 를 감춘다 */
   body.menu #hud, body.menu #topRight, body.menu #growWrap,
-  body.menu #boost, body.menu #bossBar{display:none}
+  body.menu #boost, body.menu #bossBar, body.menu #newFish, body.menu #hint{display:none}
 
   /* 보스 체력바 */
   #bossBar{position:fixed;left:50%;transform:translateX(-50%);
-    top:calc(env(safe-area-inset-top) + 124px);width:min(76%,340px);z-index:11;
+    top:calc(env(safe-area-inset-top) + 134px);width:min(76%,340px);z-index:11;
     pointer-events:none;text-align:center}
   #bossBar.hidden{display:none}
   #bossBar .bn{color:#ffd0d8;font-size:11px;font-weight:800;letter-spacing:2px;
@@ -271,6 +290,176 @@
   #toast .t1{color:#fff;font-size:13px;font-weight:700;letter-spacing:3px;opacity:.85}
   #toast .t2{color:#7dffd0;font-size:26px;font-weight:800;letter-spacing:-.5px;
     text-shadow:0 2px 14px rgba(60,255,190,.5)}
+  #toast .t3{margin-top:6px;color:#fff;font-size:13px;font-weight:700;line-height:1.5;
+    text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6);max-width:300px}
+  #toast .t3:empty{display:none}
+  #toast .t3{white-space:pre-line}
+
+  /* 새 물고기 발견 배너 */
+  #newFish{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 186px);
+    transform:translate(-50%,-14px);opacity:0;z-index:14;pointer-events:none;
+    display:flex;align-items:center;gap:9px;padding:7px 14px 7px 8px;border-radius:999px;
+    background:linear-gradient(180deg,rgba(255,211,79,.92),rgba(255,150,40,.92));
+    color:#4a2300;font-size:13px;font-weight:900;white-space:nowrap;
+    box-shadow:0 4px 16px rgba(0,0,0,.35);transition:opacity .2s ease,transform .25s ease}
+  #newFish.show{opacity:1;transform:translate(-50%,0)}
+  #newFish canvas{width:38px;height:28px;background:rgba(255,255,255,.55);border-radius:999px}
+  #newFish small{display:block;font-size:10.5px;font-weight:800;opacity:.8}
+
+  /* 판 안 안내 (그물에 걸렸을 때 등) */
+  #hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 150px);
+    transform:translateX(-50%);z-index:14;pointer-events:none;opacity:0;
+    color:#fff;font-size:17px;font-weight:900;white-space:nowrap;
+    text-shadow:0 2px 4px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.6);transition:opacity .15s ease}
+  #hint.show{opacity:1;animation:hintPulse .4s ease-in-out infinite alternate}
+  @keyframes hintPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.08)}}
+
+  /* ---------- 일시정지 ---------- */
+  .screen.pause{background:rgba(2,16,28,.78);z-index:40;gap:10px}
+  .pauseBox{display:flex;flex-direction:column;gap:10px;width:min(100%,280px)}
+  .pbtn{width:100%;padding:15px 18px;border-radius:var(--r-lg);font-size:17px;font-weight:900;
+    border:1.5px solid rgba(167,231,249,.35);background:rgba(8,52,84,.85);color:#eaf9ff;
+    box-shadow:0 4px 0 rgba(1,20,34,.9)}
+  .pbtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(1,20,34,.9)}
+  .pbtn.main{background:linear-gradient(180deg,var(--gold),var(--coral));color:#5a2c00;
+    border-color:transparent;box-shadow:0 4px 0 #b4590d}
+  .pbtn.warn{background:linear-gradient(180deg,#ff8095,#d8284a);color:#fff;border-color:transparent;
+    box-shadow:0 4px 0 #8a1028}
+  .pbtn.off{opacity:.55}
+  .pauseInfo{color:#9ec8dd;font-size:12.5px;line-height:1.6;min-height:20px}
+
+  /* 정산 버튼 줄 */
+  .overBtns{display:flex;flex-direction:column;gap:10px;width:min(100%,300px);margin-top:4px}
+  .overBtns .pbtn{padding:14px}
+
+  /* ---------- 허브 상단 바로가기 ---------- */
+  .back{width:38px;height:38px;border-radius:50%;margin-right:8px;flex:0 0 auto;
+    border:1px solid rgba(167,231,249,.3);background:rgba(6,45,73,.8);color:var(--laqua);
+    font-size:20px;font-weight:900;line-height:1}
+  .hubTop .ttl{display:flex;align-items:center}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:20px}
+  .tile{position:relative;padding:14px 12px 13px;border-radius:var(--r-md);text-align:left;
+    border:1px solid rgba(167,231,249,.22);color:#eaf9ff;
+    background:linear-gradient(160deg,rgba(14,86,124,.9),rgba(5,34,56,.9));
+    box-shadow:0 4px 14px rgba(0,10,20,.35)}
+  .tile:active{transform:scale(.98)}
+  .tile .ic{font-size:24px;line-height:1}
+  .tile .tn{margin-top:7px;font-size:15px;font-weight:900}
+  .tile .td{margin-top:2px;font-size:11px;color:#9ec8dd;line-height:1.4}
+  .tile.dex{background:linear-gradient(160deg,rgba(120,84,20,.85),rgba(56,34,8,.9));
+    border-color:rgba(255,211,79,.35)}
+
+  /* ---------- 바다 지도 ---------- */
+  .screen.map{justify-content:flex-start;align-items:stretch;padding:0;gap:0;text-align:left;
+    background:#010d18}
+  .mapHead{position:absolute;top:0;left:0;right:0;z-index:4;display:flex;align-items:center;
+    justify-content:space-between;
+    padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;
+    background:linear-gradient(180deg,rgba(2,22,38,.92),rgba(2,22,38,0))}
+  .mapHead h2{color:#eaf9ff;font-size:19px;font-weight:900;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+  .mapScroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch}
+  .mapSea{position:relative;width:100%}
+  .mapSea svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+  .depthMk{position:absolute;left:8px;color:rgba(214,238,251,.55);font-size:10px;font-weight:800;
+    letter-spacing:.5px;transform:translateY(-50%)}
+  .node{position:absolute;width:132px;margin-left:-66px;display:flex;flex-direction:column;
+    align-items:center;text-align:center;background:none;border:none;color:#eaf9ff;padding:0}
+  .orb{position:relative;width:84px;height:84px;border-radius:50%;
+    border:3px solid rgba(255,255,255,.55);overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 0 18px rgba(0,0,0,.35);
+    display:flex;align-items:center;justify-content:center;font-size:30px}
+  .orb img{width:118%;height:auto;margin-left:6%}
+  .node.sel .orb{border-color:var(--gold);
+    box-shadow:0 0 0 4px rgba(255,211,79,.35),0 0 26px rgba(255,211,79,.55)}
+  .node.sel .orb::after{content:'';position:absolute;inset:-3px;border-radius:50%;
+    border:3px solid var(--gold);animation:orbPulse 1.2s ease-out infinite}
+  @keyframes orbPulse{from{transform:scale(1);opacity:.9}to{transform:scale(1.35);opacity:0}}
+  /* 잠긴 곳은 그림만 어둡게 — 자물쇠까지 어두워지면 안 보인다 */
+  .node.lock .orb{border-color:rgba(255,255,255,.3);box-shadow:inset 0 0 0 100px rgba(0,8,16,.45),0 6px 18px rgba(0,0,0,.45)}
+  .node.lock .orb img{filter:grayscale(.85) brightness(.55)}
+  .node.soon .orb{border-style:dashed;border-color:rgba(255,255,255,.35);
+    box-shadow:inset 0 0 0 100px rgba(0,8,16,.55);color:rgba(255,255,255,.5)}
+  .node.soon .nn,.node.soon .nd{opacity:.6}
+  .node .lk{position:absolute;right:4px;bottom:4px;width:30px;height:30px;border-radius:50%;
+    background:#ffd34f;border:2px solid #fff;font-size:14px;z-index:1;
+    display:flex;align-items:center;justify-content:center}
+  .node .nn{margin-top:7px;font-size:14.5px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,.85)}
+  .node .nd{font-size:10.5px;color:#a9cfe4;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+  .node .badge{margin-top:3px;font-size:10px;font-weight:900;padding:2px 8px;border-radius:999px;
+    background:#5ee8a8;color:#05301f}
+  .node .badge.now{background:var(--gold);color:#4a2300}
+  .mapInfo{position:absolute;left:0;right:0;bottom:0;z-index:3;
+    padding:14px 16px calc(env(safe-area-inset-bottom) + 14px);
+    background:linear-gradient(180deg,rgba(2,18,32,.0),rgba(2,18,32,.95) 18%);
+    display:flex;flex-direction:column;gap:6px}
+  .mapInfo .mi{padding:12px 14px;border-radius:var(--r-md);
+    background:linear-gradient(180deg,rgba(9,56,89,.92),rgba(5,34,56,.94));
+    border:1px solid rgba(167,231,249,.22)}
+  .mi .mt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .mi .mn{color:#fff;font-size:17px;font-weight:900}
+  .mi .md{color:#7fb6d0;font-size:11px;font-weight:700}
+  .mi .mb{color:#bfe0f0;font-size:12px;line-height:1.5;margin-top:3px}
+  .mi .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+  .mi .chip{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;
+    background:rgba(167,231,249,.12);color:#d6eefb;border:1px solid rgba(167,231,249,.18)}
+  .mi .chip.hz{background:rgba(255,107,127,.16);color:#ffd0d8;border-color:rgba(255,107,127,.35)}
+  .mi .chip.ok{background:rgba(94,232,168,.16);color:#c8ffe4;border-color:rgba(94,232,168,.4)}
+  .mi .lockMsg{margin-top:7px;color:#ff9aa8;font-size:12px;font-weight:800}
+  .mapInfo .btn{width:100%;margin:0;padding:15px;font-size:17px;
+    background:linear-gradient(180deg,var(--gold),var(--coral));
+    color:#5a2c00;box-shadow:0 4px 0 #b4590d,0 10px 24px rgba(0,0,0,.4)}
+  .mapInfo .btn:disabled{background:rgba(167,231,249,.12);color:#6d8fa3;box-shadow:none}
+  /* 낮은 세로 화면 — 정보판을 줄여 지도가 보이게 */
+  @media (max-height:700px){
+    .mapInfo .mi{padding:9px 12px} .mi .mn{font-size:15.5px} .mi .mb{font-size:11.5px;line-height:1.45}
+    .mi .chips{margin-top:5px} .mi .chip{font-size:10.5px;padding:2px 7px}
+    .mapInfo .btn{padding:12px;font-size:16px}
+  }
+  /* 가로 화면 — 정보판을 오른쪽 기둥으로. 지도 노드는 왼쪽에 모인다 (renderMap 의 MAP_X) */
+  @media (orientation:landscape) and (max-height:560px){
+    .mapInfo{left:auto;top:0;width:min(46%,400px);justify-content:flex-end;
+      padding-top:calc(env(safe-area-inset-top) + 64px);
+      padding-right:calc(env(safe-area-inset-right) + 16px);
+      background:linear-gradient(90deg,rgba(2,18,32,0),rgba(2,18,32,.95) 14%)}
+  }
+
+  /* ---------- 도감 ---------- */
+  .screen.dex{justify-content:flex-start;align-items:stretch;overflow-y:auto;text-align:left;gap:0;
+    padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 24px);
+    background:linear-gradient(180deg,#2a1d08 0%,#120c04 40%,#070502 100%)}
+  .dexSum{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px}
+  .dexSum div{padding:10px 6px;border-radius:var(--r-sm);text-align:center;
+    background:rgba(255,211,79,.1);border:1px solid rgba(255,211,79,.25)}
+  .dexSum b{display:block;color:var(--gold);font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}
+  .dexSum span{color:#e8d3a8;font-size:10.5px;font-weight:700}
+  .dexSec{margin-bottom:16px}
+  .dexSec h3{color:#ffd88a;font-size:12px;font-weight:900;letter-spacing:1px;margin-bottom:8px;
+    display:flex;justify-content:space-between}
+  .dexSec h3 span{color:#a8936a;font-weight:700}
+  .dexGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .dcard{position:relative;padding:8px 4px 7px;border-radius:var(--r-sm);text-align:center;
+    background:linear-gradient(180deg,rgba(255,236,190,.12),rgba(255,236,190,.05));
+    border:1px solid rgba(255,220,150,.2);color:#fff3da}
+  .dcard canvas{width:100%;max-width:92px;height:auto;aspect-ratio:3/2;display:block;margin:0 auto}
+  .dcard .dn{font-size:11.5px;font-weight:900;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dcard .dc{font-size:10.5px;color:#e8c27a;font-weight:800;font-variant-numeric:tabular-nums}
+  .dcard.unk{background:rgba(255,255,255,.03);border-style:dashed;color:#7d6c50}
+  .dcard.unk .dc{color:#6d5d42}
+  .dcard .md{position:absolute;top:4px;right:5px;font-size:14px}
+  .dcard .tr{position:absolute;top:5px;left:6px;font-size:9.5px;font-weight:900;color:#ffd88a;opacity:.85}
+  .dexDetail{position:fixed;left:0;right:0;bottom:0;z-index:41;padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);
+    background:linear-gradient(180deg,#3a2a0e,#1a1206);border-top:1px solid rgba(255,211,79,.4);
+    border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.5);color:#fff3da}
+  .dexDetail.hidden{display:none}
+  .dexDetail .dh{display:flex;gap:12px;align-items:center}
+  .dexDetail canvas{width:120px;height:80px;flex:0 0 auto;background:rgba(255,255,255,.06);border-radius:12px}
+  .dexDetail .dnm{font-size:19px;font-weight:900}
+  .dexDetail .dtr{font-size:12px;color:#e8c27a;font-weight:800;margin-top:2px}
+  .dexDetail .dtip{margin-top:10px;font-size:13px;line-height:1.6;color:#f3e3c0}
+  .dexDetail .dpr{margin-top:8px;font-size:12px;color:#c9b07c;font-weight:700}
+  .dexDetail button{margin-top:12px;width:100%;padding:12px;border:none;border-radius:var(--r-sm);
+    background:rgba(255,211,79,.2);color:#ffe7a8;font-size:14px;font-weight:900}
 </style>
 </head>
 <body>
@@ -278,12 +467,13 @@
 
 <div id="hud">
   <div class="bars">
-    <div class="row"><b>체력</b><div class="bar"><i id="hpFill"></i></div></div>
-    <div class="row"><b>포만감</b><div class="bar"><i id="hungerFill"></i></div></div>
-    <div class="row"><b>부스트</b><div class="bar"><i id="stamFill"></i></div></div>
+    <div class="row"><b class="lHp">체력</b><div class="bar" id="hpBar"><i id="hpFill"></i><span id="hpNum">100</span></div></div>
+    <div class="row"><b class="lHunger">포만감</b><div class="bar" id="hungerBar"><i id="hungerFill"></i><span id="hungerNum">100</span></div></div>
+    <div class="row"><b class="lStam">부스트</b><div class="bar"><i id="stamFill"></i></div></div>
   </div>
 </div>
 <div id="topRight">
+  <button id="pauseBtn" aria-label="일시정지"><i></i><i></i></button>
   <div id="tierTag">티어 <em id="tierNum">2</em></div>
   <div id="eaten">먹은 물고기 0</div>
 </div>
@@ -299,17 +489,49 @@
   <div class="bh">꼬리는 안전하다 · 머리를 조심해라</div>
 </div>
 
-<div id="toast"><div class="t1">E V O L V E</div><div class="t2">리프 샤크</div></div>
+<div id="toast"><div class="t1">E V O L V E</div><div class="t2">리프 샤크</div><div class="t3"></div></div>
+<div id="newFish"><canvas width="76" height="56"></canvas><div><small>새 물고기 발견!</small><span class="nf"></span></div></div>
+<div id="hint"></div>
+
+<div id="pauseScreen" class="screen pause hidden">
+  <h1>일시정지</h1>
+  <div class="pauseBox">
+    <button class="pbtn main" id="pResume">▶ 계속하기</button>
+    <button class="pbtn" id="pRestart">↻ 처음부터</button>
+    <button class="pbtn" id="pHome">⌂ 기지로</button>
+    <button class="pbtn" id="pMute">♪ 소리 끄기</button>
+  </div>
+  <p class="pauseInfo" id="pauseInfo"></p>
+</div>
 
 <div id="hubScreen" class="screen hub hidden">
-  <div class="hubTop"><h2>해저 기지</h2>
+  <div class="hubTop"><div class="ttl"><button class="back" id="hubBack" aria-label="타이틀로">‹</button><h2>해저 기지</h2></div>
     <div><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
   </div>
-  <div class="hubSec"><h3>해역</h3><div id="stageList" class="cards"></div></div>
+  <div class="tiles">
+    <button class="tile" id="openMap"><div class="ic">🗺️</div><div class="tn">바다 지도</div><div class="td" id="mapTileSub">햇살 연안</div></button>
+    <button class="tile dex" id="openDex"><div class="ic">📖</div><div class="tn">물고기 도감</div><div class="td" id="dexTileSub">0 / 0 발견</div></button>
+  </div>
   <div class="hubSec"><h3>상어</h3><div id="sharkList" class="cards"></div></div>
   <div class="hubSec"><h3>능력치</h3><div id="upgList"></div></div>
   <div class="hubSec"><h3>부화기</h3><div id="hatchBox" class="hatch"></div></div>
-  <div class="hubGo"><button class="btn" id="diveBtn">출발</button></div>
+  <div class="hubGo"><button class="btn" id="diveBtn">바다로 ▶</button></div>
+</div>
+
+<div id="mapScreen" class="screen map hidden">
+  <div class="mapScroll" id="mapScroll"><div class="mapSea" id="mapSea"></div></div>
+  <div class="mapHead"><div class="ttl" style="display:flex;align-items:center">
+    <button class="back" id="mapBack" aria-label="기지로">‹</button><h2>바다 지도</h2></div>
+    <span class="pl" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,211,79,.16);border:1px solid rgba(255,211,79,.42);border-radius:999px;padding:5px 13px;color:var(--gold);font-size:14px;font-weight:900">◈ <span id="mapPearls">0</span></span>
+  </div>
+  <div class="mapInfo"><div class="mi" id="mapInfo"></div><button class="btn" id="mapDive">잠수 시작 ▶</button></div>
+</div>
+
+<div id="dexScreen" class="screen dex hidden">
+  <div class="hubTop"><div class="ttl"><button class="back" id="dexBack" aria-label="기지로">‹</button><h2 style="color:#ffe7a8">물고기 도감</h2></div></div>
+  <div class="dexSum" id="dexSum"></div>
+  <div id="dexBody"></div>
+  <div class="dexDetail hidden" id="dexDetail"></div>
 </div>
 
 <div id="startScreen" class="screen title">
@@ -340,6 +562,8 @@
   <b style="color:#6fe0ff">하늘</b> 부스트 필요</p>
   <p style="font-size:12px">보스는 <b style="color:#7dffd0">꼬리가 안전</b>하고
   <b style="color:#ff6b7f">머리가 위험</b>하다.<br>노란 고리가 뜨면 달려들어라.</p>
+  <p style="font-size:12px">오른쪽 위 <b>❙❙</b> 로 잠깐 멈출 수 있다.<br>
+  처음 먹은 물고기는 <b style="color:#ffd34f">도감</b>에 남는다.</p>
   <button class="btn" id="helpBack">닫기</button>
 </div>
 
@@ -354,9 +578,10 @@
   <div class="gains">
     <div class="gain"><span>획득 진주</span><b id="gPearls">+0</b></div>
     <div class="gain" id="gHatchRow"><span>부화 진행</span><b id="gHatch">+0%</b></div>
+    <div class="gain" id="gDexRow"><span>도감 새 물고기</span><b id="gDex">+0종</b></div>
   </div>
   <div id="unlockNote" class="unlock hidden"></div>
-  <button class="btn" id="retryBtn">계속</button>
+  <div class="overBtns" id="overBtns"></div>
 </div>
 
 <script>
@@ -415,7 +640,7 @@ const FISH = [
   { shape:'fish', id:'wrasse',   name:'청줄놀래기',tier:2, len:24, body:'#4db8ff', fin:'#ffd24d', behavior:'school', speed:66, depth:[.2,.7], school:true },
   { shape:'lion', id:'lionfish', name:'쏠배감펭',  tier:3, len:34, body:'#ff6b3d', fin:'#fff0e0', behavior:'drift',  speed:30, depth:[.3,.85], toxic:true, stripes:true },
   { shape:'disc', id:'striped',  name:'돌돔',      tier:3, len:38, body:'#dde6ea', fin:'#2b3a52', behavior:'flee',   speed:76, depth:[.25,.8], stripes:true },
-  { shape:'squid', id:'squid',    name:'오징어',    tier:4, len:46, body:'#ffb3c7', fin:'#d4718f', behavior:'drift',  speed:58, depth:[.2,.8] },
+  { shape:'squid', id:'squid',    name:'오징어',    tier:4, len:46, body:'#ffb3c7', fin:'#d4718f', behavior:'drift',  speed:58, depth:[.2,.8], ink:true },
   { shape:'eel', id:'moraykid', name:'곰치 치어', tier:4, len:52, body:'#8aa83c', fin:'#5d7524', behavior:'aggro',  speed:70, depth:[.5,.95] },
   { shape:'predator', id:'reefpup',  name:'상어 치어', tier:5, len:64, body:'#9fb4c4', fin:'#6b8294', behavior:'aggro',  speed:88, depth:[.2,.8] },
   { shape:'clam', id:'clam',     name:'대왕조개',  tier:5, len:40, body:'#e0cdf5', fin:'#9a7fc0', behavior:'bottom', speed:0,  depth:[.92,.99], shell:true },
@@ -459,7 +684,8 @@ const STAGES = [
     light:'shafts', terrain:'reef',
     mote:'rgba(200,238,255,.30)', flora:'rgba(38,104,78,.42)', rock:'rgba(3,38,62,.5)',
     fish:['anchovy','shrimp','clown','mackerel','puffer','seabass','crab','ray','barra','jelly'],
-    boss:'giant_barra', hungerMul:1.0, reqBase:2 },
+    boss:'giant_barra', hungerMul:1.0, reqBase:2,
+    icon:'☀️', hazards:['net'] },
 
   { id:'coral', name:'산호 정원', depth:'30 ~ 80m',
     blurb:'색이 폭발한다. 독과 가시가 숨어 있다',
@@ -468,7 +694,8 @@ const STAGES = [
     light:'shafts', terrain:'coral',
     mote:'rgba(255,214,160,.34)', flora:'rgba(226,122,168,.45)', rock:'rgba(10,62,64,.5)',
     fish:['parrot','butterfly','wrasse','lionfish','striped','squid','moraykid','reefpup','clam','urchin','jelly'],
-    boss:'giant_moray', hungerMul:1.1, reqBase:3 },
+    boss:'giant_moray', hungerMul:1.1, reqBase:3,
+    icon:'🪸', hazards:['ink'] },
 
   { id:'wreck', name:'난파선 해구', depth:'80 ~ 250m',
     blurb:'어둡다. 보이는 곳까지만 안전하다',
@@ -477,9 +704,58 @@ const STAGES = [
     light:'dark', terrain:'wreck',
     mote:'rgba(190,215,230,.22)', flora:'rgba(58,76,70,.40)', rock:'rgba(6,26,38,.62)',
     fish:['sardine','yellowray','angler','conger','tuna','swordfish','hammer','blueshark','mine','jelly'],
-    boss:'rogue_white', hungerMul:1.2, reqBase:3 },
+    boss:'rogue_white', hungerMul:1.2, reqBase:3,
+    icon:'⚓', hazards:['mine','lure'] },
 ];
 const STAGE_BY_ID = {}; STAGES.forEach(x => STAGE_BY_ID[x.id] = x);
+
+/* 지도에만 보이는 다음 바다 — 아직 데이터가 없다. 해역을 만들면 STAGES 로 옮기고 여기서 지운다 */
+const SOON = [
+  { name:'빙하 해역',   depth:'0 ~ 150m',  water:['#5b9fb8','#1d4f66'], icon:'🧊',
+    teaser:'얼음 천장 아래, 바다표범과 범고래의 바다' },
+  { name:'심해 열수구', depth:'1000m ~',   water:['#6a2e20','#1a0a08'], icon:'🌋',
+    teaser:'뜨거운 물이 솟는 칠흑의 바다' },
+  { name:'왕좌의 해구', depth:'???',       water:['#4a3a7e','#0e0820'], icon:'👑',
+    teaser:'바다의 왕이 기다린다' },
+];
+
+/* 도감 한 줄 설명 — 아이가 읽는 글이라 짧게, 게임에서 쓸모 있는 말로 */
+const FISH_TIP = {
+  anchovy:'떼로 몰려다닌다. 떼 한가운데로 돌진하면 한 번에 여러 마리!',
+  shrimp:'바닥 근처를 둥실둥실. 느려서 잡기 쉽다',
+  clown:'겁이 많아서 다가가면 쏙 도망친다',
+  mackerel:'떼로 다니는 빠른 물고기. 티어 3이 되면 먹을 수 있다',
+  puffer:'먹으면 독! 체력이 깎이고 몸이 느려진다. 노란 몸을 조심',
+  seabass:'재빠르게 도망친다. BOOST 로 따라잡자',
+  crab:'단단한 껍질 — BOOST 로 들이받아야 깨진다. 톱상어는 그냥 부순다',
+  ray:'바닥 근처를 날개처럼 펄럭이며 헤엄친다',
+  barra:'나보다 작으면 쫓아온다. 빨간 테두리면 도망쳐!',
+  jelly:'절대 먹을 수 없다. 닿으면 찌릿! 느려진다',
+  parrot:'산호를 갉아먹는 알록달록한 물고기',
+  butterfly:'줄무늬가 예쁘지만 재빠르게 도망친다',
+  wrasse:'파란 몸에 노란 꼬리. 떼로 다닌다',
+  lionfish:'화려한 가시에 독이 있다. 먹으면 아프다!',
+  striped:'줄무늬 돌돔. 재빨리 도망친다',
+  squid:'다가가면 먹물을 뿜고 달아난다. 먹물 속에선 앞이 안 보인다',
+  moraykid:'바닥 굴에서 튀어나와 덤빈다',
+  reefpup:'작은 상어. 나보다 크면 사냥하러 온다',
+  clam:'껍질이 엄청 단단하다. BOOST 로 깨면 큰 보상!',
+  urchin:'바닥의 가시 덩어리. 닿으면 따끔!',
+  sardine:'엄청 큰 떼로 다닌다. 어둠 속 간식',
+  yellowray:'바닥에 숨어 있는 노란 가오리',
+  angler:'머리 위 불빛으로 꾀어낸다. 어둠 속 불빛을 조심!',
+  conger:'길쭉한 몸으로 난파선 사이를 누빈다',
+  tuna:'바다에서 제일 빠른 물고기 중 하나. BOOST 필수',
+  swordfish:'칼 같은 주둥이로 돌진해온다',
+  hammer:'망치 머리 상어. 크면 사냥해온다',
+  blueshark:'파란 상어. 끈질기게 쫓아온다',
+  mine:'오래된 기뢰. 닿으면 펑! 보스를 유인해서 터뜨릴 수도 있다',
+};
+const BOSS_TIP = {
+  giant_barra:'빨간 점선이 보이면 옆으로 피하고, 멈췄을 때 꼬리를 물어라',
+  giant_moray:'몸이 엄청 길다. 머리 쪽은 위험, 꼬리 쪽은 안전',
+  rogue_white:'난파선 해구의 무법자. 기뢰 쪽으로 돌진하게 만들면 큰 피해!',
+};
 
 /* ---------------- 상어 로스터 ---------------- */
 /* base = 시작 티어. 깊은 바다는 더 높은 기본 티어를 요구한다 —
@@ -526,6 +802,11 @@ const freshSave = () => ({
   stage: 'shore',
   muted: false,
   best: { tier: 0, eaten: 0 },
+  /* 도감 — 판을 넘어 쌓인다. 중간에 나가도 남는다 (먹은 기억은 진짜니까) */
+  dex: {},            // 어종 id → 먹은 수
+  seen: {},           // 먹을 수 없는 것(해파리·성게·기뢰) — 닿아본 적 있음
+  bossKills: {},      // 보스 id → 쓰러뜨린 수
+  totalEaten: 0,
 });
 let SAVE = freshSave();
 
@@ -541,7 +822,11 @@ function loadSave(){
       upg:    { ...f.upg,    ...(o.upg    || {}) },
       hatch:  { ...f.hatch,  ...(o.hatch  || {}) },
       stages: { ...f.stages, ...(o.stages || {}) },
-      best:   { ...f.best,   ...(o.best   || {}) } };
+      best:   { ...f.best,   ...(o.best   || {}) },
+      dex:    { ...(o.dex       || {}) },
+      seen:   { ...(o.seen      || {}) },
+      bossKills: { ...(o.bossKills || {}) } };
+    if (typeof SAVE.totalEaten !== 'number') SAVE.totalEaten = 0;
     if (!SHARK_BY_ID[SAVE.active] || !SAVE.sharks[SAVE.active]) SAVE.active = 'reef';
     if (!STAGE_BY_ID[SAVE.stage]) SAVE.stage = 'shore';
   } catch (e) { SAVE = freshSave(); }     // 손상된 저장은 조용히 초기화
@@ -557,6 +842,24 @@ function stageLock(st, i){
   const base = (SHARK_BY_ID[SAVE.active] || SHARKS[0]).base;
   if (base < st.reqBase) return '기본 티어 ' + st.reqBase + ' 이상 상어 필요';
   return null;
+}
+
+const stageIndex = id => STAGES.findIndex(x => x.id === id);
+const stageLockById = id => { const i = stageIndex(id); return i < 0 ? '없는 해역' : stageLock(STAGES[i], i); };
+/* 지금 갈 수 있는 해역 중 가장 앞선 곳 — 안 깬 곳이 있으면 그곳, 다 깼으면 가장 깊은 곳 */
+function bestStageId(){
+  let pick = STAGES[0].id;
+  for (let i = 0; i < STAGES.length; i++) {
+    if (stageLock(STAGES[i], i)) break;
+    pick = STAGES[i].id;
+    if (!stageCleared(STAGES[i].id)) break;
+  }
+  return pick;
+}
+/* 선택된 해역이 잠겨 있으면 갈 수 있는 곳으로 옮긴다.
+   (상어를 바꾸면 고른 해역이 잠길 수 있다 — 예전엔 잠긴 해역으로 그냥 출발했다) */
+function fixStageSel(){
+  if (stageLockById(SAVE.stage)) SAVE.stage = bestStageId();
 }
 
 /* 현재 상어 + 업그레이드에서 나오는 배수들 */
@@ -780,6 +1083,14 @@ const SFX = {
   ui(){      this.tone(660, 0.07, 'triangle', 0.13); },
   buy(){     this.tone(540, 0.09, 'triangle', 0.15); setTimeout(()=>this.tone(810,0.12,'triangle',0.14), 80); },
   dead(){    this.tone(240, 1.0, 'sawtooth', 0.2, 55); },
+  net(){     this.noise(0.22, 900, 0.16); this.tone(180, 0.25, 'triangle', 0.12, 120); },
+  ink(){     this.noise(0.4, 380, 0.16, 'lowpass'); },
+  boom(){    this.tone(110, 0.9, 'sawtooth', 0.26, 30); this.noise(0.8, 260, 0.34, 'lowpass'); },
+  newFish(){ [659, 880, 1175].forEach((f, i) =>
+               setTimeout(() => this.tone(f, 0.18, 'triangle', 0.13), i*70)); },
+  medal(){   [784, 988, 1175, 1568].forEach((f, i) =>
+               setTimeout(() => this.tone(f, 0.22, 'square', 0.07), i*80)); },
+  suspend(){ if (this.ac && this.ac.state === 'running') this.ac.suspend().catch(()=>{}); },
 };
 
 /* ==========================================================================
@@ -1004,6 +1315,8 @@ const G = {
   shake:0, danger:0, eaten:0, evolveFlash:0,
   boss:null, bossSpawned:false, cleared:false, pearls:0, endTimer:0,
   stage:null, pool:[], bossDef:null, attract:false,
+  paused:false, newSpecies:0,
+  hz:{},                 // 해역 장치 상태 — HAZARDS[key].init() 이 채운다
 };
 
 function makePlayer(){
@@ -1015,6 +1328,7 @@ function makePlayer(){
     hp:maxHp, maxHp, hunger:100, stam:100,
     growth:0, boosting:false, slow:0, iframe:0, biteCd:0,
     phase:0, hurtFlash:0, st,
+    snare:0, snareImm:0, boostPrev:false,   // 그물
   };
 }
 /* 흡입 반경 — 감각 업그레이드와 귀상어 능력이 여기로 들어온다 */
@@ -1026,7 +1340,7 @@ const boostBtn = document.getElementById('boost');
 const stageEl  = document.getElementById('stage');
 
 stageEl.addEventListener('pointerdown', e => {
-  if (!G.running) return;
+  if (!G.running || G.paused) return;
   if (IN.id !== -1) return;
   IN.id = e.pointerId; IN.active = true;
   IN.ox = e.clientX; IN.oy = e.clientY; IN.dx = 0; IN.dy = 0; IN.mag = 0;
@@ -1140,6 +1454,242 @@ function ring(x, y){
 }
 
 /* ==========================================================================
+   해역 장치 — 해역마다 규칙을 하나씩 더한다. 물색·어종만 다르면 다 같은 바다다.
+   STAGES[].hazards 에 키를 적으면 그 해역에서 켜진다. 지도와 입장 안내도 여기서 읽는다.
+   새 장치 = 항목 하나 { icon, name, tip, init, update, drawWorld, drawScreen } (함수는 전부 선택)
+     init()          런 시작 시 G.hz 에 상태를 만든다
+     update(dt)      고정 틱
+     drawWorld()     월드 좌표 (물고기보다 먼저)
+     drawScreen(W,H) 화면 좌표 (어둠 위에 — 어둠 속에서도 보여야 하는 것)
+   ========================================================================== */
+const HAZARDS = {
+  /* 햇살 연안 — 수면에서 늘어진 그물. 걸리면 거의 못 움직이고 BOOST 연타로 빠져나온다 */
+  net: {
+    icon:'🕸️', name:'어선 그물', tip:'걸리면 BOOST 를 연타해서 빠져나와라',
+    init(){
+      const rng = mulberry(7700 + WORLD.w), n = 4;
+      G.hz.nets = [];
+      for (let i = 0; i < n; i++) {
+        const x = WORLD.w*(i + 0.5)/n + (rng() - 0.5)*WORLD.w*0.1;
+        G.hz.nets.push({ x0:x, x, w: 150 + rng()*70, h: 240 + rng()*150, ph: rng()*6.28 });
+      }
+    },
+    update(dt){
+      const p = G.player;
+      for (const n of G.hz.nets) n.x = n.x0 + Math.sin(G.t*0.25 + n.ph)*60;
+      p.snareImm = Math.max(0, p.snareImm - dt);
+      if (p.snare > 0) {
+        if (IN.boost && !p.boostPrev) {                 // 누를 때마다 한 번씩 몸부림
+          p.snare -= 0.4; G.shake = Math.max(G.shake, 3); SFX.bite();
+          burst(p.x, p.y, 'rgba(230,240,255,.85)', 5, 80, 'bubble');
+        }
+        p.snare -= dt*0.5;                               // 안 눌러도 언젠가는 풀린다
+        if (p.snare <= 0) {
+          p.snare = 0; p.snareImm = 1.6;                 // 빠져나온 직후 바로 다시 걸리지 않게
+          floatText(p.x, p.y - p.len*0.8, '탈출!', '#7dffd0');
+        }
+      } else if (p.snareImm <= 0) {
+        for (const n of G.hz.nets) {                     // 그물은 수면(y=0)에서 아래로 늘어진다
+          if (Math.abs(p.x - n.x) < n.w*0.5 && p.y < n.h + 6) {
+            p.snare = 2.2; p.vx *= 0.15; p.vy *= 0.15;
+            SFX.net(); G.shake = Math.max(G.shake, 4);
+            floatText(p.x, p.y - p.len*0.8, '그물에 걸렸다!', '#ffd84d');
+            break;
+          }
+        }
+      }
+      p.boostPrev = IN.boost;
+      showHint(p.snare > 0 ? '🕸️ BOOST 연타!' : '');
+    },
+    drawWorld(){
+      const c = G.cam;
+      for (const n of G.hz.nets) {
+        if (Math.abs(n.x - c.x) > c.w*0.5 + n.w) continue;
+        const l = n.x - n.w/2, sw = Math.sin(G.t*0.9 + n.ph)*12;
+        const cols = 7, rows = Math.max(4, Math.round(n.h/30));
+        ctx.strokeStyle = 'rgba(232,240,246,.42)'; ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        for (let i = 0; i <= cols; i++) {                // 세로줄 — 아래로 갈수록 흔들린다
+          const x = l + n.w*i/cols;
+          ctx.moveTo(x, 0); ctx.quadraticCurveTo(x + sw*0.3, n.h*0.5, x + sw, n.h);
+        }
+        for (let j = 1; j <= rows; j++) {                // 가로줄
+          const y = n.h*j/rows, k = (y/n.h)*(y/n.h);
+          ctx.moveTo(l + sw*k, y); ctx.lineTo(l + n.w + sw*k, y);
+        }
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(150,110,60,.9)'; ctx.lineWidth = 3;   // 위쪽 밧줄
+        ctx.beginPath(); ctx.moveTo(l - 8, 2); ctx.lineTo(l + n.w + 8, 2); ctx.stroke();
+        ctx.fillStyle = '#ff7a2a';                       // 부표
+        for (let i = 0; i <= 3; i++) { ctx.beginPath(); ctx.arc(l + n.w*i/3, 2, 7, 0, 6.2832); ctx.fill(); }
+        ctx.fillStyle = 'rgba(70,80,90,.95)';            // 추
+        for (let i = 0; i <= 4; i++) { ctx.beginPath(); ctx.arc(l + n.w*i/4 + sw, n.h, 4, 0, 6.2832); ctx.fill(); }
+      }
+      const p = G.player;
+      if (p.snare > 0) {                                 // 걸린 상어를 그물이 휘감는다
+        const r = p.len*0.62;
+        ctx.save(); ctx.translate(p.x, p.y);
+        ctx.strokeStyle = 'rgba(240,245,250,.8)'; ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (let i = -3; i <= 3; i++) {
+          ctx.moveTo(i*r/3 - r*0.3, -r); ctx.lineTo(i*r/3 + r*0.3, r);
+          ctx.moveTo(i*r/3 + r*0.3, -r); ctx.lineTo(i*r/3 - r*0.3, r);
+        }
+        ctx.stroke(); ctx.restore();
+      }
+    },
+  },
+
+  /* 산호 정원 — 오징어에게 다가가면 먹물을 뿜고 달아난다. 먹물 속은 앞이 안 보인다 */
+  ink: {
+    icon:'🦑', name:'오징어 먹물', tip:'오징어에게 다가가면 먹물! 먹물 밖으로 헤엄쳐라',
+    init(){ G.hz.clouds = []; G.hz.inked = 0; },
+    squirt(f, nx, ny){                                   // updateFish 에서 부른다
+      G.hz.clouds.push({ x: f.x, y: f.y, r: 14, R: 105 + Math.random()*30,
+        vx: f.vx*0.15, vy: f.vy*0.15, life: 5.5, max: 5.5, seed: Math.random()*6.28 });
+      f.vx = -nx*f.def.speed*4.2; f.vy = -ny*f.def.speed*4.2;
+      SFX.ink();
+    },
+    update(dt){
+      const p = G.player; let inside = false;
+      for (let i = G.hz.clouds.length - 1; i >= 0; i--) {
+        const c = G.hz.clouds[i];
+        c.life -= dt;
+        if (c.life <= 0) { G.hz.clouds.splice(i, 1); continue; }
+        c.r = lerp(c.r, c.R, clamp(dt*3.2, 0, 1));
+        c.x += c.vx*dt; c.y += c.vy*dt - 4*dt; c.vx *= 0.985; c.vy *= 0.985;
+        if (c.life > 0.8 && Math.hypot(p.x - c.x, p.y - c.y) < c.r*0.8) inside = true;
+      }
+      G.hz.inked = clamp(G.hz.inked + (inside ? dt*3 : -dt*0.9), 0, 1);
+      showHint(inside ? '🦑 먹물! 밖으로 헤엄쳐!' : '');
+    },
+    drawWorld(){
+      for (const c of G.hz.clouds) {
+        const a = clamp(c.life/1.2, 0, 1) * clamp((c.max - c.life)*4, 0, 1);
+        for (let k = 0; k < 4; k++) {                    // 덩어리 몇 개를 겹쳐 뭉게뭉게
+          const ang = c.seed + k*1.7, off = k ? c.r*0.38 : 0;
+          const x = c.x + Math.cos(ang)*off, y = c.y + Math.sin(ang)*off*0.7;
+          const rr = c.r*(k ? 0.62 : 0.85);
+          const g = ctx.createRadialGradient(x, y, rr*0.15, x, y, rr);
+          g.addColorStop(0, 'rgba(18,8,30,' + (0.92*a) + ')');
+          g.addColorStop(0.7, 'rgba(26,12,40,' + (0.6*a) + ')');
+          g.addColorStop(1, 'rgba(26,12,40,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(x, y, rr, 0, 6.2832); ctx.fill();
+        }
+      }
+    },
+    drawScreen(W, H){
+      const k = G.hz.inked;
+      if (k < 0.01) return;
+      const g = ctx.createRadialGradient(W/2, H/2, Math.min(W, H)*0.12, W/2, H/2, Math.max(W, H)*0.6);
+      g.addColorStop(0, 'rgba(14,6,26,' + (0.5*k) + ')');
+      g.addColorStop(1, 'rgba(10,4,20,' + (0.93*k) + ')');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    },
+  },
+
+  /* 난파선 해구 — 기뢰. 닿으면 터진다. 보스가 들이받아도 터진다 → 유인하는 전략이 생긴다 */
+  mine: {
+    icon:'💣', name:'기뢰', tip:'닿으면 펑! 보스를 기뢰 쪽으로 유인하면 보스도 펑!',
+    drawWorld(){                                         // 기절한 물고기 머리 위에 별
+      for (const f of G.fish) {
+        if (!(f.stun > 0)) continue;
+        for (let i = 0; i < 3; i++) {
+          const a = G.t*5 + i*2.09;
+          ctx.fillStyle = '#ffe27a';
+          ctx.beginPath();
+          ctx.arc(f.x + Math.cos(a)*f.def.len*0.35, f.y - f.def.len*0.5 + Math.sin(a)*4, 2.4, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+    },
+    drawScreen(W, H){                                    // 어둠 속에서도 깜빡이는 경고등
+      const c = G.cam;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const f of G.fish) {
+        if (!f.def.mine) continue;
+        const x = W/2 + f.x - c.x, y = H/2 + f.y - c.y;
+        if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+        const a = 0.35 + 0.35*Math.sin(G.t*5 + f.phase);
+        const g = ctx.createRadialGradient(x, y, 1, x, y, 16);
+        g.addColorStop(0, 'rgba(255,90,90,' + a + ')'); g.addColorStop(1, 'rgba(255,60,60,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 16, 0, 6.2832); ctx.fill();
+      }
+      ctx.restore();
+    },
+  },
+
+  /* 난파선 해구 — 아귀 불빛. 어둠 위에 그려서, 깜깜한 데서 불빛만 보인다 */
+  lure: {
+    icon:'🏮', name:'아귀 불빛', tip:'어둠 속 작은 불빛은 아귀일지도 몰라',
+    drawScreen(W, H){
+      const c = G.cam;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const f of G.fish) {
+        if (!f.def.lure) continue;
+        const L = f.def.len, dir = f.vx < 0 ? -1 : 1;
+        const x = W/2 + f.x + dir*L*0.62 - c.x, y = H/2 + f.y - L*0.48 - c.y;
+        if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+        const a = 0.55 + 0.25*Math.sin(G.t*2.4 + f.phase);
+        const g = ctx.createRadialGradient(x, y, 1, x, y, 22);
+        g.addColorStop(0, 'rgba(255,248,180,' + a + ')'); g.addColorStop(1, 'rgba(200,255,140,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 22, 0, 6.2832); ctx.fill();
+      }
+      ctx.restore();
+    },
+  },
+};
+const stageHazards = st => (st && st.hazards || []).map(k => HAZARDS[k]).filter(Boolean);
+/* G.hz.on 은 런을 시작할 때만 켜진다 — 타이틀·기지 뒤 배경에서는 장치가 돌지 않는다 */
+function hazardsCall(fn, a, b){
+  if (fn !== 'init' && G.hz.on !== G.stage.id) return;
+  for (const h of stageHazards(G.stage)) if (h[fn]) h[fn](a, b);
+}
+
+const MINE_R = 170, MINE_BOSS_DMG = 90;
+function explodeMine(f){
+  if (f.dead) return;
+  f.dead = true;
+  SAVE.seen[f.def.id] = true;
+  burst(f.x, f.y, '#ffb347', 30, 330);
+  burst(f.x, f.y, 'rgba(255,240,200,.9)', 16, 200, 'bubble');
+  G.parts.push({ x: f.x, y: f.y, vx:0, vy:0, life:0.55, max:0.55, r:16, color:'#ffb347', kind:'boom' });
+  G.shake = Math.max(G.shake, 15); SFX.boom();
+  const p = G.player, dp = Math.hypot(p.x - f.x, p.y - f.y) || 1;
+  if (dp < MINE_R && !G.attract) {
+    const k = 1 - dp/MINE_R;
+    hurtPlayer(Math.round(10 + 14*k), (p.x - f.x)/dp, (p.y - f.y)/dp, 0.9);
+    p.vx += (p.x - f.x)/dp*260*k; p.vy += (p.y - f.y)/dp*260*k;
+  }
+  for (const o of G.fish) {                              // 주변 물고기는 기절 — 먹을 기회
+    if (o === f || o.dead || o.def.shock) continue;
+    const d = Math.hypot(o.x - f.x, o.y - f.y) || 1;
+    if (d < MINE_R) { o.stun = 2.4; o.vx += (o.x - f.x)/d*240; o.vy += (o.y - f.y)/d*240; }
+  }
+  const b = G.boss;
+  if (b && b.state !== 'dead' && b.state !== 'intro') {
+    const d = Math.hypot(b.x - f.x, b.y - f.y);
+    if (d < MINE_R + G.bossDef.len*0.3) {
+      b.hp -= MINE_BOSS_DMG; b.flash = 1;
+      b.state = 'stagger'; b.t = 0;                      // 맞으면 휘청 — 덤으로 약점 창
+      floatText(b.x, b.y - G.bossDef.len*0.3, '펑! -' + MINE_BOSS_DMG, '#ffb347');
+      if (b.hp <= 0) bossDown();
+    }
+  }
+}
+
+/* 화면 아래 안내 한 줄 — 같은 글이면 DOM 을 건드리지 않는다 */
+let hintNow = null;
+function showHint(text){
+  if (text === hintNow) return;
+  hintNow = text;
+  const h = document.getElementById('hint');
+  h.textContent = text;
+  h.classList.toggle('show', !!text);
+}
+
+/* ==========================================================================
    시뮬레이션
    ========================================================================== */
 
@@ -1160,7 +1710,8 @@ function updatePlayer(dt){
 
   const slowF = p.slow > 0 ? 0.55 : 1;
   p.slow = Math.max(0, p.slow - dt);
-  const speed = e.speed * p.st.speed * (p.boosting ? BOOST_MULT : 1) * slowF;
+  const snareF = p.snare > 0 ? 0.12 : 1;               // 그물 — 거의 못 움직인다
+  const speed = e.speed * p.st.speed * (p.boosting ? BOOST_MULT : 1) * slowF * snareF;
 
   const acc = mag > 0 ? 7.5 : 2.0;
   p.vx = lerp(p.vx, dx*speed*mag, clamp(acc*dt, 0, 1));
@@ -1194,6 +1745,7 @@ function eatFish(f){
   p.growth += Math.pow(def.tier, 1.6);
   burst(f.x, f.y, def.body, 6 + def.tier*2, 90 + def.tier*18);
   SFX.eat(def.tier);
+  dexRecord(def, f);
   if (def.toxic) {          // 복어: 먹으면 중독 — "보고 먹어라"를 가르치는 장치
     p.hp -= 8; p.slow = 1.5; p.hurtFlash = 1;
     G.shake = Math.max(G.shake, 5);
@@ -1201,6 +1753,47 @@ function eatFish(f){
     if (p.hp <= 0) { gameOver(); return; }
   }
   if (p.growth >= EVO[p.stage].need && p.stage < EVO.length - 1) evolve();
+}
+
+/* ---------------- 도감 ----------------
+   먹은 수는 판을 넘어 쌓인다. 처음 먹으면 "새 물고기 발견", 정해진 수를 채우면 메달.
+   보너스 진주는 이번 판 진주(G.pearls)에 들어간다 — 중간에 나가면 진주는 사라지고 기록만 남는다 */
+const DEX_NEW_PEARLS = 5;                     // × 티어
+const medalSteps = def => def.tier >= 4 ? [3, 10, 30] : [10, 40, 100];
+const MEDALS = ['🥉', '🥈', '🥇'];
+const MEDAL_NAMES = ['동메달', '은메달', '금메달'];
+function medalOf(def, n){
+  const s = medalSteps(def); let m = -1;
+  for (let i = 0; i < s.length; i++) if (n >= s[i]) m = i;
+  return m;
+}
+function dexRecord(def, f){
+  if (G.attract) return;
+  const before = SAVE.dex[def.id] || 0, now = before + 1;
+  SAVE.dex[def.id] = now;
+  SAVE.totalEaten = (SAVE.totalEaten || 0) + 1;
+  if (!before) {
+    const bonus = def.tier*DEX_NEW_PEARLS;
+    G.pearls += bonus; G.newSpecies++;
+    showNewFish(def, '+' + bonus + ' 진주');
+    SFX.newFish();
+    writeSave();                               // 새 발견은 바로 남긴다 — 앱이 꺼져도 도감은 지킨다
+    return;
+  }
+  const m = medalOf(def, now);
+  if (m > medalOf(def, before)) {
+    const bonus = def.tier*10*(m + 1);
+    G.pearls += bonus;
+    floatText(f.x, f.y - 26, MEDALS[m] + ' ' + def.name + ' ' + now + '마리!', '#ffd34f');
+    showNewFish(def, MEDAL_NAMES[m] + ' · +' + bonus + ' 진주', MEDALS[m] + ' ' + def.name + ' ' + now + '마리');
+    SFX.medal();
+  }
+}
+function dexSeen(def){
+  if (G.attract || SAVE.seen[def.id]) return;
+  SAVE.seen[def.id] = true; G.newSpecies++;
+  showNewFish(def, '먹을 수 없다! 조심', '새로 만났다');
+  writeSave();
 }
 
 function evolve(){
@@ -1234,7 +1827,8 @@ function handleContact(f, nx, ny){
   if (G.attract) return;                 // 타이틀 연출 중에는 아무 일도 일어나지 않는다
   const p = G.player, def = f.def;
 
-  if (def.shock) { hurtPlayer(12, nx, ny, 0.95); p.slow = 1.0; return; }
+  if (def.mine)  { dexSeen(def); explodeMine(f); return; }
+  if (def.shock) { dexSeen(def); hurtPlayer(12, nx, ny, 0.95); p.slow = 1.0; return; }
 
   if (def.shell) {                       // 게: 부스트로만 깬다 — 부스트에 용도를 준다
     if ((p.boosting || p.st.shark.shellBreaker) && p.tier >= def.tier) {
@@ -1403,6 +1997,16 @@ function updateBoss(dt){
   b.y = clamp(b.y + b.vy*dt, 90,  WORLD.h - 90);
 
   if (b.state === 'intro') return;
+
+  // 기뢰를 들이받으면 보스도 터진다 — 기뢰 쪽으로 유인하는 전략
+  for (const f of G.fish) {
+    if (!f.def.mine || f.dead) continue;
+    if (Math.hypot(f.x - b.x, f.y - b.y) < G.bossDef.len*0.38 + f.def.len*0.4) {
+      explodeMine(f);
+      if (b.state === 'dead') return;
+      break;
+    }
+  }
 
   if (dist < G.bossDef.len*0.34 + p.len*0.45) {
     const staggered = b.state === 'stagger';
@@ -1602,7 +2206,10 @@ function updateFish(dt){
 
     if (def.tier > p.tier && !def.shock) nearestDanger = Math.min(nearestDanger, dist);
 
-    switch (def.behavior) {
+    if (f.stun > 0) {                                     // 기뢰에 기절 — 둥실 떠오른다
+      f.stun -= dt;
+      f.vx *= 0.94; f.vy = lerp(f.vy, -12, 0.05);
+    } else switch (def.behavior) {
       case 'float':
         f.vx = lerp(f.vx, Math.sin(G.t*0.5 + f.phase)*14, 0.03);
         f.vy = lerp(f.vy, Math.cos(G.t*0.33 + f.phase)*11 - 5, 0.03);
@@ -1647,6 +2254,12 @@ function updateFish(dt){
       default: wander(f, dt);
     }
 
+    // 오징어 먹물 — 다가가면 뿜고 달아난다 (먹물 장치가 켜진 해역에서만)
+    if (def.ink && G.hz.clouds && !G.attract && dist < 150 && !(f.inkAt > G.t)) {
+      f.inkAt = G.t + 7;
+      HAZARDS.ink.squirt(f, nx, ny);
+    }
+
     // 흡입 — 하위 티어는 반경 안에 들면 끌려온다
     const sucR = suctionR(p);
     if (def.tier < p.tier && !def.shock && !def.shell && dist < sucR) {
@@ -1673,6 +2286,7 @@ function updateParts(dt){
     q.life -= dt;
     if (q.life <= 0) { G.parts.splice(i, 1); continue; }
     if (q.kind === 'ring') { q.r += 420*dt; continue; }
+    if (q.kind === 'boom') { q.r += 620*dt; continue; }
     q.x += q.vx*dt; q.y += q.vy*dt;
     if (q.kind === 'bubble') { q.vy -= 60*dt; q.vx *= 0.97; }
     else { q.vy += 70*dt; q.vx *= 0.94; q.vy *= 0.96; }
@@ -1699,7 +2313,7 @@ function updateCam(dt){
    렌더 — 스프라이트 0장, 전부 Canvas Path 로 절차적 생성
    ========================================================================== */
 const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
+let ctx = cv.getContext('2d');      // let — 도감 아이콘을 그릴 때 잠깐 다른 캔버스로 바꿔 끼운다
 let DPR = 1;
 
 function resize(){
@@ -2439,6 +3053,14 @@ function drawParts(){
       ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.2832); ctx.stroke();
       continue;
     }
+    if (q.kind === 'boom') {                          // 폭발 충격파
+      ctx.strokeStyle = 'rgba(255,190,90,' + (a*0.85) + ')';
+      ctx.lineWidth = 4 + a*10;
+      ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.2832); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,230,160,' + (a*a*0.35) + ')';
+      ctx.fill();
+      continue;
+    }
     if (q.kind === 'text') {
       ctx.globalAlpha = a;
       ctx.font = '800 15px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
@@ -2529,6 +3151,7 @@ function render(){
   ctx.save();
   ctx.translate(W/2 - G.cam.x + sx, H/2 - G.cam.y + sy);
   if (!titleBg) drawSeabed();
+  if (!G.attract) hazardsCall('drawWorld');
   const mx = W*0.5 + 160, my = H*0.5 + 160;
   for (const f of G.fish) {
     if (Math.abs(f.x - G.cam.x) > mx || Math.abs(f.y - G.cam.y) > my) continue;
@@ -2541,6 +3164,7 @@ function render(){
   ctx.restore();
 
   drawDark(W, H);
+  if (!G.attract) hazardsCall('drawScreen', W, H);
   drawOverlay(W, H);
   drawStick();
 }
@@ -2551,29 +3175,37 @@ function render(){
 const el = id => document.getElementById(id);
 const UI = {
   hp: el('hpFill'), hunger: el('hungerFill'), stam: el('stamFill'),
+  hpBar: el('hpBar'), hungerBar: el('hungerBar'), hpNum: el('hpNum'), hungerNum: el('hungerNum'),
   tier: el('tierNum'), eaten: el('eaten'),
   grow: el('growFill'), growLabel: el('growLabel'),
   toast: el('toast'), toastName: el('toast').querySelector('.t2'),
-  toastLabel: el('toast').querySelector('.t1'),
+  toastLabel: el('toast').querySelector('.t1'), toastSub: el('toast').querySelector('.t3'),
   start: el('startScreen'), over: el('overScreen'), hub: el('hubScreen'),
+  map: el('mapScreen'), dex: el('dexScreen'), pause: el('pauseScreen'),
   bossBar: el('bossBar'), bossFill: el('bossFill'), bossName: el('bossName'),
 };
 let toastTimer = 0;
 
 function setBar(node, v){ node.style.transform = 'scaleX(' + clamp(v, 0, 1) + ')'; }
+/* 매 프레임 부르므로 글자가 바뀔 때만 DOM 을 건드린다 */
+function setText(node, v){ if (node.__v !== v) { node.__v = v; node.textContent = v; } }
 
 function updateHUD(){
   const p = G.player;
   setBar(UI.hp,     p.hp/p.maxHp);
   setBar(UI.hunger, p.hunger/100);
   setBar(UI.stam,   p.stam/100);
+  setText(UI.hpNum,     String(Math.max(0, Math.ceil(p.hp))));
+  setText(UI.hungerNum, String(Math.max(0, Math.ceil(p.hunger))));
+  UI.hpBar.classList.toggle('low', p.hp/p.maxHp < 0.25);
+  UI.hungerBar.classList.toggle('low', p.hunger < 20);
   const need = EVO[p.stage].need;
   setBar(UI.grow, need === Infinity ? 1 : p.growth/need);
-  UI.tier.textContent = p.tier;
-  UI.eaten.textContent = '먹은 물고기 ' + G.eaten;
-  UI.growLabel.textContent = need === Infinity
+  setText(UI.tier, String(p.tier));
+  setText(UI.eaten, '먹은 물고기 ' + G.eaten);
+  setText(UI.growLabel, need === Infinity
     ? evoName(p.st.shark, p.stage) + ' · 최종 단계'
-    : evoName(p.st.shark, p.stage) + ' → ' + evoName(p.st.shark, p.stage+1);
+    : evoName(p.st.shark, p.stage) + ' → ' + evoName(p.st.shark, p.stage+1));
   boostBtn.classList.toggle('on', p.boosting);
   boostBtn.classList.toggle('dry', p.stam < STAM_MIN && !p.boosting);
   if (G.boss && G.boss.state !== 'dead') {
@@ -2582,30 +3214,104 @@ function updateHUD(){
   } else UI.bossBar.classList.add('hidden');
 }
 
-function showToast(name, label){
+function showToast(name, label, sub, dur){
   UI.toastLabel.textContent = label || 'E V O L V E';
   UI.toastName.textContent = name;
+  UI.toastSub.textContent = sub || '';
   UI.toast.classList.add('show');
-  toastTimer = 1.6;
+  toastTimer = dur || 1.6;
 }
+
+/* ---------------- 새 물고기 배너 — 여러 개가 겹치면 줄을 세운다 ---------------- */
+let newFishTimer = 0;
+const newFishQ = [];
+function showNewFish(def, sub, title){
+  newFishQ.push({ def, sub, title });
+  if (newFishTimer <= 0) nextNewFish();
+}
+function nextNewFish(){
+  const box = el('newFish'), n = newFishQ.shift();
+  if (!n) { box.classList.remove('show'); newFishTimer = 0; return; }
+  paintFish(box.querySelector('canvas'), n.def, false);
+  box.querySelector('small').textContent = n.title || '새 물고기 발견!';
+  box.querySelector('.nf').textContent = n.def.name + ' · ' + n.sub;
+  box.classList.add('show');
+  newFishTimer = 2.2;
+}
+
+/* ---------------- 생물 아이콘 — 게임에서 쓰는 그림 함수를 작은 캔버스에 그대로 쓴다 ----------------
+   전역 ctx 를 잠깐 바꿔 끼운다. 그래서 스프라이트가 있으면 스프라이트로, 없으면 도형으로
+   게임 화면과 똑같이 나온다 (그림을 새로 그릴 필요가 없다) */
+const ICON_VIEWER = { x: 0, y: 0, tier: 99 };
+function paintFish(cvs, def, sil){
+  const g = cvs.getContext('2d'), w = cvs.width, h = cvs.height;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, w, h);
+  const L = def.len, sp = art('fish.' + def.id);
+  const spanW = sp ? L*SPRITE_SPAN : L*1.5;
+  const spanH = sp ? spanW*sp.naturalHeight/(sp.naturalWidth || 1)
+                   : L*Math.max(0.62, (RATIO[def.shape] || 0.42)*1.35);
+  const k = Math.min(w*0.84/spanW, h*0.84/spanH);
+  const prev = ctx;
+  ctx = g;
+  try {
+    g.save(); g.translate(w/2, h/2); g.scale(k, k);
+    drawCreature({ def, x: 0, y: 0, vx: 1, vy: 0, phase: 1.2, wob: 1, hp: 1, maxHp: 1 }, ICON_VIEWER);
+    g.restore();
+  } finally { ctx = prev; }
+  if (sil) silhouette(g, w, h);
+}
+function paintBoss(cvs, id, sil){
+  const g = cvs.getContext('2d'), w = cvs.width, h = cvs.height;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, w, h);
+  const im = art('boss.' + id);
+  if (im) {
+    const k = Math.min(w*0.92/im.naturalWidth, h*0.92/im.naturalHeight);
+    g.drawImage(im, (w - im.naturalWidth*k)/2, (h - im.naturalHeight*k)/2, im.naturalWidth*k, im.naturalHeight*k);
+  } else {
+    g.font = Math.round(h*0.6) + 'px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = '#fff'; g.fillText('🦈', w/2, h/2);
+  }
+  if (sil) silhouette(g, w, h);
+}
+function silhouette(g, w, h){
+  g.save(); g.globalCompositeOperation = 'source-in';
+  g.fillStyle = '#2b2116'; g.fillRect(0, 0, w, h);
+  g.restore();
+}
+
+const fmtTime = t => Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2, '0');
+const isKnown = id => !!(SAVE.dex[id] || SAVE.seen[id]);
+/* 해역마다 처음 나오는 어종만 — 해파리는 세 해역에 다 있지만 도감엔 한 번 */
+function dexGroups(){
+  const used = {};
+  return STAGES.map(st => {
+    const ids = st.fish.filter(id => FISH_BY_ID[id] && !used[id]);
+    ids.forEach(id => used[id] = true);
+    return { st, ids };
+  });
+}
+
+/* 다른 화면을 전부 닫는다 — 화면이 늘어나도 한 곳만 고치면 된다 */
+function hideScreens(){
+  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, el('helpScreen')])
+    s.classList.add('hidden');
+  el('dexDetail').classList.add('hidden');
+  hideToast();
+}
+function hideToast(){ toastTimer = 0; UI.toast.classList.remove('show'); }
 
 /* ---------------- 허브 ---------------- */
 function renderHub(){
+  fixStageSel();
   el('hubPearls').textContent = SAVE.pearls;
   el('muteBtn').classList.toggle('off', SAVE.muted);
 
-  el('stageList').innerHTML = STAGES.map((st, i) => {
-    const lock = stageLock(st, i), done = stageCleared(st.id), on = SAVE.stage === st.id;
-    return '<div class="card' + (on && !lock ? ' on' : '') + (lock ? ' lock' : '') +
-      '" data-stage="' + st.id + '">' +
-      '<i class="dot" style="background:' + st.water[0] + '"></i>' +
-      '<div class="tx"><div class="nm">' + st.name + (done ? '<em>클리어</em>' : '') + '</div>' +
-      '<div class="ds">' + st.blurb + '</div>' +
-      '<div class="sub">수심 ' + st.depth + ' · 기본 티어 ' + st.reqBase + ' 이상</div></div>' +
-      (lock ? '<div class="bl">' + lock + '</div>'
-            : '<div class="st' + (on ? '' : ' ok') + '">' + (on ? '선택됨' : '선택') + '</div>') +
-      '</div>';
-  }).join('');
+  const cur = STAGE_BY_ID[SAVE.stage] || STAGES[0];
+  el('mapTileSub').textContent = cur.icon + ' ' + cur.name + (stageCleared(cur.id) ? ' ✓' : ' 도전 중');
+  const allIds = FISH.map(d => d.id);
+  el('dexTileSub').textContent = allIds.filter(isKnown).length + ' / ' + allIds.length + ' 발견';
 
   el('sharkList').innerHTML = SHARKS.map(sh => {
     const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
@@ -2613,7 +3319,8 @@ function renderHub(){
       '" data-shark="' + sh.id + '">' +
       '<i class="dot" style="background:' + sh.skin + '"></i>' +
       '<div class="tx"><div class="nm">' + sh.name + '<em>' + sh.tag + '</em></div>' +
-      '<div class="ds">' + (owned ? sh.desc : '상어알을 부화시켜 해금') + '</div></div>' +
+      '<div class="ds">' + (owned ? sh.desc : '상어알을 부화시켜 해금') + '</div>' +
+      '<div class="sub">기본 티어 ' + sh.base + '</div></div>' +
       '<div class="st">' + (on ? '사용 중' : owned ? '선택' : '잠김') + '</div></div>';
   }).join('');
 
@@ -2648,13 +3355,6 @@ function renderHub(){
   el('hatchBox').innerHTML = html;
 }
 
-el('stageList').addEventListener('click', e => {
-  const card = e.target.closest('[data-stage]');
-  if (!card) return;
-  const id = card.dataset.stage, i = STAGES.findIndex(x => x.id === id);
-  if (stageLock(STAGES[i], i)) return;
-  SAVE.stage = id; writeSave(); SFX.ui(); renderHub();
-});
 el('muteBtn').addEventListener('click', () => {
   SAVE.muted = !SAVE.muted; writeSave();
   SFX.setMuted(SAVE.muted);
@@ -2666,7 +3366,9 @@ el('sharkList').addEventListener('click', e => {
   if (!card) return;
   const id = card.dataset.shark;
   if (!SAVE.sharks[id]) return;
-  SAVE.active = id; writeSave(); SFX.ui(); renderHub();
+  SAVE.active = id;
+  fixStageSel();               // 상어를 바꿔 고른 해역이 잠기면 갈 수 있는 곳으로
+  writeSave(); SFX.ui(); renderHub();
 });
 el('upgList').addEventListener('click', e => {
   const b = e.target.closest('[data-upg]');
@@ -2687,6 +3389,236 @@ el('hatchBox').addEventListener('click', e => {
   writeSave(); SFX.ui(); renderHub();
 });
 
+/* ---------------- 바다 지도 ----------------
+   위가 수면, 아래로 갈수록 깊다. 노드는 STAGES + SOON 에서 자동으로 만든다 —
+   해역을 하나 추가하면 지도에 저절로 한 칸 늘어난다. */
+const MAP_TOP = 150, MAP_GAP = 172;
+/* 노드 가로 위치(%) — 가로 화면에서는 오른쪽에 정보판이 있으므로 왼쪽에 모은다 */
+const mapX = () => innerWidth > innerHeight*1.3 && innerHeight <= 560 ? [16, 36] : [34, 67];
+let mapSel = null;            // 'shore' 같은 해역 id, 또는 'soon:0'
+function mapNodes(){
+  return STAGES.map((st, i) => ({ key: st.id, st, i }))
+    .concat(SOON.map((so, j) => ({ key: 'soon:' + j, soon: so, i: STAGES.length + j })));
+}
+function renderMap(){
+  const nodes = mapNodes(), sea = el('mapSea');
+  const W = sea.clientWidth || innerWidth;
+  const H = MAP_TOP + (nodes.length - 1)*MAP_GAP + (mapX()[0] < 30 ? 120 : 330);
+  sea.style.height = H + 'px';
+  const MX = mapX();
+  const pos = nodes.map((n, k) => ({ x: W*MX[k % 2]/100, y: MAP_TOP + k*MAP_GAP }));
+
+  /* 물색이 노드마다 그 해역 색으로 바뀌며 점점 어두워진다 */
+  const stops = ['#8fe0f5 0px', '#3fb4dc 70px'];
+  nodes.forEach((n, k) => {                // 노드마다 한 색 — 사이는 부드럽게 이어진다
+    const w = n.st ? n.st.water : n.soon.water;
+    stops.push(mix(w[0], w[1], 0.55) + ' ' + pos[k].y + 'px');
+  });
+  stops.push('#010407 ' + H + 'px');
+  sea.style.background = 'linear-gradient(180deg,' + stops.join(',') + ')';
+
+  let svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">';
+  svg += '<path d="M0 74 Q ' + W*0.125 + ' 64 ' + W*0.25 + ' 74 T ' + W*0.5 + ' 74 T ' + W*0.75 + ' 74 T ' + W + ' 74"' +
+         ' fill="none" stroke="rgba(255,255,255,.7)" stroke-width="3"/>';      // 수면
+  for (let k = 0; k < nodes.length - 1; k++) {
+    const a = pos[k], b = pos[k + 1];
+    const done = nodes[k].st && stageCleared(nodes[k].st.id) && nodes[k + 1].st;
+    svg += '<path d="M' + a.x + ' ' + a.y + ' C ' + a.x + ' ' + (a.y + MAP_GAP*0.55) + ' ' +
+           b.x + ' ' + (b.y - MAP_GAP*0.55) + ' ' + b.x + ' ' + b.y + '" fill="none" ' +
+           (done ? 'stroke="rgba(255,211,79,.9)" stroke-width="6" stroke-linecap="round"'
+                 : 'stroke="rgba(214,238,251,.45)" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 13"') + '/>';
+  }
+  svg += '</svg>';
+
+  const goal = bestStageId();
+  let html = svg + '<div style="position:absolute;right:16px;top:40px;font-size:26px">⛵</div>';
+  nodes.forEach((n, k) => {
+    const p = pos[k];
+    if (n.soon) {
+      html += '<button class="node soon' + (mapSel === n.key ? ' sel' : '') + '" data-key="' + n.key +
+        '" style="left:' + p.x + 'px;top:' + (p.y - 42) + 'px">' +
+        '<div class="orb" style="background:radial-gradient(circle at 35% 30%,' + n.soon.water[0] + ',' + n.soon.water[1] + ')">' +
+        n.soon.icon + '</div><div class="nn">' + n.soon.name + '</div><div class="nd">' + n.soon.depth + '</div>' +
+        '<div class="badge" style="background:rgba(167,231,249,.2);color:#a9cfe4">준비 중</div></button>';
+      return;
+    }
+    const st = n.st, lock = stageLock(st, n.i), done = stageCleared(st.id);
+    const im = art('boss.' + st.boss);
+    html += '<button class="node' + (mapSel === n.key ? ' sel' : '') + (lock ? ' lock' : '') +
+      '" data-key="' + n.key + '" style="left:' + p.x + 'px;top:' + (p.y - 42) + 'px">' +
+      '<div class="orb" style="background:radial-gradient(circle at 35% 30%,' + st.water[0] + ',' + st.water[1] + ')">' +
+      (im ? '<img src="' + im.src + '" alt="">' : st.icon) +
+      (lock ? '<span class="lk">🔒</span>' : '') + '</div>' +
+      '<div class="nn">' + st.icon + ' ' + st.name + '</div><div class="nd">수심 ' + st.depth + '</div>' +
+      (done ? '<div class="badge">클리어 ✓</div>'
+            : (!lock && goal === st.id) ? '<div class="badge now">도전!</div>' : '') +
+      '</button>';
+  });
+  sea.innerHTML = html;
+  renderMapInfo();
+}
+function renderMapInfo(){
+  const box = el('mapInfo'), btn = el('mapDive');
+  const nodes = mapNodes(), n = nodes.find(x => x.key === mapSel) || nodes[0];
+  if (n.soon) {
+    box.innerHTML = '<div class="mt"><div class="mn">' + n.soon.icon + ' ' + n.soon.name + '</div>' +
+      '<div class="md">수심 ' + n.soon.depth + '</div></div>' +
+      '<div class="mb">' + n.soon.teaser + '</div>' +
+      '<div class="lockMsg">🚧 아직 만드는 중인 바다예요</div>';
+    btn.disabled = true; btn.textContent = '준비 중';
+    return;
+  }
+  const st = n.st, lock = stageLock(st, n.i), rec = SAVE.stages[st.id] || {};
+  const found = st.fish.filter(isKnown).length;
+  let h = '<div class="mt"><div class="mn">' + st.icon + ' ' + st.name + '</div>' +
+    '<div class="md">수심 ' + st.depth + '</div></div>' +
+    '<div class="mb">' + st.blurb + '</div><div class="chips">' +
+    '<span class="chip">👑 ' + BOSSES[st.boss].name + '</span>' +
+    '<span class="chip">📖 ' + found + '/' + st.fish.length + '종</span>' +
+    '<span class="chip">기본 티어 ' + st.reqBase + '+</span>' +
+    (rec.cleared ? '<span class="chip ok">클리어 ✓' + (rec.best ? ' · 최고 ' + fmtTime(rec.best) : '') + '</span>' : '') +
+    '</div>';
+  for (const hz of stageHazards(st))
+    h += '<div class="mb">' + hz.icon + ' <b>' + hz.name + '</b> — ' + hz.tip + '</div>';
+  if (lock) h += '<div class="lockMsg">🔒 ' + lock + '</div>';
+  box.innerHTML = h;
+  btn.disabled = !!lock;
+  btn.textContent = lock ? '잠겨 있어요' : '잠수 시작 ▶';
+}
+function openMap(){
+  hideScreens();
+  document.body.classList.add('menu');
+  fixStageSel();
+  mapSel = SAVE.stage;
+  el('mapPearls').textContent = SAVE.pearls;
+  UI.map.classList.remove('hidden');
+  renderMap();
+  const k = mapNodes().findIndex(x => x.key === mapSel);       // 고른 해역이 화면 가운데 오게
+  const sc = el('mapScroll');
+  sc.scrollTop = Math.max(0, MAP_TOP + k*MAP_GAP - sc.clientHeight*0.38);
+}
+el('mapSea').addEventListener('click', e => {
+  const b = e.target.closest('[data-key]');
+  if (!b) return;
+  mapSel = b.dataset.key;
+  if (STAGE_BY_ID[mapSel] && !stageLockById(mapSel)) { SAVE.stage = mapSel; writeSave(); }
+  SFX.ui();
+  const top = el('mapScroll').scrollTop;
+  renderMap();
+  el('mapScroll').scrollTop = top;
+});
+el('mapDive').addEventListener('click', () => {
+  if (!STAGE_BY_ID[mapSel] || stageLockById(mapSel)) return;
+  SAVE.stage = mapSel; writeSave();
+  startRun();
+});
+el('mapBack').addEventListener('click', () => { SFX.ui(); openHub(); });
+addEventListener('resize', () => { if (!UI.map.classList.contains('hidden')) renderMap(); });
+
+/* ---------------- 도감 ---------------- */
+function openDex(){
+  hideScreens();
+  document.body.classList.add('menu');
+  renderDex();
+  UI.dex.classList.remove('hidden');
+  UI.dex.scrollTop = 0;
+}
+function renderDex(){
+  const allIds = FISH.map(d => d.id);
+  const bossIds = Object.keys(BOSSES);
+  el('dexSum').innerHTML =
+    '<div><b>' + (SAVE.totalEaten || 0).toLocaleString() + '</b><span>먹은 물고기</span></div>' +
+    '<div><b>' + allIds.filter(isKnown).length + '/' + allIds.length + '</b><span>발견한 종류</span></div>' +
+    '<div><b>' + bossIds.filter(id => SAVE.bossKills[id]).length + '/' + bossIds.length + '</b><span>쓰러뜨린 보스</span></div>';
+
+  let html = '';
+  for (const g of dexGroups()) {
+    const found = g.ids.filter(isKnown).length;
+    html += '<div class="dexSec"><h3>' + g.st.icon + ' ' + g.st.name + '<span>' + found + ' / ' + g.ids.length + '</span></h3><div class="dexGrid">';
+    for (const id of g.ids) {
+      const d = FISH_BY_ID[id], known = isKnown(id), n = SAVE.dex[id] || 0, m = medalOf(d, n);
+      html += '<button class="dcard' + (known ? '' : ' unk') + '" data-fish="' + id + '">' +
+        '<span class="tr">T' + d.tier + '</span>' + (m >= 0 ? '<span class="md">' + MEDALS[m] + '</span>' : '') +
+        '<canvas width="138" height="92" data-icon="' + id + '"></canvas>' +
+        '<div class="dn">' + (known ? d.name : '???') + '</div>' +
+        '<div class="dc">' + (!known ? '-' : d.shock ? '만남 ✓' : '×' + n.toLocaleString()) + '</div></button>';
+    }
+    html += '</div></div>';
+  }
+  html += '<div class="dexSec"><h3>👑 보스<span>' + bossIds.filter(id => SAVE.bossKills[id]).length + ' / ' + bossIds.length + '</span></h3><div class="dexGrid">';
+  for (const id of bossIds) {
+    const k = SAVE.bossKills[id] || 0;
+    html += '<button class="dcard' + (k ? '' : ' unk') + '" data-boss="' + id + '">' +
+      '<span class="tr">T' + BOSSES[id].tier + '</span>' +
+      '<canvas width="138" height="92" data-bossicon="' + id + '"></canvas>' +
+      '<div class="dn">' + (k ? BOSSES[id].name : '???') + '</div>' +
+      '<div class="dc">' + (k ? '×' + k : '-') + '</div></button>';
+  }
+  html += '</div></div>';
+  el('dexBody').innerHTML = html;
+  el('dexBody').querySelectorAll('[data-icon]').forEach(c => paintFish(c, FISH_BY_ID[c.dataset.icon], !isKnown(c.dataset.icon)));
+  el('dexBody').querySelectorAll('[data-bossicon]').forEach(c => paintBoss(c, c.dataset.bossicon, !SAVE.bossKills[c.dataset.bossicon]));
+}
+/* 먹이 규칙을 한 마디로 — 테두리 색 규칙을 도감에서도 배운다 */
+function ruleOf(d){
+  if (d.mine)  return '💣 닿으면 폭발';
+  if (d.shock) return '⚡ 먹을 수 없음 · 닿으면 찌릿';
+  if (d.shell) return '🛡️ 껍질 — BOOST 로 깨기';
+  if (d.toxic) return '☠️ 독 — 먹으면 아프다';
+  if (d.behavior === 'aggro') return '😠 크면 쫓아온다';
+  if (d.behavior === 'flee')  return '💨 도망친다';
+  if (d.school) return '🐟 떼로 다닌다';
+  return '';
+}
+function showDexDetail(kind, id){
+  const box = el('dexDetail');
+  let h;
+  if (kind === 'boss') {
+    const b = BOSSES[id], k = SAVE.bossKills[id] || 0;
+    const st = STAGES.find(s => s.boss === id);
+    h = '<div class="dh"><canvas width="240" height="160"></canvas><div>' +
+      '<div class="dnm">' + (k ? b.name : '???') + '</div>' +
+      '<div class="dtr">보스 · 티어 ' + b.tier + ' · 체력 ' + b.hp + '</div></div></div>' +
+      '<div class="dtip">' + (k ? BOSS_TIP[id] || '' : (st ? st.name : '') + '의 끝에서 기다린다') + '</div>' +
+      '<div class="dpr">' + (k ? '쓰러뜨린 횟수 ' + k : '아직 쓰러뜨리지 못했다') + '</div>';
+    box.innerHTML = h + '<button id="dexClose">닫기</button>';
+    paintBoss(box.querySelector('canvas'), id, !k);
+  } else {
+    const d = FISH_BY_ID[id], known = isKnown(id), n = SAVE.dex[id] || 0;
+    const home = STAGES.filter(s => s.fish.indexOf(id) >= 0).map(s => s.name).join(' · ');
+    let prog = '';
+    if (known && !d.shock) {
+      const steps = medalSteps(d), m = medalOf(d, n);
+      prog = m >= steps.length - 1 ? '🥇 금메달 완성!'
+           : MEDALS[m + 1] + ' ' + MEDAL_NAMES[m + 1] + '까지 ' + (steps[m + 1] - n) + '마리';
+    }
+    h = '<div class="dh"><canvas width="240" height="160"></canvas><div>' +
+      '<div class="dnm">' + (known ? d.name : '???') + '</div>' +
+      '<div class="dtr">티어 ' + d.tier + (known && ruleOf(d) ? ' · ' + ruleOf(d) : '') + '</div></div></div>' +
+      '<div class="dtip">' + (known ? FISH_TIP[id] || '' : '아직 만나지 못했다. ' + home + '에 산다') + '</div>' +
+      '<div class="dpr">' + (known ? (d.shock ? '만난 적 있음' : '먹은 수 ' + n.toLocaleString() + '마리') +
+        (prog ? ' · ' + prog : '') : '') + '</div>';
+    box.innerHTML = h + '<button id="dexClose">닫기</button>';
+    paintFish(box.querySelector('canvas'), d, !known);
+  }
+  box.classList.remove('hidden');
+}
+el('dexBody').addEventListener('click', e => {
+  const c = e.target.closest('[data-fish],[data-boss]');
+  if (!c) return;
+  SFX.ui();
+  if (c.dataset.boss) showDexDetail('boss', c.dataset.boss);
+  else showDexDetail('fish', c.dataset.fish);
+});
+el('dexDetail').addEventListener('click', e => {
+  if (e.target.id === 'dexClose') el('dexDetail').classList.add('hidden');
+});
+el('dexBack').addEventListener('click', () => { SFX.ui(); openHub(); });
+
+el('openMap').addEventListener('click', () => { SFX.ui(); openMap(); });
+el('openDex').addEventListener('click', () => { SFX.ui(); openDex(); });
+el('hubBack').addEventListener('click', () => { SFX.ui(); showTitle(); });
+
 /* 타이틀 연출 — 상어가 천천히 헤엄치고 물고기가 산다. 판정은 꺼져 있다. */
 function attractStep(dt){
   const p = G.player;
@@ -2699,6 +3631,21 @@ function attractStep(dt){
   updateFish(dt);
   updateParts(dt);
   updateCam(dt);
+}
+/* 타이틀 뒤에서 헤엄치는 장면을 새로 깐다 — 판을 하고 돌아와도 처음과 같게 */
+function setupAttract(){
+  const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
+  G.stage = st;
+  WORLD.w = st.world.w; WORLD.h = st.world.h;
+  G.pool = st.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
+  G.bossDef = BOSSES[st.boss];
+  buildTerrain(st);
+  G.boss = null; G.hz = {}; G.paused = false;
+  G.player = makePlayer();
+  G.cam.x = G.player.x; G.cam.y = G.player.y;
+  G.fish.length = 0; G.parts.length = 0;
+  while (G.fish.length < 40) spawnFish();
+  G.player.stage = 3; G.player.len = EVO[3].len*1.5;   // 타이틀 간판용 — 플레이에는 영향 없음
 }
 
 /* 타이틀 배경은 캔버스에 그린다 — DOM 으로 덮으면 헤엄치는 물고기가 가려진다 */
@@ -2713,12 +3660,14 @@ function drawCover(im, W, H){
 }
 
 function showTitle(){
-  G.running = false; G.attract = true;
+  G.running = false;
+  setupAttract();
+  G.attract = true;
   BGM.play('title');
   document.body.classList.add('menu');
-  UI.hub.classList.add('hidden');
-  UI.over.classList.add('hidden');
-  el('helpScreen').classList.add('hidden');
+  hideScreens();
+  UI.bossBar.classList.add('hidden');
+  el('titleMute').classList.toggle('off', SAVE.muted);
   UI.start.classList.remove('hidden');
   applyTitleArt();
 }
@@ -2726,18 +3675,86 @@ function showTitle(){
 function openHub(){
   G.attract = false;
   BGM.play('hub');
-  G.running = false;
+  G.running = false; G.paused = false;
   document.body.classList.add('menu');
-  UI.start.classList.add('hidden');
-  UI.over.classList.add('hidden');
+  hideScreens();
   UI.bossBar.classList.add('hidden');
+  showHint('');
   renderHub();
   UI.hub.classList.remove('hidden');
 }
 
+/* ---------------- 일시정지 ----------------
+   중간에 나가면 이번 판의 진주·부화 진행은 사라진다 (해역을 끝내지 않았으니까).
+   실수로 누르지 않게 두 번 눌러야 나간다. 도감 기록은 남는다. */
+let pauseArm = null;          // 'restart' | 'home' — 한 번 누르면 확인 상태
+function pauseGame(){
+  if (!G.running || G.paused || G.over) return;
+  G.paused = true; G.shake = 0;
+  IN.active = false; IN.mag = 0; IN.id = -1; IN.boost = false;
+  SFX.suspend();               // BGM 도 그 자리에서 멈춘다
+  pauseArm = null;
+  hideToast();
+  renderPause();
+  document.body.classList.add('menu');
+  UI.pause.classList.remove('hidden');
+}
+function resumeGame(){
+  if (!G.paused) return;
+  G.paused = false; acc = 0;
+  UI.pause.classList.add('hidden');
+  document.body.classList.remove('menu');
+  SFX.resume();
+}
+const runHasLoot = () => G.eaten > 0 || G.pearls > 0;
+function renderPause(){
+  const r = el('pRestart'), h = el('pHome');
+  r.textContent = pauseArm === 'restart' ? '정말 처음부터? 한 번 더!' : '↻ 처음부터';
+  h.textContent = pauseArm === 'home'    ? '정말 나갈까? 한 번 더!'   : '⌂ 기지로';
+  r.classList.toggle('warn', pauseArm === 'restart');
+  h.classList.toggle('warn', pauseArm === 'home');
+  el('pMute').textContent = SAVE.muted ? '♪ 소리 켜기' : '♪ 소리 끄기';
+  el('pMute').classList.toggle('off', SAVE.muted);
+  el('pauseInfo').innerHTML = runHasLoot()
+    ? '지금 나가면 이번 판의 <b>진주 ' + G.pearls + '개</b>' +
+      (SAVE.hatch.sharkId ? '와 <b>부화 진행</b>' : '') + '이 사라져요.<br>도감 기록은 남아요.'
+    : '도감 기록은 언제나 남아요.';
+}
+function abandonRun(){
+  G.running = false; G.paused = false; G.over = true;
+  G.boss = null;
+  SFX.resume();
+  writeSave();                 // 도감만 남긴다 — 진주·부화·클리어는 반영하지 않는다
+}
+function pauseChoice(kind){
+  if (runHasLoot() && pauseArm !== kind) { pauseArm = kind; SFX.ui(); renderPause(); return; }
+  abandonRun();
+  if (kind === 'restart') startRun(); else openHub();
+}
+el('pauseBtn').addEventListener('click', e => { e.stopPropagation(); pauseGame(); });
+el('pResume').addEventListener('click', () => { resumeGame(); SFX.ui(); });
+el('pRestart').addEventListener('click', () => pauseChoice('restart'));
+el('pHome').addEventListener('click', () => pauseChoice('home'));
+el('pMute').addEventListener('click', () => {
+  SAVE.muted = !SAVE.muted; writeSave();
+  SFX.setMuted(SAVE.muted);
+  if (!SAVE.muted) SFX.ready();
+  renderPause();
+});
+/* 앱을 내리거나 탭을 바꾸면 자동으로 멈춘다. 메뉴에 있을 때도 소리는 끈다 */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (G.running && !G.paused) pauseGame(); SFX.suspend(); }
+  else if (!G.paused) SFX.resume();
+});
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape' && e.key.toLowerCase() !== 'p') return;
+  if (G.paused) resumeGame(); else pauseGame();
+});
+
 /* ---------------- 런 시작 / 정산 ---------------- */
 function startRun(){
   G.attract = false;
+  fixStageSel();               // 잠긴 해역으로는 출발하지 않는다
   const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
   G.stage = st;
   WORLD.w = st.world.w; WORLD.h = st.world.h;
@@ -2748,28 +3765,47 @@ function startRun(){
   BGM.play(st.id);
   G.player = makePlayer();
   G.fish.length = 0; G.parts.length = 0;
-  G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0;
+  G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0; G.newSpecies = 0;
   G.timeScale = 1; G.slowmo = 0; G.evolveFlash = 0;
   G.boss = null; G.bossSpawned = false; G.cleared = false; G.endTimer = 0;
+  G.paused = false;
+  G.hz = {}; hazardsCall('init'); G.hz.on = st.id;
   G.cam.x = G.player.x; G.cam.y = G.player.y;
   IN.active = false; IN.mag = 0; IN.id = -1; IN.boost = false;
   while (G.fish.length < TARGET_FISH) spawnFish();
-  UI.start.classList.add('hidden');
-  UI.over.classList.add('hidden');
-  UI.hub.classList.add('hidden');
+  hideScreens();
   UI.bossBar.classList.add('hidden');
+  newFishQ.length = 0; nextNewFish(); showHint('');
   document.body.classList.remove('menu');
   G.over = false; G.running = true;
+  /* 입장 안내 — 이 해역에만 있는 장치를 한 줄씩 */
+  const tips = stageHazards(st).map(h => h.icon + ' ' + h.name + ' — ' + h.tip).join('\n');
+  showToast(st.name, '수심 ' + st.depth, tips, tips ? 3.2 : 1.8);
 }
 
 /* 보스를 잡은 직후 1.5초 연출 중에 굶거나 물려 죽어도 클리어는 클리어다 */
 function gameOver(){ finishRun(G.cleared); }
 
+function overButtons(list){
+  const box = el('overBtns');
+  box.innerHTML = '';
+  for (const b of list) {
+    const bt = document.createElement('button');
+    bt.className = 'pbtn' + (b.main ? ' main' : '');
+    bt.textContent = b.label;
+    bt.addEventListener('click', () => { SFX.ui(); b.fn(); });
+    box.appendChild(bt);
+  }
+}
+
 function finishRun(cleared){
   if (G.over) return;
   G.over = true; G.running = false;
   BGM.play('hub');                 // 정산 화면까지 보스 곡이 이어지지 않게
+  showHint(''); hideToast();
+  newFishQ.length = 0; nextNewFish();
   const p = G.player;
+  const id = G.stage.id, i = stageIndex(id), next = STAGES[i + 1] || null;
 
   let pearls = G.pearls;
   if (cleared) pearls += BOSS_PEARLS;
@@ -2786,41 +3822,60 @@ function finishRun(cleared){
       SAVE.hatch = { sharkId: null, progress: 0 };
     }
   }
-  let gotEgg = false, newStage = null;
+  let gotEgg = false, newStage = null, first = false, newBest = false;
   if (cleared) {
-    const first = !stageCleared(G.stage.id);
-    SAVE.stages[G.stage.id] = { cleared: true };
+    const rec = SAVE.stages[id] || {};
+    first = !rec.cleared;
+    newBest = !first && (!rec.best || G.t < rec.best);
+    SAVE.stages[id] = { ...rec, cleared: true, best: (!rec.best || G.t < rec.best) ? G.t : rec.best };
+    SAVE.bossKills[G.stage.boss] = (SAVE.bossKills[G.stage.boss] || 0) + 1;
     if (first) {
       SAVE.eggs += 1; gotEgg = true;
-      const i = STAGES.findIndex(x => x.id === G.stage.id);
-      if (i >= 0 && i + 1 < STAGES.length) newStage = STAGES[i+1];
+      if (next) newStage = next;
+      if (next && !stageLock(next, i + 1)) SAVE.stage = next.id;   // 새 해역을 바로 골라 둔다
     }
   }
   SAVE.best.tier  = Math.max(SAVE.best.tier,  p.tier);
   SAVE.best.eaten = Math.max(SAVE.best.eaten, G.eaten);
   writeSave();
 
+  const allDone = cleared && !next;
   if (!cleared) SFX.dead();
-  el('overTitle').textContent = cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
+  el('overTitle').textContent = allDone && first ? '👑 바다의 왕!' : cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
   el('overSub').textContent = cleared
-    ? G.bossDef.name + '를 쓰러뜨렸다. 더 깊은 바다가 기다린다.'
+    ? G.bossDef.name + '를 쓰러뜨렸다. ' + (next ? '더 깊은 바다가 기다린다.' : '모든 바다를 정복했다!')
     : p.hunger <= 0 ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
                     : '더 큰 것은 피하고, 자란 뒤에 돌아와라.';
   el('sTier').textContent  = p.tier;
   el('sEaten').textContent = G.eaten;
-  const m = Math.floor(G.t/60), sec = Math.floor(G.t%60);
-  el('sTime').textContent  = m + ':' + String(sec).padStart(2, '0');
+  el('sTime').textContent  = fmtTime(G.t);
   el('gPearls').textContent = '+' + pearls + (cleared ? ' (보스 +' + BOSS_PEARLS + ')' : '');
   el('gHatchRow').hidden = !hatchGain;
   el('gHatch').textContent = '+' + hatchGain + '%';
+  el('gDexRow').hidden = !G.newSpecies;
+  el('gDex').textContent = '+' + G.newSpecies + '종';
 
-  const note = el('unlockNote');
+  const nextOpen = !!(next && cleared && !stageLock(next, i + 1));
   const msgs = [];
   if (unlocked) msgs.push('부화 완료 — ' + unlocked.name + ' 해금');
   if (gotEgg)   msgs.push('상어알 획득 — 기지의 부화기에 넣어라');
   if (newStage) msgs.push('새 해역 — ' + newStage.name);
+  if (cleared && next && !nextOpen) msgs.push(next.name + ': ' + stageLock(next, i + 1));
+  if (newBest)  msgs.push('신기록! ' + fmtTime(G.t));
+  if (allDone && first) msgs.push('더 깊은 바다는 지금 만드는 중이에요');
+  const note = el('unlockNote');
   if (msgs.length) { note.textContent = msgs.join(' · '); note.classList.remove('hidden'); }
   else note.classList.add('hidden');
+
+  const retry = () => { SAVE.stage = id; writeSave(); startRun(); };
+  if (!cleared)     overButtons([{ label:'↻ 다시 도전', main:true, fn: retry },
+                                 { label:'⌂ 기지로', fn: openHub }]);
+  else if (nextOpen) overButtons([{ label:'다음 해역: ' + next.name + ' ▶', main:true,
+                                    fn: () => { SAVE.stage = next.id; writeSave(); startRun(); } },
+                                  { label:'↻ 한 번 더', fn: retry },
+                                  { label:'⌂ 기지로', fn: openHub }]);
+  else              overButtons([{ label:'⌂ 기지로', main:true, fn: openHub },
+                                 { label:'↻ 한 번 더', fn: retry }]);
 
   UI.bossBar.classList.add('hidden');
   UI.over.classList.remove('hidden');
@@ -2840,8 +3895,7 @@ el('titleMute').addEventListener('click', () => {
   if (!SAVE.muted) { SFX.ready(); SFX.resume(); SFX.ui(); }
   el('titleMute').classList.toggle('off', SAVE.muted);
 });
-el('diveBtn').addEventListener('click', startRun);
-el('retryBtn').addEventListener('click', openHub);
+el('diveBtn').addEventListener('click', () => { SFX.ui(); openMap(); });
 
 /* 고정 timestep — 프레임이 흔들려도 물리는 일정하게 */
 const STEP = 1/60;
@@ -2852,6 +3906,7 @@ function step(dt){
   updatePlayer(dt);
   updateFish(dt);
   if (G.boss) updateBoss(dt);
+  hazardsCall('update', dt);
   updateParts(dt);
   updateCam(dt);
   G.shake = Math.max(0, G.shake - dt*28);
@@ -2869,8 +3924,9 @@ function frame(ts){
   G.timeScale = lerp(G.timeScale, G.slowmo > 0 ? 0.35 : 1, 0.2);
 
   if (toastTimer > 0) { toastTimer -= real; if (toastTimer <= 0) UI.toast.classList.remove('show'); }
+  if (newFishTimer > 0) { newFishTimer -= real; if (newFishTimer <= 0) nextNewFish(); }
 
-  if (G.running) {
+  if (G.running && !G.paused) {
     acc += real * G.timeScale;
     let n = 0;
     while (acc >= STEP && n < 5) { step(STEP); acc -= STEP; n++; }
@@ -2881,7 +3937,7 @@ function frame(ts){
     let n = 0;
     while (acc >= STEP && n < 5) { attractStep(STEP); acc -= STEP; n++; }
     if (acc > STEP*5) acc = 0;
-  } else if (G.player) {
+  } else if (G.player && !G.paused) {
     updateParts(real);                               // 정지 — 파티클만 흘린다
   }
   if (G.player) render();
@@ -2894,22 +3950,19 @@ if (location.search.indexOf('debug') >= 0) {
   window.__ART = ART; window.__IMGS = IMGS; window.__loadArt = loadArt;
   window.__TRACKS = TRACKS; window.__BGM = BGM;
   window.__emitStep = emitStep; window.__noteHz = noteHz;
+  window.__HAZARDS = HAZARDS; window.__explodeMine = explodeMine;
+  window.__openMap = () => openMap(); window.__openDex = () => openDex();
+  window.__pause = () => pauseGame(); window.__startRun = () => startRun();
+  window.__finishRun = c => finishRun(c);
 }
 loadSave();
+fixStageSel();
 loadArt();
-G.stage = STAGE_BY_ID[SAVE.stage] || STAGES[0];
-WORLD.w = G.stage.world.w; WORLD.h = G.stage.world.h;
-G.pool = G.stage.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
-G.bossDef = BOSSES[G.stage.boss];
-buildTerrain(G.stage);
 document.body.classList.add('menu');     // 시작 화면에서도 게임 HUD 를 감춘다
 addEventListener('pointerdown', () => { SFX.ready(); SFX.resume(); }, { once: true });
 resize();
-G.player = makePlayer();
-G.cam.x = G.player.x; G.cam.y = G.player.y;
-while (G.fish.length < 40) spawnFish();              // 타이틀 배경용
+setupAttract();                          // 타이틀 배경용
 G.attract = true;
-G.player.stage = 3; G.player.len = EVO[3].len*1.5;   // 타이틀 간판용 — 플레이에는 영향 없음
 el('titleMute').classList.toggle('off', SAVE.muted);
 applyTitleArt();
 BGM.play('title');          // 첫 터치로 오디오가 깨어날 때 이 곡부터 흐른다
