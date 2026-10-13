@@ -189,6 +189,9 @@
   .card.lock{opacity:.4}
   .card:active{transform:scale(.995)}
   .card .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+  .card .shk{width:64px;height:40px;object-fit:contain;flex:0 0 auto}
+  .card .shk.sil{filter:brightness(0) opacity(.55)}
+  .card.lock .shk{opacity:1}
   .card .tx{flex:1;min-width:0}
   .card .nm{color:#eaf9ff;font-size:14px;font-weight:700}
   .card .nm em{font-style:normal;color:var(--deep);background:var(--laqua);
@@ -273,6 +276,20 @@
     text-shadow:0 2px 8px rgba(0,0,0,.7)}
   #titleShark{width:min(74%,300px);aspect-ratio:3/2;margin:4px 0 2px;
     background-size:contain;background-repeat:no-repeat;background-position:center}
+  /* 타이틀 상어 — 그림은 한 장이지만 헤엄치듯 떠다니다 가끔 앞으로 확 달려든다.
+     (예전엔 캔버스 상어가 헤엄쳤는데, 겹쳐 보여서 그림으로 바꾸면서 멈췄다) */
+  #titleShark{animation:titleSwim 6s ease-in-out infinite;transform-origin:45% 55%;will-change:transform}
+  @keyframes titleSwim{
+    0%  {transform:translate(-8px,2px) rotate(-1.5deg) scale(1)}
+    20% {transform:translate(0,-9px) rotate(.5deg) scale(1)}
+    40% {transform:translate(8px,0) rotate(2deg) scale(1)}
+    60% {transform:translate(0,8px) rotate(-.5deg) scale(1)}
+    74% {transform:translate(-10px,2px) rotate(-2.5deg) scale(.98)}
+    82% {transform:translate(14px,-4px) rotate(3deg) scale(1.08)}
+    90% {transform:translate(4px,0) rotate(0deg) scale(1.02)}
+    100%{transform:translate(-8px,2px) rotate(-1.5deg) scale(1)}
+  }
+  @media (prefers-reduced-motion:reduce){ #titleShark{animation:none} }
   .btn.cta{margin-top:10px;padding:16px 46px;font-size:18px;
     background:linear-gradient(180deg,var(--gold),var(--coral));
     color:#5a2c00;box-shadow:0 5px 0 #b4590d,0 12px 26px rgba(0,0,0,.4)}
@@ -283,7 +300,7 @@
   .pill.off{opacity:.45;text-decoration:line-through}
 
   /* 토스트 (성장 알림) */
-  #toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.8);
+  #toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.8);width:min(92vw,360px);
     z-index:20;pointer-events:none;opacity:0;text-align:center;
     transition:opacity .25s ease,transform .25s cubic-bezier(.2,1.6,.4,1)}
   #toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -291,7 +308,7 @@
   #toast .t2{color:#7dffd0;font-size:26px;font-weight:800;letter-spacing:-.5px;
     text-shadow:0 2px 14px rgba(60,255,190,.5)}
   #toast .t3{margin-top:6px;color:#fff;font-size:13px;font-weight:700;line-height:1.5;
-    text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6);max-width:300px}
+    text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6);margin-left:auto;margin-right:auto;max-width:320px}
   #toast .t3:empty{display:none}
   #toast .t3{white-space:pre-line}
 
@@ -560,6 +577,7 @@
   <b style="color:#ffd84d">노랑</b> 동급(물어야 함)<br>
   <b style="color:#ff6b7f">빨강</b> 포식자 ·
   <b style="color:#6fe0ff">하늘</b> 부스트 필요</p>
+  <p style="font-size:12px">크게 자라면 <b style="color:#ff6b7f">👑 보스의 굴</b>이 열린다.<br>화살표를 따라가면 보스가 나온다.</p>
   <p style="font-size:12px">보스는 <b style="color:#7dffd0">꼬리가 안전</b>하고
   <b style="color:#ff6b7f">머리가 위험</b>하다.<br>노란 고리가 뜨면 달려들어라.</p>
   <p style="font-size:12px">오른쪽 위 <b>❙❙</b> 로 잠깐 멈출 수 있다.<br>
@@ -671,7 +689,10 @@ const BOSSES = {
     body:'#d3dde2', fin:'#7b8c97', contact:15, staggerMul:2.0,
     summon:['sardine','yellowray'] },
 };
-const BOSS_TRIGGER_STAGE = 2;   // 진화 3단계(기본 티어 +2) 도달 시 등장
+const BOSS_TRIGGER_STAGE = 2;   // 진화 3단계(기본 티어 +2) 도달 시 보스 굴이 열린다
+const LAIR_ENTER    = 240;      // 굴에 이만큼 다가가면 보스가 나온다
+const LAIR_PATIENCE = 90;       // 이 시간(초) 동안 안 오면 보스가 직접 찾아온다
+const LAIR_DELAY    = 1.7;      // 진화 알림이 끝난 뒤에 굴 알림을 띄운다
 
 /* ==========================================================================
    해역 — 1개 = 데이터 한 블록. 물색/조명/지형/부유물/어종/보스를 갈아끼운다.
@@ -898,6 +919,18 @@ const ART = {
   'shark.reef.1':         'shark/reef_1.png',
   'shark.reef.2':         'shark/reef_2.png',
   'shark.reef.3':         'shark/reef_3.png',
+  'shark.saw.0':          'shark/saw_0.png',
+  'shark.saw.1':          'shark/saw_1.png',
+  'shark.saw.2':          'shark/saw_2.png',
+  'shark.saw.3':          'shark/saw_3.png',
+  'shark.hammerhead.0':   'shark/hammerhead_0.png',
+  'shark.hammerhead.1':   'shark/hammerhead_1.png',
+  'shark.hammerhead.2':   'shark/hammerhead_2.png',
+  'shark.hammerhead.3':   'shark/hammerhead_3.png',
+  'shark.mako.0':         'shark/mako_0.png',
+  'shark.mako.1':         'shark/mako_1.png',
+  'shark.mako.2':         'shark/mako_2.png',
+  'shark.mako.3':         'shark/mako_3.png',
   /* 물고기 — fish.<어종id> */
   'fish.anchovy':         'fish/anchovy.png',
   'fish.barra':           'fish/barra.png',
@@ -919,12 +952,24 @@ const ART = {
   'fish.striped':         'fish/striped.png',
   'fish.urchin':          'fish/urchin.png',
   'fish.wrasse':          'fish/wrasse.png',
+  'fish.sardine':         'fish/sardine.png',
+  'fish.yellowray':       'fish/yellowray.png',
+  'fish.angler':          'fish/angler.png',
+  'fish.conger':          'fish/conger.png',
+  'fish.tuna':            'fish/tuna.png',
+  'fish.swordfish':       'fish/swordfish.png',
+  'fish.hammer':          'fish/hammer.png',
+  'fish.blueshark':       'fish/blueshark.png',
+  'fish.mine':            'fish/mine.png',
   /* 보스 — boss.<보스id> */
   'boss.giant_barra':     'boss/giant_barra.png',
   'boss.giant_moray':     'boss/giant_moray.png',
   'boss.rogue_white':     'boss/rogue_white.png',
 };
 const ART_BASE  = 'assets/';
+/* 상어별 그림 폭 배율 (진화 단계 0~3). 톱상어는 긴 톱날이 가로폭을 먹어서 몸통이
+   작아 보인다 — 몸통 크기가 리프 샤크와 비슷해지도록 그림만 넓힌다. 판정은 그대로 */
+const SHARK_SPAN = { saw: [1.6, 1.85, 1.8, 1.65] };
 const SPRITE_SPAN = 1.5;        // 이미지 가로폭 = 생물 몸길이(len) × 1.5
 const IMGS = {};
 let artPending = 0;
@@ -1090,6 +1135,7 @@ const SFX = {
                setTimeout(() => this.tone(f, 0.18, 'triangle', 0.13), i*70)); },
   medal(){   [784, 988, 1175, 1568].forEach((f, i) =>
                setTimeout(() => this.tone(f, 0.22, 'square', 0.07), i*80)); },
+  lair(){    this.tone(90, 1.2, 'sawtooth', 0.16, 60); this.tone(180, 0.9, 'triangle', 0.08, 120); },
   suspend(){ if (this.ac && this.ac.state === 'running') this.ac.suspend().catch(()=>{}); },
 };
 
@@ -1315,7 +1361,7 @@ const G = {
   shake:0, danger:0, eaten:0, evolveFlash:0,
   boss:null, bossSpawned:false, cleared:false, pearls:0, endTimer:0,
   stage:null, pool:[], bossDef:null, attract:false,
-  paused:false, newSpecies:0,
+  paused:false, newSpecies:0, lair:null,
   hz:{},                 // 해역 장치 상태 — HAZARDS[key].init() 이 채운다
 };
 
@@ -1609,7 +1655,8 @@ const HAZARDS = {
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       for (const f of G.fish) {
         if (!f.def.mine) continue;
-        const x = W/2 + f.x - c.x, y = H/2 + f.y - c.y;
+        const sp = art('fish.mine');                     // 그림이 있으면 그림 속 빨간 등 자리
+        const x = W/2 + f.x - c.x + (sp ? f.def.len*0.25 : 0), y = H/2 + f.y - c.y - (sp ? f.def.len*0.26 : 0);
         if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
         const a = 0.35 + 0.35*Math.sin(G.t*5 + f.phase);
         const g = ctx.createRadialGradient(x, y, 1, x, y, 16);
@@ -1629,7 +1676,9 @@ const HAZARDS = {
       for (const f of G.fish) {
         if (!f.def.lure) continue;
         const L = f.def.len, dir = f.vx < 0 ? -1 : 1;
-        const x = W/2 + f.x + dir*L*0.62 - c.x, y = H/2 + f.y - L*0.48 - c.y;
+        /* 불빛 위치 — 그림이 있으면 그림 속 전구 자리, 없으면 Canvas 도형의 전구 자리 */
+        const lx = art('fish.angler') ? 0.57 : 0.62, ly = art('fish.angler') ? 0.22 : 0.48;
+        const x = W/2 + f.x + dir*L*lx - c.x, y = H/2 + f.y - L*ly - c.y;
         if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
         const a = 0.55 + 0.25*Math.sin(G.t*2.4 + f.phase);
         const g = ctx.createRadialGradient(x, y, 1, x, y, 22);
@@ -1809,7 +1858,7 @@ function evolve(){
   ring(p.x, p.y);
   burst(p.x, p.y, 'rgba(180,255,228,.9)', 28, 190, 'bubble');
   showToast(evoName(p.st.shark, p.stage));
-  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned) spawnBoss();
+  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned && !G.lair) openLair();
 }
 
 function hurtPlayer(dmg, nx, ny, cd){
@@ -1865,13 +1914,116 @@ function handleContact(f, nx, ny){
    설계의 핵심: 페이즈 2부터 잡어를 소환하고 플레이어는 그걸 먹어 회복한다.
    위협이 곧 생명줄이라, 장기전에서 포만감이 말라 억울하게 죽는 일이 없다.
    ========================================================================== */
-function spawnBoss(){
+/* 보스 굴 — 3단계가 되면 맵 반대편에 굴이 열리고 화살표가 길을 알려준다.
+   찾아가면 보스가 굴에서 나온다. 더 자라고(4단계 성체) 가도 된다 — 언제 싸울지를
+   아이가 고른다. 대신 포만감은 계속 줄고, 너무 오래 안 오면 보스가 직접 온다 */
+function openLair(){
   const p = G.player;
+  G.lair = {
+    x: p.x < WORLD.w*0.5 ? WORLD.w*0.82 : WORLD.w*0.18,
+    y: clamp(WORLD.h*0.6, 220, WORLD.h - 220),
+    t: -LAIR_DELAY, shown: false,
+  };
+}
+function updateLair(dt){
+  const L = G.lair;
+  if (!L || G.bossSpawned) return;
+  L.t += dt;
+  if (!L.shown && L.t >= 0) {
+    L.shown = true;
+    showToast(G.bossDef.name + '의 굴', '보 스 의  기 척',
+      '👑 화살표를 따라가면 보스가 나온다\n더 자라고 가도 된다', 3.2);
+    SFX.lair();
+  }
+  if (!L.shown) return;
+  const p = G.player;
+  if (Math.hypot(p.x - L.x, p.y - L.y) < LAIR_ENTER) { spawnBoss(); return; }
+  if (L.t > LAIR_PATIENCE) {                       // 안 오면 직접 온다
+    G.lair = null;
+    spawnBoss();
+    showToast(G.bossDef.name, '경  고', '참다 못한 보스가 직접 찾아왔다!', 2.4);
+  }
+}
+/* 굴 — 붉게 맥동하는 소용돌이와 보스 실루엣 */
+function drawLair(){
+  const L = G.lair;
+  if (!L || !L.shown || G.bossSpawned) return;
+  const pulse = 0.5 + 0.5*Math.sin(G.t*3);
+  ctx.save();
+  ctx.translate(L.x, L.y);
+  const g = ctx.createRadialGradient(0, 0, 10, 0, 0, 170);
+  g.addColorStop(0, 'rgba(20,0,10,.75)');
+  g.addColorStop(0.55, 'rgba(120,10,40,' + (0.28 + 0.12*pulse) + ')');
+  g.addColorStop(1, 'rgba(255,60,90,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(0, 0, 170, 0, 6.2832); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,110,130,' + (0.45 + 0.3*pulse) + ')';
+  ctx.lineWidth = 4; ctx.setLineDash([18, 14]);
+  ctx.save(); ctx.rotate(G.t*0.6);
+  ctx.beginPath(); ctx.arc(0, 0, 118, 0, 6.2832); ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.rotate(-G.t*0.9);
+  ctx.beginPath(); ctx.arc(0, 0, 80, 0, 6.2832); ctx.stroke();
+  ctx.restore();
+  ctx.setLineDash([]);
+  const im = art('boss.' + G.stage.boss);              // 그림자 속에서 기다리는 보스
+  if (im) {
+    const w = G.bossDef.len*0.9, sil = outlineOf(im, '#12040a', w);
+    const k = w/sil.__base, ow = sil.width*k, oh = sil.height*k;
+    ctx.globalAlpha = 0.6 + 0.2*pulse;
+    ctx.drawImage(sil, -ow/2, -oh/2 + Math.sin(G.t*1.4)*6, ow, oh);
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+/* 화면 가장자리 화살표 — 어둠 위에 그려서 난파선 해구에서도 보인다 */
+function drawLairArrow(W, H){
+  const L = G.lair;
+  if (!L || !L.shown || G.bossSpawned) return;
+  const sx = W/2 + L.x - G.cam.x, sy = H/2 + L.y - G.cam.y;
+  const dist = Math.round(Math.hypot(L.x - G.player.x, L.y - G.player.y)/10);
+  const bob = Math.sin(G.t*6)*5;
+  ctx.save();
+  ctx.font = '900 14px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)';
+  const top = 150, bot = H - 130, pad = 34;            // HUD 와 버튼을 피한다
+  if (sx > pad && sx < W - pad && sy > top && sy < bot) {
+    // 화면 안 — 굴 위에서 통통 튀는 표시
+    ctx.fillStyle = '#ffd34f';
+    ctx.beginPath();
+    ctx.moveTo(sx, sy - 120 + bob); ctx.lineTo(sx - 14, sy - 140 + bob); ctx.lineTo(sx + 14, sy - 140 + bob);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeText('👑 보스의 굴', sx, sy - 156 + bob); ctx.fillText('👑 보스의 굴', sx, sy - 156 + bob);
+  } else {
+    // 화면 밖 — 가장자리에 방향 화살표
+    const cx = W/2, cy = (top + bot)/2;
+    const a = Math.atan2(sy - cy, sx - cx);
+    const kx = Math.abs(Math.cos(a)) > 1e-3 ? (W/2 - pad)/Math.abs(Math.cos(a)) : 1e9;
+    const ky = Math.abs(Math.sin(a)) > 1e-3 ? ((bot - top)/2)/Math.abs(Math.sin(a)) : 1e9;
+    const r = Math.min(kx, ky) + bob*0.6;
+    const ax = cx + Math.cos(a)*r, ay = cy + Math.sin(a)*r;
+    ctx.save(); ctx.translate(ax, ay); ctx.rotate(a);
+    ctx.fillStyle = 'rgba(255,80,100,.95)';
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-12, -15); ctx.lineTo(-5, 0); ctx.lineTo(-12, 15);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    const lx = clamp(ax - Math.cos(a)*44, 50, W - 50), ly = clamp(ay - Math.sin(a)*30, top, bot);
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)'; ctx.fillStyle = '#ffd34f';
+    ctx.strokeText('👑 ' + dist + 'm', lx, ly); ctx.fillText('👑 ' + dist + 'm', lx, ly);
+  }
+  ctx.restore();
+}
+
+function spawnBoss(){
+  const p = G.player, lair = G.lair;
   G.bossDef = BOSSES[G.stage.boss];
-  const side = p.x < WORLD.w*0.5 ? 1 : -1;
+  G.lair = null;
+  const side = lair ? (p.x < lair.x ? 1 : -1) : (p.x < WORLD.w*0.5 ? 1 : -1);
   G.boss = {
-    x: clamp(p.x + side*(G.cam.w*0.5 + 280), 140, WORLD.w - 140),
-    y: clamp(p.y, 180, WORLD.h - 180),
+    x: lair ? clamp(lair.x, 140, WORLD.w - 140) : clamp(p.x + side*(G.cam.w*0.5 + 280), 140, WORLD.w - 140),
+    y: lair ? clamp(lair.y, 180, WORLD.h - 180) : clamp(p.y, 180, WORLD.h - 180),
     vx: -side*50, vy: 0,
     hp: G.bossDef.hp, maxHp: G.bossDef.hp,
     state: 'intro', t: 0, phase: 1, cd: 1.0,
@@ -2926,24 +3078,25 @@ function drawShark(p){
 
   const sp = art('shark.' + SAVE.active + '.' + st);
   if (sp) {
+    const span = (SHARK_SPAN[SAVE.active] || [])[st] || SPRITE_SPAN;
     faceHeading(p.vx, p.vy);
     if (p.boosting) {                               // 잔상으로 속도감
       const a0 = ctx.globalAlpha;
       for (let i = 3; i >= 1; i--) {
         ctx.globalAlpha = a0 * (0.13/i);
-        ctx.save(); ctx.translate(-L*0.3*i, 0); drawSprite(sp, L); ctx.restore();
+        ctx.save(); ctx.translate(-L*0.3*i, 0); drawSprite(sp, L, span); ctx.restore();
       }
       ctx.globalAlpha = a0;
     }
     if (p.hurtFlash > 0) {                          // 피격 — 붉게 번쩍
-      drawSprite(sp, L);
+      drawSprite(sp, L, span);
       ctx.save(); ctx.globalAlpha = p.hurtFlash*0.55;
       ctx.fillStyle = '#ff5a72';
       ctx.globalCompositeOperation = 'source-atop';
-      const bx = L*SPRITE_SPAN;
+      const bx = L*span;
       ctx.fillRect(-bx, -bx, bx*2, bx*2);
       ctx.restore();
-    } else drawSprite(sp, L);
+    } else drawSprite(sp, L, span);
     ctx.restore(); return;
   }
 
@@ -3151,7 +3304,7 @@ function render(){
   ctx.save();
   ctx.translate(W/2 - G.cam.x + sx, H/2 - G.cam.y + sy);
   if (!titleBg) drawSeabed();
-  if (!G.attract) hazardsCall('drawWorld');
+  if (!G.attract) { hazardsCall('drawWorld'); drawLair(); }
   const mx = W*0.5 + 160, my = H*0.5 + 160;
   for (const f of G.fish) {
     if (Math.abs(f.x - G.cam.x) > mx || Math.abs(f.y - G.cam.y) > my) continue;
@@ -3164,7 +3317,7 @@ function render(){
   ctx.restore();
 
   drawDark(W, H);
-  if (!G.attract) hazardsCall('drawScreen', W, H);
+  if (!G.attract) { hazardsCall('drawScreen', W, H); drawLairArrow(W, H); }
   drawOverlay(W, H);
   drawStick();
 }
@@ -3317,7 +3470,9 @@ function renderHub(){
     const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
     return '<div class="card' + (on ? ' on' : '') + (owned ? '' : ' lock') +
       '" data-shark="' + sh.id + '">' +
-      '<i class="dot" style="background:' + sh.skin + '"></i>' +
+      (art('shark.' + sh.id + '.2')                 // 그림이 있으면 그림 — 잠긴 상어는 실루엣
+        ? '<img class="shk' + (owned ? '' : ' sil') + '" src="' + art('shark.' + sh.id + '.2').src + '" alt="">'
+        : '<i class="dot" style="background:' + sh.skin + '"></i>') +
       '<div class="tx"><div class="nm">' + sh.name + '<em>' + sh.tag + '</em></div>' +
       '<div class="ds">' + (owned ? sh.desc : '상어알을 부화시켜 해금') + '</div>' +
       '<div class="sub">기본 티어 ' + sh.base + '</div></div>' +
@@ -3640,7 +3795,7 @@ function setupAttract(){
   G.pool = st.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
   G.bossDef = BOSSES[st.boss];
   buildTerrain(st);
-  G.boss = null; G.hz = {}; G.paused = false;
+  G.boss = null; G.hz = {}; G.paused = false; G.lair = null;
   G.player = makePlayer();
   G.cam.x = G.player.x; G.cam.y = G.player.y;
   G.fish.length = 0; G.parts.length = 0;
@@ -3722,7 +3877,7 @@ function renderPause(){
 }
 function abandonRun(){
   G.running = false; G.paused = false; G.over = true;
-  G.boss = null;
+  G.boss = null; G.lair = null;
   SFX.resume();
   writeSave();                 // 도감만 남긴다 — 진주·부화·클리어는 반영하지 않는다
 }
@@ -3767,7 +3922,7 @@ function startRun(){
   G.fish.length = 0; G.parts.length = 0;
   G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0; G.newSpecies = 0;
   G.timeScale = 1; G.slowmo = 0; G.evolveFlash = 0;
-  G.boss = null; G.bossSpawned = false; G.cleared = false; G.endTimer = 0;
+  G.boss = null; G.bossSpawned = false; G.cleared = false; G.endTimer = 0; G.lair = null;
   G.paused = false;
   G.hz = {}; hazardsCall('init'); G.hz.on = st.id;
   G.cam.x = G.player.x; G.cam.y = G.player.y;
@@ -3907,6 +4062,7 @@ function step(dt){
   updateFish(dt);
   if (G.boss) updateBoss(dt);
   hazardsCall('update', dt);
+  updateLair(dt);
   updateParts(dt);
   updateCam(dt);
   G.shake = Math.max(0, G.shake - dt*28);
@@ -3954,6 +4110,9 @@ if (location.search.indexOf('debug') >= 0) {
   window.__openMap = () => openMap(); window.__openDex = () => openDex();
   window.__pause = () => pauseGame(); window.__startRun = () => startRun();
   window.__finishRun = c => finishRun(c);
+  window.__openLair = () => openLair();
+  /* 화면이 가려져 rAF 가 멈춘 상태에서도 시뮬레이션을 돌려 볼 수 있게 — n 틱(1/60초) 진행 */
+  window.__step = n => { for (let i = 0; i < n && G.running; i++) step(STEP); updateHUD(); render(); };
 }
 loadSave();
 fixStageSel();
