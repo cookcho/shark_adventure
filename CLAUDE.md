@@ -236,6 +236,7 @@ out.save(dst, optimize=True)
 | [`docs/ASSET_PROMPTS.md`](docs/ASSET_PROMPTS.md) | 완료분 생성 프롬프트 |
 | [`docs/ASSET_PROMPTS_REMAINING.md`](docs/ASSET_PROMPTS_REMAINING.md) | **남은 21장 프롬프트** |
 | [`docs/UPGRADE_REVIEW.md`](docs/UPGRADE_REVIEW.md) | 기능 업그레이드 검토 · 구현 기록 · 다음 성장/재미 기획 |
+| [`docs/STAGE_PLAN_4_6.md`](docs/STAGE_PLAN_4_6.md) | **해역 4~6 기획** (빙하 · 열수구 · 왕좌 · 끝없는 바다 · 새 상어 4종 · 그림 프롬프트) |
 
 ## 9. 폰 설치 (PWA) — 2026-10-14
 
