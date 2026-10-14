@@ -1,0 +1,19 @@
+{
+  "name": "샤크 어드벤처 — 바다의 왕",
+  "short_name": "샤크 어드벤처",
+  "description": "작은 상어에서 바다의 최강자로! 먹고, 자라고, 보스를 쓰러뜨리는 상어 성장 게임",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "portrait",
+  "background_color": "#04263d",
+  "theme_color": "#04263d",
+  "categories": ["games", "kids"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -8,7 +8,14 @@
      CSS 색을 멋대로 어둡게 칠해 버튼과 체력바가 검붉게 보인다 -->
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>바다의 왕 — 코어 데모</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="샤크 어드벤처">
+<!-- 폰 설치(PWA) — 홈 화면 아이콘 + 전체화면 + 오프라인. 게임 자체는 여전히 이 파일 하나다 -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>샤크 어드벤처</title>
 <style>
   :root{
     color-scheme:dark;
@@ -298,6 +305,8 @@
   .pill{padding:9px 18px;border-radius:999px;border:1.5px solid rgba(167,231,249,.45);
     background:rgba(6,45,73,.62);color:var(--laqua);font-size:12.5px;font-weight:700}
   .pill.off{opacity:.45;text-decoration:line-through}
+  .pill.install{border-color:rgba(255,211,79,.7);color:var(--gold)}
+  .pill.hidden{display:none}
 
   /* 토스트 (성장 알림) */
   #toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.8);width:min(92vw,360px);
@@ -561,8 +570,17 @@
     <div class="titleRow">
       <button class="pill" id="titleHelp">조작법</button>
       <button class="pill" id="titleMute">♪ 소리</button>
+      <button class="pill install hidden" id="titleInstall">📲 설치</button>
     </div>
   </div>
+</div>
+
+<div id="installScreen" class="screen hidden">
+  <h1>📲 폰에 설치하기</h1>
+  <p id="installHow"></p>
+  <p style="font-size:12px">설치하면 홈 화면에 <b>상어 아이콘</b>이 생기고<br>
+  주소창 없이 <b>전체 화면</b>으로 열린다. 한 번 연 뒤에는 인터넷이 없어도 된다.</p>
+  <button class="btn" id="installBack">닫기</button>
 </div>
 
 <div id="helpScreen" class="screen hidden">
@@ -3448,7 +3466,7 @@ function dexGroups(){
 
 /* 다른 화면을 전부 닫는다 — 화면이 늘어나도 한 곳만 고치면 된다 */
 function hideScreens(){
-  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, el('helpScreen')])
+  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, el('helpScreen'), el('installScreen')])
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
   hideToast();
@@ -4097,6 +4115,42 @@ function frame(ts){
     updateParts(real);                               // 정지 — 파티클만 흘린다
   }
   if (G.player) render();
+}
+
+/* ---------------- 폰 설치 (PWA) ----------------
+   크롬·삼성 인터넷은 설치 창을 직접 띄울 수 있다 (beforeinstallprompt).
+   아이폰 사파리는 그런 창이 없어서 "공유 → 홈 화면에 추가" 를 글로 안내한다.
+   이미 설치해서 열었으면 버튼을 감춘다 */
+let installEvt = null;
+const isStandalone = () => matchMedia('(display-mode: fullscreen)').matches ||
+  matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function refreshInstallBtn(){
+  el('titleInstall').classList.toggle('hidden', isStandalone());
+}
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; refreshInstallBtn(); });
+addEventListener('appinstalled', () => { installEvt = null; el('titleInstall').classList.add('hidden'); });
+el('titleInstall').addEventListener('click', async () => {
+  SFX.ui();
+  if (installEvt) {                                   // 크롬·삼성 인터넷 — 설치 창을 바로 띄운다
+    installEvt.prompt();
+    try { await installEvt.userChoice; } catch (e) {}
+    installEvt = null; refreshInstallBtn();
+    return;
+  }
+  el('installHow').innerHTML = isIOS
+    ? '아이폰은 사파리에서<br><b>아래 공유 버튼(□↑) → "홈 화면에 추가"</b>'
+    : '브라우저 메뉴(⋮ 또는 ≡)에서<br><b>"홈 화면에 추가"</b> 또는 <b>"앱 설치"</b>를 누른다<br>' +
+      '<span style="font-size:11px;opacity:.8">삼성 인터넷은 주소창의 ⬇ 설치 아이콘도 된다</span>';
+  UI.start.classList.add('hidden'); el('installScreen').classList.remove('hidden');
+});
+el('installBack').addEventListener('click', () => {
+  SFX.ui(); el('installScreen').classList.add('hidden'); UI.start.classList.remove('hidden');
+});
+refreshInstallBtn();
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
 /* 부트 */
