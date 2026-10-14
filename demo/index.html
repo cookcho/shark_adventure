@@ -1306,7 +1306,7 @@ const SFX = {
   },
 
   eat(tier){ this.tone(520 - tier*38, 0.1, 'sine', 0.16, 300 - tier*20);
-             this.noise(0.05 + tier*0.01, 2400 - tier*150, 0.12, 'highpass'); },   // 와작
+             this.tone(760, 0.06, 'sine', 0.10, 1400); },   // 뽁
   bite(){    this.noise(0.09, 1400, 0.2); },
   hurt(){    this.tone(220, 0.26, 'sawtooth', 0.17, 70); this.noise(0.14, 500, 0.14); },
   shell(){   this.noise(0.16, 2600, 0.22, 'highpass'); },
@@ -1702,78 +1702,70 @@ function ring(x, y){
   G.parts.push({ x, y, vx:0, vy:0, life:0.75, max:0.75, r:10, color:'#9dffd8', kind:'ring' });
 }
 
-/* ---------------- 와앙 — 먹는 게 보이게 ----------------
-   먹으면 ① 물고기가 작아지며 입으로 빨려 들어가고 ② 입 앞에서 이빨 달린 턱이 탁 닫히고
-   ③ 상어가 몸을 앞으로 쭉 내민다. 전부 보이는 것만 — 판정·수치와 무관하다 */
+/* ---------------- 뽁! — 먹는 게 보이게 ----------------
+   먹으면 ① 물고기가 입으로 쓱 들어가고 ② 입에서 하얀 고리 + 별 가루가 뽁 터지고
+   ③ 상어 몸이 통 튄다. 전부 보이는 것만 — 판정·수치와 무관하다.
+   (2026-10-14 시안 4개 중 "C. 뽁! 반짝" 으로 결정. 이빨 턱은 "괴물 같다"는 의견으로 뺐다) */
 /* 상어 입 위치 — 진행 방향(기울기 제한 포함) 앞쪽 */
 function sharkMouth(p){
   const pitch = clamp(Math.atan2(p.vy, Math.abs(p.vx) + 1e-3), -MAX_PITCH, MAX_PITCH);
   const a = p.vx < 0 ? Math.PI - pitch : pitch;
   return { x: p.x + Math.cos(a)*p.len*0.42, y: p.y + Math.sin(a)*p.len*0.42, a };
 }
+const POP_T = 0.24;     // 몸 튕김 길이
 function chompFx(f, eaten){
   if (G.attract) return;
-  const p = G.player, m = sharkMouth(p);
+  const p = G.player;
   const big = !!(f && f.def.tier >= p.tier - 1);       // 내 티어에 가까운 큰 먹이
-  p.chomp = 0.24;
-  if (G.parts.length < 330) {
-    G.parts.push({ x: m.x, y: m.y, vx:0, vy:0, life:0.26, max:0.26, r:0, kind:'jaw',
-      size: clamp(p.len*0.34, 11, 34) * (big ? 1.25 : 1) });
-    if (eaten && f)
-      G.parts.push({ x: f.x, y: f.y, vx:0, vy:0, life:0.16, max:0.16, r:0, kind:'gulp',
-        sx: f.x, sy: f.y, def: f.def, dir: f.vx < 0 ? -1 : 1, golden: f.golden });
-  }
-  if (eaten && f) {
-    burst(m.x, m.y, f.def.body, 4 + f.def.tier*2, 70 + f.def.tier*14);
-    if (big) floatText(m.x, m.y - p.len*0.5, '꿀꺽!', '#ffffff');
-    else if (Math.random() < 0.28) floatText(m.x, m.y - p.len*0.45, '냠!', '#ffffff');
-  }
+  p.chomp = POP_T;
+  if (eaten && f && G.parts.length < 330) {
+    // 물고기가 입으로 쓱 — 도착하면 뽁 (updateParts 에서)
+    G.parts.push({ x: f.x, y: f.y, vx:0, vy:0, life:0.12, max:0.12, r:0, kind:'gulp',
+      sx: f.x, sy: f.y, def: f.def, dir: f.vx < 0 ? -1 : 1, golden: f.golden, big, color: f.def.body });
+  } else popAt(sharkMouth(p), false, false, null);       // 물기 — 작게만
 }
-/* 상어 몸 — 와앙 할 때 앞으로 늘어나며 내민다 (faceHeading 뒤에 불러서 x 가 앞쪽) */
+/* 입에서 터지는 것 — 고리 하나 + 별 가루 + (가끔) "뽁!" */
+function popAt(m, big, eaten, color){
+  if (G.parts.length > 320) return;
+  const p = G.player, s = clamp(p.len/66, 0.55, 1.4) * (big ? 1.3 : 1);
+  G.parts.push({ x: m.x, y: m.y, vx:0, vy:0, life:0.4, max:0.4, r: 5*s, grow: 95*s, kind:'pop' });
+  const n = eaten ? (big ? 8 : 5) : 3;
+  for (let i = 0; i < n; i++) {
+    const an = Math.random()*6.2832, sp = (80 + Math.random()*90)*s;
+    G.parts.push({ x: m.x, y: m.y, vx: Math.cos(an)*sp, vy: Math.sin(an)*sp,
+      life: 0.45, max: 0.45, r: (eaten ? 5.5 : 4)*s, rot: Math.random()*6, kind:'star' });
+  }
+  if (eaten && color) burst(m.x, m.y, color, 3, 60);
+  if (eaten && (big || Math.random() < 0.25)) floatText(m.x, m.y - p.len*0.45, '뽁!', '#ffffff');
+}
+/* 상어 몸 — 뽁 할 때 통 튄다 (faceHeading 뒤에 불러서 x 가 앞쪽) */
 function chompPose(p, L){
   if (!(p.chomp > 0)) return;
-  const k = Math.sin((1 - p.chomp/0.24)*Math.PI);
-  ctx.translate(L*0.07*k, 0);
-  ctx.scale(1 + 0.12*k, 1 - 0.08*k);
+  const k = Math.sin((1 - p.chomp/POP_T)*Math.PI);
+  ctx.scale(1 + 0.10*k, 1 - 0.08*k);
 }
-/* 턱 — 위아래 잇몸 + 흰 이빨이 탁 닫힌다. 앞 절반은 닫히고 뒤 절반은 닫힌 채 커지며 사라진다 */
-function drawJaw(q){
-  const m = sharkMouth(G.player), t = 1 - q.life/q.max;
-  const open = t < 0.5 ? 1 - t/0.5 : 0;
-  const r = q.size * (t < 0.5 ? 1 : 1 + (t - 0.5)*0.5);
-  const a = t < 0.5 ? 1 : 1 - (t - 0.5)/0.5;
-  ctx.save();
-  ctx.translate(m.x, m.y); ctx.rotate(m.a); ctx.translate(r*0.8, 0);   // 눈을 가리지 않게 입 앞으로
-  ctx.globalAlpha = a;
-  const gap = r*0.62*open, n = 5, tw = r/n*0.85, th = r*0.42;
-  for (const sg of [-1, 1]) {                       // -1 위턱, 1 아래턱
-    ctx.save(); ctx.translate(0, sg*gap);
-    ctx.beginPath();                                 // 잇몸
-    ctx.ellipse(0, 0, r, r*0.5, 0, sg < 0 ? Math.PI : 0, sg < 0 ? 2*Math.PI : Math.PI);
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(214,60,90,.85)'; ctx.fill();
-    ctx.lineWidth = Math.max(1.5, r*0.09); ctx.strokeStyle = 'rgba(40,6,16,.85)'; ctx.stroke();
-    ctx.beginPath();                                 // 이빨 — 반대쪽 턱을 향한다
-    for (let i = 0; i < n; i++) {
-      const x = -r + (i + 0.5)*(2*r/n);
-      ctx.moveTo(x - tw, 0); ctx.lineTo(x + tw, 0); ctx.lineTo(x, -sg*th);
-    }
-    ctx.closePath();
-    ctx.fillStyle = '#ffffff'; ctx.fill();
-    ctx.lineWidth = Math.max(1, r*0.05); ctx.strokeStyle = 'rgba(40,6,16,.7)'; ctx.stroke();
-    ctx.restore();
-  }
-  ctx.restore();
-}
-/* 꿀꺽 — 먹힌 물고기가 작아지며 입으로 빨려 들어간다 */
+/* 꿀꺽 — 먹힌 물고기가 입으로 쓱 들어간다 */
 const GULP_VIEW = { x: 0, y: 0, tier: 99 };
 function drawGulp(q){
   const m = sharkMouth(G.player), t = 1 - q.life/q.max, e = t*t;
-  const x = lerp(q.sx, m.x, e), y = lerp(q.sy, m.y, e), k = 1 - 0.8*t;
   ctx.save();
-  ctx.globalAlpha = 1 - t*0.6;
-  ctx.translate(x, y); ctx.scale(k, k);
+  ctx.translate(lerp(q.sx, m.x, e), lerp(q.sy, m.y, e));
   drawCreature({ def: q.def, x: 0, y: 0, vx: q.dir, vy: 0, phase: 0, wob: 1, hp: 1, maxHp: 1, golden: q.golden }, GULP_VIEW);
+  ctx.restore();
+}
+function drawPop(q){
+  const k = 1 - q.life/q.max;
+  ctx.strokeStyle = 'rgba(255,255,255,' + (1 - k) + ')';
+  ctx.lineWidth = 4*(1 - k) + 1;
+  ctx.beginPath(); ctx.arc(q.x, q.y, q.r + k*q.grow*0.4, 0, 6.2832); ctx.stroke();
+}
+function drawStar(q){
+  ctx.save();
+  ctx.translate(q.x, q.y); ctx.rotate(q.rot);
+  ctx.fillStyle = 'rgba(255,240,170,' + Math.min(1, q.life*3) + ')';
+  ctx.beginPath();
+  for (let j = 0; j < 8; j++) { const r = j % 2 ? q.r*0.37 : q.r; ctx.lineTo(Math.cos(j*0.785)*r, Math.sin(j*0.785)*r); }
+  ctx.closePath(); ctx.fill();
   ctx.restore();
 }
 
@@ -2965,10 +2957,14 @@ function updateParts(dt){
   for (let i = G.parts.length - 1; i >= 0; i--) {
     const q = G.parts[i];
     q.life -= dt;
-    if (q.life <= 0) { G.parts.splice(i, 1); continue; }
+    if (q.life <= 0) {
+      if (q.kind === 'gulp' && !G.attract && G.player) popAt(sharkMouth(G.player), q.big, true, q.color);   // 입에 도착 — 뽁
+      G.parts.splice(i, 1); continue;
+    }
     if (q.kind === 'ring') { q.r += 420*dt; continue; }
     if (q.kind === 'boom') { q.r += 620*dt; continue; }
-    if (q.kind === 'jaw' || q.kind === 'gulp') continue;   // 상어 입을 따라간다 — drawParts 에서
+    if (q.kind === 'gulp' || q.kind === 'pop') continue;   // 꿀꺽은 상어 입을 따라간다 — drawParts 에서
+    if (q.kind === 'star') { q.x += q.vx*dt; q.y += q.vy*dt; const d = Math.pow(0.0067, dt); q.vx *= d; q.vy *= d; q.rot += dt*8; continue; }
     q.x += q.vx*dt; q.y += q.vy*dt;
     if (q.kind === 'bubble') { q.vy -= 60*dt; q.vx *= 0.97; }
     else { q.vy += 70*dt; q.vx *= 0.94; q.vy *= 0.96; }
@@ -3766,8 +3762,9 @@ function drawParts(){
       ctx.fill();
       continue;
     }
-    if (q.kind === 'jaw')  { drawJaw(q); continue; }
     if (q.kind === 'gulp') { drawGulp(q); continue; }
+    if (q.kind === 'pop')  { drawPop(q); continue; }
+    if (q.kind === 'star') { drawStar(q); continue; }
     if (q.kind === 'text') {
       ctx.globalAlpha = a;
       ctx.font = '800 15px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
