@@ -410,6 +410,26 @@
   .acard .new{display:inline-block;margin-left:6px;background:#ff4d6d;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;vertical-align:2px}
   .dcard .gd{position:absolute;bottom:5px;left:6px;font-size:13px}
 
+  /* 관리자 모드 */
+  .adm{width:32px;height:32px;border-radius:50%;margin-right:6px;vertical-align:middle;
+    border:1px solid rgba(167,231,249,.18);background:rgba(6,45,73,.5);color:#5b7a8c;font-size:13px}
+  .adm.on{color:#ff9aa8;border-color:#ff6b7f;background:rgba(120,20,40,.6)}
+  .admBar{display:none;margin:-8px 0 12px;padding:7px 12px;border-radius:var(--r-sm);text-align:center;
+    background:repeating-linear-gradient(135deg,rgba(255,107,127,.25) 0 10px,rgba(255,107,127,.12) 10px 20px);
+    border:1px solid #ff6b7f;color:#ffd0d8;font-size:12px;font-weight:900}
+  body.admin .admBar{display:block}
+  #adminLogin input{width:min(100%,220px);padding:13px;border-radius:var(--r-md);text-align:center;
+    border:1.5px solid rgba(167,231,249,.45);background:rgba(2,16,28,.7);color:#fff;
+    font-size:24px;font-weight:900;letter-spacing:10px}
+  #adminLogin .err{color:#ff9aa8;font-size:12.5px;font-weight:800;min-height:18px}
+  .admGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(100%,340px)}
+  .admGrid .pbtn{padding:12px 8px;font-size:13.5px}
+  .admGrid .pbtn.on{background:linear-gradient(180deg,#5ee8a8,#1f9e6c);color:#03301f;border-color:transparent}
+  .admSec{color:#ff9aa8;font-size:11px;font-weight:900;letter-spacing:2px;margin-top:6px}
+  #pAdmin{display:none;width:min(100%,280px)}
+  body.admin #pAdmin{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  #pAdmin .pbtn{padding:10px 6px;font-size:12.5px;border-color:rgba(255,107,127,.5)}
+
   /* ---------- 일시정지 ---------- */
   .screen.pause{background:rgba(2,16,28,.78);z-index:40;gap:10px}
   .pauseBox{display:flex;flex-direction:column;gap:10px;width:min(100%,280px)}
@@ -599,13 +619,22 @@
     <button class="pbtn" id="pHome">⌂ 기지로</button>
     <button class="pbtn" id="pMute">♪ 소리 끄기</button>
   </div>
+  <div id="pAdmin">
+    <button class="pbtn" data-adm="lair">👑 보스 굴 열기</button>
+    <button class="pbtn" data-adm="boss">⚔️ 보스 바로</button>
+    <button class="pbtn" data-adm="evo">🦈 진화 +1</button>
+    <button class="pbtn" data-adm="item">🎁 아이템 5종</button>
+    <button class="pbtn" data-adm="gold">✨ 황금 소환</button>
+    <button class="pbtn" data-adm="clear">🏁 바로 클리어</button>
+  </div>
   <p class="pauseInfo" id="pauseInfo"></p>
 </div>
 
 <div id="hubScreen" class="screen hub hidden">
   <div class="hubTop"><div class="ttl"><button class="back" id="hubBack" aria-label="타이틀로">‹</button><h2>해저 기지</h2></div>
-    <div><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
+    <div><button id="admBtn" class="adm" aria-label="관리자">⚙</button><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
   </div>
+  <div class="admBar">🔧 관리자 모드 — 테스트 저장을 쓰는 중 (아이 진행도는 그대로)</div>
   <div class="lvRow"><div class="lvB">Lv <b id="lvNum">1</b></div>
     <div class="lvBar"><i id="lvFill"></i></div><div class="lvT" id="lvTxt">0 / 120</div></div>
   <div class="tiles three">
@@ -627,6 +656,43 @@
     <span class="pl" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,211,79,.16);border:1px solid rgba(255,211,79,.42);border-radius:999px;padding:5px 13px;color:var(--gold);font-size:14px;font-weight:900">◈ <span id="mapPearls">0</span></span>
   </div>
   <div class="mapInfo"><div class="mi" id="mapInfo"></div><button class="btn" id="mapDive">잠수 시작 ▶</button></div>
+</div>
+
+<div id="adminLogin" class="screen hidden">
+  <h1>🔧 관리자 모드</h1>
+  <p>테스트용 — 모든 해역과 기능이 열린다.<br>아이의 저장은 건드리지 않는다.</p>
+  <input id="admPw" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="····">
+  <div class="err" id="admErr"></div>
+  <div class="pauseBox">
+    <button class="pbtn main" id="admGo">들어가기</button>
+    <button class="pbtn" id="admCancel">닫기</button>
+  </div>
+</div>
+
+<div id="adminScreen" class="screen hidden" style="justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top) + 24px)">
+  <h1>🔧 관리자</h1>
+  <div class="admSec">판 안</div>
+  <div class="admGrid">
+    <button class="pbtn" data-adm="god">🛡️ 무적</button>
+    <button class="pbtn" data-adm="food">🍖 배부름 유지</button>
+  </div>
+  <div class="admSec">저장 (테스트 저장만 바뀐다)</div>
+  <div class="admGrid">
+    <button class="pbtn" data-adm="pearls">◈ 진주 +10,000</button>
+    <button class="pbtn" data-adm="sharks">🦈 상어 전부</button>
+    <button class="pbtn" data-adm="stages">🌊 해역 전부 클리어</button>
+    <button class="pbtn" data-adm="upgmax">⚙️ 능력치 MAX</button>
+    <button class="pbtn" data-adm="upg0">⚙️ 능력치 0</button>
+    <button class="pbtn" data-adm="bag">🎒 가방 +5씩</button>
+    <button class="pbtn" data-adm="dex">📖 도감 전부</button>
+    <button class="pbtn" data-adm="lvup">⭐ 레벨 +1</button>
+    <button class="pbtn" data-adm="achall">🏆 업적 전부</button>
+    <button class="pbtn" data-adm="egg">🥚 상어알 +1</button>
+    <button class="pbtn" data-adm="reset">♻️ 테스트 저장 초기화</button>
+    <button class="pbtn warn" data-adm="exit">🚪 관리자 끄기</button>
+  </div>
+  <p class="pauseInfo" id="admMsg"></p>
+  <button class="btn" id="admBack">기지로</button>
 </div>
 
 <div id="achScreen" class="screen dex ach hidden">
@@ -919,6 +985,11 @@ const BOSS_PEARLS  = 150;
    메타 저장 — localStorage. 읽기/쓰기 모두 실패할 수 있으므로 전부 감싼다.
    ========================================================================== */
 const SAVE_KEY = 'seaking.save.v1';
+/* 관리자(테스트) 모드는 저장을 따로 쓴다 — 아이의 진행도를 절대 건드리지 않는다.
+   새로고침하면 관리자 모드는 꺼지고 원래 저장으로 돌아온다 */
+const ADMIN_SAVE_KEY = 'seaking.save.admin';
+const ADMIN = { on: false, god: true, food: true };
+const saveKey = () => ADMIN.on ? ADMIN_SAVE_KEY : SAVE_KEY;
 const freshSave = () => ({
   v: 1, pearls: 0, eggs: 0, active: 'reef',
   sharks: { reef: true },
@@ -945,7 +1016,7 @@ let SAVE = freshSave();
 
 function loadSave(){
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw = localStorage.getItem(saveKey());
     if (!raw) return;
     const o = JSON.parse(raw);
     if (!o || o.v !== 1) return;
@@ -972,12 +1043,13 @@ function loadSave(){
   } catch (e) { SAVE = freshSave(); }     // 손상된 저장은 조용히 초기화
 }
 function writeSave(){
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {}
+  try { localStorage.setItem(saveKey(), JSON.stringify(SAVE)); } catch (e) {}
 }
 
 /* 해역 해금 — 앞 해역 클리어 + 상어 기본 티어 충족 */
 const stageCleared = id => !!(SAVE.stages[id] && SAVE.stages[id].cleared);
 function stageLock(st, i){
+  if (ADMIN.on) return null;                 // 관리자 — 모든 해역 열림 (상어 티어 무관)
   if (i > 0 && !stageCleared(STAGES[i-1].id)) return '앞 해역을 먼저 클리어';
   const base = (SHARK_BY_ID[SAVE.active] || SHARKS[0]).base;
   if (base < st.reqBase) return '기본 티어 ' + st.reqBase + ' 이상 상어 필요';
@@ -1903,7 +1975,8 @@ function updatePlayer(dt){
   p.phase += (1.1 + Math.hypot(p.vx, p.vy)/70) * dt * 6;
 
   // 포만감 — 멈추면 죽는 압박 장치
-  p.hunger = Math.max(0, p.hunger - HUNGER_DRAIN*G.stage.hungerMul*dt);
+  p.hunger = ADMIN.on && ADMIN.food ? 100                // 관리자 — 배고프지 않다
+           : Math.max(0, p.hunger - HUNGER_DRAIN*G.stage.hungerMul*dt);
   if (p.hunger <= 0) p.hp -= p.maxHp*STARVE_DPS*dt;
   else if (p.hunger > 70 && p.hp > 0 && p.hp < p.maxHp) p.hp = Math.min(p.maxHp, p.hp + REGEN_PS*dt);
 
@@ -2230,6 +2303,7 @@ function evolve(){
 function hurtPlayer(dmg, nx, ny, cd){
   const p = G.player;
   if (p.iframe > 0) return;
+  if (ADMIN.on && ADMIN.god) return;                   // 관리자 무적
   if (p.shield > 0) {                                  // 🛡️ 방어막 — 한 번 막고 사라진다
     p.shield = 0; p.iframe = Math.max(cd, 0.9);
     p.vx += nx*160; p.vy += ny*160;
@@ -3874,7 +3948,8 @@ function dexGroups(){
 
 /* 다른 화면을 전부 닫는다 — 화면이 늘어나도 한 곳만 고치면 된다 */
 function hideScreens(){
-  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, UI.ach, el('helpScreen'), el('installScreen')])
+  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, UI.ach, el('helpScreen'), el('installScreen'),
+                   el('adminLogin'), el('adminScreen')])
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
   hideToast();
@@ -3885,6 +3960,7 @@ function hideToast(){ toastTimer = 0; UI.toast.classList.remove('show'); }
 function renderHub(){
   fixStageSel();
   el('hubPearls').textContent = SAVE.pearls;
+  el('admBtn').classList.toggle('on', ADMIN.on);
   el('muteBtn').classList.toggle('off', SAVE.muted);
 
   const cur = STAGE_BY_ID[SAVE.stage] || STAGES[0];
@@ -4391,6 +4467,113 @@ document.addEventListener('visibilitychange', () => {
 addEventListener('keydown', e => {
   if (e.key !== 'Escape' && e.key.toLowerCase() !== 'p') return;
   if (G.paused) resumeGame(); else pauseGame();
+});
+
+/* ---------------- 관리자 모드 ----------------
+   비밀번호는 해시로만 들고 있다 (코드를 열어봐도 숫자가 바로 보이지 않게).
+   단, 정적 웹페이지라 진짜 보안은 아니다 — 아이가 우연히 들어가지 않게 막는 정도 */
+const ADMIN_HASH = '8bcda438';
+function fnv(str){
+  let x = 0x811c9dc5;
+  for (const ch of str) { x ^= ch.codePointAt(0); x = Math.imul(x, 0x01000193) >>> 0; }
+  return x.toString(16);
+}
+/* 관리자 저장 — 처음이면 모든 해역 클리어 · 상어 전부 · 진주 많이 로 만든다 */
+function adminFreshSave(){
+  const f = freshSave();
+  f.pearls = 99999;
+  SHARKS.forEach(sh => f.sharks[sh.id] = true);
+  STAGES.forEach(st => f.stages[st.id] = { cleared: true });
+  f.inv = { revive: 5, shield: 5, magnet: 5 };
+  return f;
+}
+function enterAdmin(){
+  writeSave();                                   // 아이 저장을 먼저 확실히 남긴다
+  ADMIN.on = true;
+  let raw = null;
+  try { raw = localStorage.getItem(ADMIN_SAVE_KEY); } catch (e) {}
+  if (raw) loadSave(); else { SAVE = adminFreshSave(); writeSave(); }
+  document.body.classList.add('admin');
+  SFX.setMuted(SAVE.muted);
+}
+function exitAdmin(){
+  writeSave();
+  ADMIN.on = false;
+  SAVE = freshSave(); loadSave(); fixStageSel();
+  document.body.classList.remove('admin');
+  SFX.setMuted(SAVE.muted);
+}
+function openAdmin(){
+  hideScreens(); document.body.classList.add('menu');
+  renderAdmin();
+  el('adminScreen').classList.remove('hidden');
+}
+function renderAdmin(msg){
+  el('adminScreen').querySelector('[data-adm="god"]').classList.toggle('on', ADMIN.god);
+  el('adminScreen').querySelector('[data-adm="food"]').classList.toggle('on', ADMIN.food);
+  el('admMsg').textContent = msg || ('진주 ' + SAVE.pearls.toLocaleString() + ' · Lv ' + levelOf(SAVE.xp).lv +
+    ' · 업적 ' + ACH.filter(a => SAVE.ach[a.id]).length + '/' + ACH.length);
+}
+const ADMIN_ACTIONS = {
+  god:    () => { ADMIN.god = !ADMIN.god; return '무적 ' + (ADMIN.god ? '켬' : '끔'); },
+  food:   () => { ADMIN.food = !ADMIN.food; return '배부름 유지 ' + (ADMIN.food ? '켬' : '끔'); },
+  pearls: () => { SAVE.pearls += 10000; return '진주 +10,000'; },
+  sharks: () => { SHARKS.forEach(sh => SAVE.sharks[sh.id] = true); return '상어 4종 해금'; },
+  stages: () => { STAGES.forEach(st => SAVE.stages[st.id] = { ...(SAVE.stages[st.id] || {}), cleared: true }); return '해역 전부 클리어'; },
+  upgmax: () => { UPGRADES.forEach(u => SAVE.upg[u.id] = UPG_MAX); return '능력치 전부 MAX'; },
+  upg0:   () => { UPGRADES.forEach(u => SAVE.upg[u.id] = 0); return '능력치 전부 0'; },
+  bag:    () => { SHOP.forEach(it => SAVE.inv[it.id] = (SAVE.inv[it.id] || 0) + 5); return '가방 아이템 +5씩'; },
+  dex:    () => { FISH.forEach(d => { if (d.shock) SAVE.seen[d.id] = true; else SAVE.dex[d.id] = Math.max(SAVE.dex[d.id] || 0, 1); }); return '도감 전부 발견'; },
+  lvup:   () => { const L = levelOf(SAVE.xp); SAVE.xp += L.need - L.cur; payLevels(); return '레벨 +1 → Lv ' + levelOf(SAVE.xp).lv; },
+  achall: () => { ACH.forEach(a => { if (!SAVE.ach[a.id]) SAVE.ach[a.id] = 1; }); return '업적 전부 달성 (보상 없이)'; },
+  egg:    () => { SAVE.eggs++; return '상어알 +1'; },
+  reset:  () => { SAVE = adminFreshSave(); return '테스트 저장 초기화'; },
+};
+el('admBtn').addEventListener('click', () => {
+  SFX.ui();
+  if (ADMIN.on) { openAdmin(); return; }
+  hideScreens(); document.body.classList.add('menu');
+  el('admPw').value = ''; el('admErr').textContent = '';
+  el('adminLogin').classList.remove('hidden');
+  setTimeout(() => el('admPw').focus(), 50);
+});
+function tryLogin(){
+  if (fnv('seaking-admin:' + el('admPw').value.trim()) === ADMIN_HASH) {
+    SFX.evolve(); enterAdmin(); openAdmin();
+  } else {
+    SFX.hurt(); el('admErr').textContent = '비밀번호가 틀렸어요'; el('admPw').value = '';
+  }
+}
+el('admGo').addEventListener('click', tryLogin);
+el('admPw').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+el('admCancel').addEventListener('click', () => { SFX.ui(); openHub(); });
+el('admBack').addEventListener('click', () => { SFX.ui(); openHub(); });
+el('adminScreen').addEventListener('click', e => {
+  const b = e.target.closest('[data-adm]');
+  if (!b) return;
+  const k = b.dataset.adm;
+  if (k === 'exit') { SFX.ui(); exitAdmin(); openHub(); return; }
+  const msg = ADMIN_ACTIONS[k] && ADMIN_ACTIONS[k]();
+  writeSave(); SFX.buy(); renderAdmin(msg);
+});
+/* 일시정지 메뉴의 관리자 버튼 — 테스트하고 싶은 장면으로 바로 */
+el('pAdmin').addEventListener('click', e => {
+  const b = e.target.closest('[data-adm]');
+  if (!b || !ADMIN.on || !G.running) return;
+  const p = G.player, k = b.dataset.adm;
+  if (k === 'lair' && !G.bossSpawned) { if (!G.lair) openLair(); G.lair.t = 0; }
+  if (k === 'boss' && !G.bossSpawned) spawnBoss();
+  if (k === 'evo' && p.stage < EVO.length - 1) { p.growth = EVO[p.stage].need; evolve(); }
+  if (k === 'item') ['heal', 'magnet', 'bolt', 'shield', 'rage'].forEach((kind, i) => {
+    spawnItem(); const it = G.items[G.items.length - 1];
+    it.kind = kind; it.x = clamp(p.x - 160 + i*80, 60, WORLD.w - 60); it.y = clamp(p.y - 120, 80, WORLD.h - 90);
+  });
+  if (k === 'gold') {
+    const f = G.fish.find(f => f.def.tier < p.tier && !f.def.school && !f.def.shell && !f.def.toxic && !f.def.shock);
+    if (f) { f.golden = true; f.x = clamp(p.x + 120, 40, WORLD.w - 40); f.y = p.y; }
+  }
+  if (k === 'clear') { G.cleared = true; G.endTimer = 0.1; }
+  SFX.ui(); resumeGame();
 });
 
 /* ---------------- 런 시작 / 정산 ---------------- */
