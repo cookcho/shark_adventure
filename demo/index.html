@@ -84,6 +84,9 @@
     text-shadow:0 1px 2px rgba(0,8,16,.9)}
   #tierTag em{font-style:normal;color:#fff;font-size:21px;font-weight:900;letter-spacing:0;
     font-variant-numeric:tabular-nums}
+  #endlessInfo{display:none;color:#ffe7a8;font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;
+    text-shadow:0 1px 2px rgba(0,8,16,.95),0 0 6px rgba(0,8,16,.6)}
+  body.endless #endlessInfo{display:block}
   #eaten{color:#e6f7ff;font-size:13px;font-weight:800;
     font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,8,16,.95),0 0 6px rgba(0,8,16,.6)}
 
@@ -407,6 +410,20 @@
   .acard .ar{flex:0 0 auto;text-align:right;font-size:11px;font-weight:900;color:var(--gold)}
   .acard.done{background:linear-gradient(180deg,rgba(255,211,79,.16),rgba(255,138,36,.06));border-color:rgba(255,211,79,.45)}
   .acard.done .ai{filter:none}
+  .tchip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;
+    font-size:12.5px;font-weight:900;border:1px solid;white-space:nowrap}
+  .tchip.r0{color:#e6f2fa;border-color:rgba(230,242,250,.45);background:rgba(230,242,250,.08)}
+  .tchip.r1{color:#8fdcff;border-color:rgba(143,220,255,.6);background:rgba(60,170,230,.14)}
+  .tchip.r2{color:#e0b0ff;border-color:rgba(224,176,255,.65);background:rgba(160,90,230,.18)}
+  .tchip.r3{color:#ffe08a;border-color:rgba(255,211,79,.8);background:rgba(255,190,60,.16);
+    box-shadow:0 0 10px rgba(255,200,80,.35)}
+  .titleRowHub{display:flex;align-items:center;gap:8px;margin:-8px 0 12px;padding:0;background:none;border:none;
+    color:#9ec8dd;font-size:11px;font-weight:800}
+  #titleBadge{margin-top:8px;min-height:24px}
+  .acard .tl{margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .acard .tl button{padding:3px 10px;border-radius:999px;border:1px solid rgba(255,211,79,.6);
+    background:rgba(255,211,79,.15);color:#ffe7a8;font-size:11px;font-weight:900}
+  .acard .tl button.on{background:#ffd34f;color:#4a2300;border-color:transparent}
   .acard .new{display:inline-block;margin-left:6px;background:#ff4d6d;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;vertical-align:2px}
   .dcard .gd{position:absolute;bottom:5px;left:6px;font-size:13px}
 
@@ -592,6 +609,7 @@
   <button id="pauseBtn" aria-label="일시정지"><i></i><i></i></button>
   <div id="tierTag">티어 <em id="tierNum">2</em></div>
   <div id="eaten">먹은 물고기 0</div>
+  <div id="endlessInfo"></div>
 </div>
 <div id="growWrap">
   <div id="growBar"><i id="growFill"></i></div>
@@ -635,6 +653,7 @@
     <div><button id="admBtn" class="adm" aria-label="관리자">⚙</button><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
   </div>
   <div class="admBar">🔧 관리자 모드 — 테스트 저장을 쓰는 중 (아이 진행도는 그대로)</div>
+  <button class="titleRowHub" id="titleRow">칭호 <span id="hubTitle"></span> <span style="opacity:.7">› 바꾸기</span></button>
   <div class="lvRow"><div class="lvB">Lv <b id="lvNum">1</b></div>
     <div class="lvBar"><i id="lvFill"></i></div><div class="lvT" id="lvTxt">0 / 120</div></div>
   <div class="tiles three">
@@ -739,6 +758,7 @@
   <div class="titleWrap">
     <div class="wordmark"><span class="w1">SHARK</span><span class="w2">ADVENTURE</span></div>
     <p class="tagline">작은 상어에서 바다의 최강자로!</p>
+    <div id="titleBadge"></div>
     <div id="titleShark"></div>
     <button class="btn cta" id="startBtn">▶ 모험 시작</button>
     <div class="titleRow">
@@ -1010,14 +1030,27 @@ const STAGES = [
     fish:['e_mackerel','seahorse','nautilus','e_squid','e_tuna','e_barra','e_hammer','guardian','e_leopard','crownjelly'],
     boss:'megalodon', hungerMul:1.5, reqBase:6, goldChance:0.06,
     icon:'👑', hazards:['crown','whirl'] },
+
+  /* 끝없는 바다 — 왕좌를 깬 뒤 열린다. 1분마다 다음 바다의 모습·물고기로 바뀌고 보스가 번갈아 온다.
+     물색·조명·지형은 startRun/endlessSea 가 지금 깊이의 해역에서 복사한다 */
+  { id:'endless', name:'끝없는 바다', depth:'∞',
+    blurb:'모든 바다가 차례로 펼쳐진다. 얼마나 오래 버틸까?',
+    world:{ w:3600, h:2000 },
+    water:['#38b0dc','#0a6391'], deep:['#04243c','#01101c'],
+    light:'shafts', terrain:'reef',
+    mote:'rgba(200,238,255,.30)', flora:'rgba(38,104,78,.42)', rock:'rgba(3,38,62,.5)',
+    fish:[], boss:null, hungerMul:1.0, reqBase:2,
+    icon:'♾️', hazards:[], endless:true },
 ];
 const STAGE_BY_ID = {}; STAGES.forEach(x => STAGE_BY_ID[x.id] = x);
+const SEAS = STAGES.filter(st => !st.endless);           // 끝없는 바다가 차례로 보여 주는 해역들
+function stagePool(st, depth){
+  const ids = st.endless ? [].concat(...SEAS.slice(0, (depth || 0) + 1).map(x => x.fish)) : st.fish;
+  return [...new Set(ids)].map(id => FISH_BY_ID[id]).filter(Boolean);
+}
 
 /* 지도에만 보이는 다음 바다 — 아직 데이터가 없다. 해역을 만들면 STAGES 로 옮기고 여기서 지운다 */
-const SOON = [
-  { name:'끝없는 바다', depth:'∞', water:['#1a3a5a','#050a14'], icon:'♾️',
-    teaser:'왕좌를 깬 자만 들어갈 수 있는 바다. 얼마나 오래 버틸까?' },
-];
+const SOON = [];      // 지도에만 보이는 다음 바다 — 지금은 없다 (해역을 기획하면 여기에)
 
 /* 도감 한 줄 설명 — 아이가 읽는 글이라 짧게, 게임에서 쓸모 있는 말로 */
 const FISH_TIP = {
@@ -1159,6 +1192,8 @@ const freshSave = () => ({
   seen: {},           // 먹을 수 없는 것(해파리·성게·기뢰) — 닿아본 적 있음
   bossKills: {},      // 보스 id → 쓰러뜨린 수
   totalEaten: 0,
+  title: '',          // 단 칭호 = 업적 id ('' 이면 기본 칭호)
+  endless: { best: 0, bestKills: 0 },   // 끝없는 바다 최고 기록 (버틴 초 · 보스 수)
   /* 성장 · 재미 */
   xp: 0, lvPaid: 1,   // 누적 경험치 / 보상을 준 레벨
   ach: {},            // 업적 id → 1(달성, 안 봄) · 2(봄)
@@ -1189,7 +1224,8 @@ function loadSave(){
       goldDex:{ ...(o.goldDex || {}) },
       stats:  { ...f.stats, ...(o.stats || {}) },
       inv:    { ...f.inv,   ...(o.inv   || {}) },
-      bring:  { ...f.bring, ...(o.bring || {}) } };
+      bring:  { ...f.bring, ...(o.bring || {}) },
+      endless:{ ...f.endless, ...(o.endless || {}) } };
     if (typeof SAVE.xp !== 'number') SAVE.xp = 0;
     if (typeof SAVE.lvPaid !== 'number') SAVE.lvPaid = 1;
     if (typeof SAVE.totalEaten !== 'number') SAVE.totalEaten = 0;
@@ -2742,13 +2778,46 @@ const ACH = [
   { id:'nets10',   icon:'🕸️', name:'탈출 명인',       desc:'그물에서 10번 탈출',            goal:10,   get:() => SAVE.stats.nets, pearls:100 },
   { id:'shells20', icon:'🦀', name:'껍질 파괴자',     desc:'껍질 생물 20번 깨기',           goal:20,   get:() => SAVE.stats.shells, pearls:100 },
   { id:'mineBoss', icon:'💣', name:'기뢰 전술가',     desc:'보스를 기뢰로 3번 터뜨리기',    goal:3,    get:() => SAVE.stats.mineBoss, pearls:200 },
-  { id:'clearAll', icon:'🌊', name:'모든 바다 정복',   desc:'모든 해역을 클리어',         goal:STAGES.length, get:() => STAGES.filter(s => stageCleared(s.id)).length, pearls:400 },
+  { id:'clearAll', icon:'🌊', name:'모든 바다 정복',   desc:'모든 해역을 클리어',         goal:SEAS.length, get:() => SEAS.filter(s => stageCleared(s.id)).length, pearls:400 },
   { id:'sharkAll', icon:'🥚', name:'상어 수집가',     desc:'상어 4종을 모두 얻기',          goal:SHARKS.length, get:() => SHARKS.filter(s => SAVE.sharks[s.id]).length, pearls:300 },
   { id:'upgMax',   icon:'⚙️', name:'만렙 능력치',     desc:'능력치 하나를 MAX 로',          goal:UPG_MAX, get:() => Math.max(...Object.values(SAVE.upg)), pearls:200 },
   { id:'lv10',     icon:'⭐', name:'레벨 10',         desc:'레벨 10 달성',                  goal:10,   get:() => levelOf(SAVE.xp).lv, pearls:300 },
 ];
+ACH.push(
+  { id:'endless5',  icon:'♾️', name:'끝없는 도전',   desc:'끝없는 바다에서 5분 버티기',   goal:300, get:() => Math.floor(SAVE.endless.best), pearls:300 },
+  { id:'endless10', icon:'🌌', name:'심연의 생존자', desc:'끝없는 바다에서 10분 버티기',  goal:600, get:() => Math.floor(SAVE.endless.best), pearls:600 },
+  { id:'endlessB5', icon:'⚔️', name:'보스 러시',     desc:'끝없는 바다 한 판에 보스 5마리', goal:5,   get:() => SAVE.endless.bestKills, pearls:500 });
 ACH.push({ id:'king', icon:'👑', name:'바다의 왕', desc:'메갈로돈을 쓰러뜨리기', goal:1, get:() => SAVE.bossKills.megalodon || 0, pearls:800 });
 const achXp = a => Math.round(a.pearls/2);
+
+/* ---- 칭호 ----
+   업적을 달성하면 그 업적의 칭호를 얻는다. 업적 화면에서 "달기" → 기지·타이틀에 보인다.
+   등급은 업적 보상 진주로 정한다 (클수록 어려운 업적) */
+const TITLE_OF = {
+  eat100:'첫 사냥꾼', eat1000:'대식가', eat5000:'바다의 청소부',
+  dex10:'꼬마 박사', dex20:'물고기 박사', dexAll:'도감 마스터',
+  boss1:'보스 사냥꾼 견습', bossAll:'보스 정복자', boss10:'보스 사냥꾼',
+  nohit:'무적의 지느러미', fast:'번개 상어', adult:'다 큰 상어',
+  combo10:'콤보 상어', combo30:'콤보 마스터', gold1:'반짝이 수집가', gold10:'황금 손',
+  items20:'보물 사냥꾼', nets10:'탈출 명인', shells20:'껍질 파괴자', mineBoss:'기뢰 전술가',
+  clearAll:'바다 정복자', sharkAll:'상어 수집가', upgMax:'만렙 상어', lv10:'베테랑 상어',
+  endless5:'끝없는 도전자', endless10:'심연의 생존자', endlessB5:'보스 러시', king:'바다의 왕',
+};
+const DEFAULT_TITLE = '새내기 상어';
+const titleOf = a => TITLE_OF[a.id] || a.name;
+const RARITY = [
+  { min: 0,   name:'일반', cls:'r0' },
+  { min: 100, name:'희귀', cls:'r1' },
+  { min: 300, name:'영웅', cls:'r2' },
+  { min: 500, name:'전설', cls:'r3' },
+];
+const rarityOf = a => RARITY.filter(r => a.pearls >= r.min).pop();
+/* 지금 단 칭호 — 없거나 아직 못 얻은 것이면 기본 칭호 */
+function currentTitle(){
+  const a = ACH.find(x => x.id === SAVE.title && SAVE.ach[x.id]);
+  return a ? { name: titleOf(a), cls: rarityOf(a).cls, icon: a.icon } : { name: DEFAULT_TITLE, cls: 'r0', icon: '🦈' };
+}
+function titleChip(){ const t = currentTitle(); return '<span class="tchip ' + t.cls + '">' + t.icon + ' ' + t.name + '</span>'; }
 /* 새로 달성한 업적을 찾아 보상을 주고 목록을 돌려준다.
    런 중이면 배너로 알리고, 기지에서는 업적 타일에 NEW 표시만 한다 */
 function checkAch(){
@@ -2760,7 +2829,7 @@ function checkAch(){
       SAVE.pearls += a.pearls;
       SAVE.xp += achXp(a);
       got.push(a);
-      if (G.running) { showBanner(a.icon, '🏆 업적 달성!', a.name + ' · +' + a.pearls + ' 진주'); SFX.medal(); }
+      if (G.running) { showBanner(a.icon, '🏆 업적 달성! 칭호 획득', '「' + titleOf(a) + '」 · +' + a.pearls + ' 진주'); SFX.medal(); }
     }
   }
   if (got.length) { G.newAch = (G.newAch || 0) + got.length; writeSave(); }
@@ -2934,7 +3003,7 @@ function evolve(){
   burst(p.x, p.y, 'rgba(180,255,228,.9)', 28, 190, 'bubble');
   showToast(evoName(p.st.shark, p.stage));
   if (p.stage > SAVE.stats.maxStage) { SAVE.stats.maxStage = p.stage; if (p.stage === 3) checkAch(); }
-  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned && !G.lair && !G.hz.crownOpen) {
+  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned && !G.lair && !G.hz.crownOpen && !G.stage.endless) {
     if ((G.stage.hazards || []).includes('crown')) HAZARDS.crown.open(); else openLair();   // 왕좌는 왕관 조각
   }
 }
@@ -3408,7 +3477,60 @@ function bossDown(){
   burst(b.x, b.y, G.bossDef.body, 42, 270);
   ring(b.x, b.y);
   G.shake = 16; G.slowmo = 0.8; SFX.bossDown();
+  if (G.stage.endless) { endlessBossDown(); return; }   // 끝없는 바다 — 판은 계속된다
   G.cleared = true; G.endTimer = 1.5;
+}
+
+/* ---------------- 끝없는 바다 ----------------
+   1분마다 한 해역씩 깊어진다 (모습·음악·물고기). 끝까지 가면 배고픔이 조금씩 빨라진다.
+   보스는 100초에 처음, 쓰러뜨리면 110초 뒤 다음 — 6마리를 돌면 한 바퀴마다 체력 +30% */
+const ENDLESS_STEP = 60, ENDLESS_BOSS1 = 100, ENDLESS_BOSS_GAP = 110;
+const ENDLESS_BOSSES = ['giant_barra', 'giant_moray', 'rogue_white', 'orca_alpha', 'kraken', 'megalodon'];
+function endlessStart(st){
+  G.endless = { t: 0, level: 0, kills: 0, next: ENDLESS_BOSS1, deadT: 0, ramp: 0 };
+  endlessSea(st, 0, true);
+}
+/* 지금 깊이의 해역 모습으로 갈아입는다 */
+function endlessSea(st, k, quiet){
+  const sea = SEAS[Math.min(k, SEAS.length - 1)];
+  for (const f of ['water', 'deep', 'light', 'terrain', 'mote', 'flora', 'rock', 'darkBase'])
+    st[f] = sea[f];
+  st.artId = sea.id;
+  st.hungerMul = 1.0 + 0.08*k;
+  G.pool = stagePool(st, k);
+  if (!quiet) {
+    buildTerrain(st); SFX.stageBed(st);
+    if (!G.boss || G.boss.state === 'dead') BGM.play(sea.id);
+    showToast(sea.name, '더  깊 은  바 다 로', '물고기가 더 강해진다', 2.2);
+  }
+}
+function endlessSpawnBoss(){
+  const E = G.endless, id = ENDLESS_BOSSES[E.kills % ENDLESS_BOSSES.length], lap = Math.floor(E.kills/ENDLESS_BOSSES.length);
+  G.stage.boss = id;
+  G.lair = null; G.bossSpawned = false;
+  spawnBoss();
+  if (lap) { G.boss.hp = G.boss.maxHp = Math.round(G.bossDef.hp*(1 + 0.3*lap)); }
+}
+function endlessBossDown(){
+  const E = G.endless, id = G.stage.boss;
+  E.kills++; E.deadT = 0; E.next = E.t + ENDLESS_BOSS_GAP;
+  SAVE.bossKills[id] = (SAVE.bossKills[id] || 0) + 1;
+  G.pearls += BOSS_PEARLS; G.xp += XP_BOSS;
+  floatText(G.player.x, G.player.y - 60, '보스 격파! +' + BOSS_PEARLS + ' 진주', '#ffd34f');
+  showBanner('👑', '보스 ' + E.kills + '마리째!', '다음 보스는 ' + Math.round(ENDLESS_BOSS_GAP) + '초 뒤');
+  checkAch();
+}
+function updateEndless(dt){
+  const E = G.endless;
+  E.t += dt;
+  const lv = Math.min(SEAS.length - 1, Math.floor(E.t/ENDLESS_STEP));
+  if (lv > E.level) { E.level = lv; endlessSea(G.stage, lv); }
+  const ramp = Math.floor(E.t/ENDLESS_STEP) - (SEAS.length - 1);
+  if (ramp > E.ramp) { E.ramp = ramp; G.stage.hungerMul += 0.05; }   // 끝까지 내려가면 조금씩 더 배고프게
+  if (G.boss && G.boss.state === 'dead') {
+    E.deadT += dt;
+    if (E.deadT > 1.6) { G.boss = null; G.bossSpawned = false; BGM.play(G.stage.artId); }
+  } else if (!G.boss && E.t >= E.next) endlessSpawnBoss();
 }
 
 /* 보스 부위 — 어디를 무는지가 중요하다.
@@ -3893,7 +4015,7 @@ function buildTerrain(st){
 function drawWater(W, H){
   const st = G.stage;
   const dq = Math.round(clamp(G.cam.y / WORLD.h, 0, 1)*32)/32;   // 32단계면 눈에 안 띈다
-  const g = cachedGrad('water|' + st.id + '|' + dq + '|' + H, () => {
+  const g = cachedGrad('water|' + st.id + st.water[0] + '|' + dq + '|' + H, () => {
     const gg = ctx.createLinearGradient(0, 0, 0, H);
     gg.addColorStop(0, mix(st.water[0], st.deep[0], clamp(dq*1.25, 0, 1)));
     gg.addColorStop(1, mix(st.water[1], st.deep[1], clamp(dq*1.15, 0, 1)));
@@ -3928,7 +4050,7 @@ function drawWater(W, H){
 }
 
 function drawFar(W, H){
-  const bg = art('stage.' + G.stage.id);
+  const bg = art('stage.' + (G.stage.artId || G.stage.id));
   if (bg) {                                        // 가로로 이어지는 원경 배경
     const r = bg.naturalHeight / (bg.naturalWidth || 1);
     const bh = H, bw = bh / r, span = bw*2;
@@ -3940,7 +4062,7 @@ function drawFar(W, H){
       ctx.drawImage(bg, 0, 0, bw, bh);
       ctx.restore();
     }
-    ctx.fillStyle = cachedGrad('scrim|' + G.stage.id + '|' + H, () => {
+    ctx.fillStyle = cachedGrad('scrim|' + (G.stage.artId || G.stage.id) + '|' + H, () => {
       const sc = ctx.createLinearGradient(0, 0, 0, H);   // 깊이감 + 대비 확보
       sc.addColorStop(0, hexA(G.stage.deep[0], 0.26));
       sc.addColorStop(1, hexA(G.stage.deep[1], 0.62));
@@ -4773,6 +4895,10 @@ function updateHUD(){
   setBar(UI.grow, need === Infinity ? 1 : p.growth/need);
   setText(UI.tier, String(p.tier));
   setText(UI.eaten, '먹은 물고기 ' + G.eaten);
+  if (G.endless && G.stage.endless) {
+    const E = G.endless, left = !G.boss ? Math.max(0, Math.ceil(E.next - E.t)) : 0;
+    setText(el('endlessInfo'), '♾️ ' + fmtTime(E.t) + ' · 깊이 ' + (E.level + 1) + (left && left <= 15 ? ' · 보스 ' + left + '초' : ''));
+  }
   setText(UI.growLabel, need === Infinity
     ? evoName(p.st.shark, p.stage) + ' · 최종 단계'
     : evoName(p.st.shark, p.stage) + ' → ' + evoName(p.st.shark, p.stage+1));
@@ -4919,6 +5045,7 @@ function renderHub(){
   el('lvNum').textContent = L.lv;
   el('lvFill').style.width = (100*L.cur/L.need).toFixed(1) + '%';
   el('lvTxt').textContent = L.cur + ' / ' + L.need;
+  el('hubTitle').innerHTML = titleChip();
 
   el('shopList').innerHTML = SHOP.map(it => {
     const n = SAVE.inv[it.id] || 0, on = SAVE.bring[it.id];
@@ -5044,11 +5171,22 @@ function renderAch(){
     '<div class="acard' + (r.d ? ' done' : '') + '"><div class="ai">' + r.a.icon + '</div>' +
     '<div class="tx"><div class="an">' + r.a.name + (r.nw ? '<span class="new">NEW</span>' : '') + '</div>' +
     '<div class="ad">' + r.a.desc + '</div>' +
+    '<div class="tl"><span class="tchip ' + rarityOf(r.a).cls + '">' + (r.d ? r.a.icon + ' ' + titleOf(r.a) : '🔒 ' + titleOf(r.a)) + '</span>' +
+      '<span style="font-size:10px;color:#9d86b3">' + rarityOf(r.a).name + ' 칭호</span>' +
+      (r.d ? '<button data-title="' + r.a.id + '"' + (SAVE.title === r.a.id ? ' class="on">사용 중' : '>달기') + '</button>' : '') + '</div>' +
     (r.d ? '' : '<div class="ab"><i style="width:' + (100*r.v/r.a.goal).toFixed(1) + '%"></i></div>' +
                 '<div class="ap">' + r.v.toLocaleString() + ' / ' + r.a.goal.toLocaleString() + '</div>') +
     '</div><div class="ar">' + (r.d ? '✓ 달성' : '◈ ' + r.a.pearls) + '</div></div>').join('');
 }
 el('openAch').addEventListener('click', () => { SFX.ui(); openAch(); });
+el('titleRow').addEventListener('click', () => { SFX.ui(); openAch(); });
+/* 업적 카드의 "칭호 달기" */
+el('achList').addEventListener('click', e => {
+  const b = e.target.closest('[data-title]');
+  if (!b) return;
+  SAVE.title = SAVE.title === b.dataset.title ? '' : b.dataset.title;   // 다시 누르면 떼기
+  writeSave(); SFX.buy(); renderAch();
+});
 el('achBack').addEventListener('click', () => { SFX.ui(); openHub(); });
 
 /* ---------------- 바다 지도 ----------------
@@ -5131,13 +5269,14 @@ function renderMapInfo(){
     return;
   }
   const st = n.st, lock = stageLock(st, n.i), rec = SAVE.stages[st.id] || {};
-  const found = st.fish.filter(isKnown).length;
+  const fishIds = st.endless ? FISH.map(d => d.id) : st.fish, found = fishIds.filter(isKnown).length;
   let h = '<div class="mt"><div class="mn">' + st.icon + ' ' + st.name + '</div>' +
     '<div class="md">수심 ' + st.depth + '</div></div>' +
     '<div class="mb">' + st.blurb + '</div><div class="chips">' +
-    '<span class="chip">👑 ' + BOSSES[st.boss].name + '</span>' +
-    '<span class="chip">📖 ' + found + '/' + st.fish.length + '종</span>' +
+    '<span class="chip">👑 ' + (st.endless ? '보스 6마리가 번갈아' : BOSSES[st.boss].name) + '</span>' +
+    '<span class="chip">📖 ' + found + '/' + fishIds.length + '종</span>' +
     '<span class="chip">기본 티어 ' + st.reqBase + '+</span>' +
+    (st.endless && SAVE.endless.best ? '<span class="chip ok">최고 ' + fmtTime(SAVE.endless.best) + ' · 보스 ' + SAVE.endless.bestKills + '</span>' : '') +
     (rec.cleared ? '<span class="chip ok">클리어 ✓' + (rec.best ? ' · 최고 ' + fmtTime(rec.best) : '') + '</span>' : '') +
     '</div>';
   for (const hz of stageHazards(st))
@@ -5195,6 +5334,7 @@ function renderDex(){
 
   let html = '';
   for (const g of dexGroups()) {
+    if (!g.ids.length) continue;                     // 끝없는 바다는 새 물고기가 없다
     const found = g.ids.filter(isKnown).length;
     html += '<div class="dexSec"><h3>' + g.st.icon + ' ' + g.st.name + '<span>' + found + ' / ' + g.ids.length + '</span></h3><div class="dexGrid">';
     for (const id of g.ids) {
@@ -5300,7 +5440,7 @@ function setupAttract(){
   const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
   G.stage = st;
   WORLD.w = st.world.w; WORLD.h = st.world.h;
-  G.pool = st.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
+  G.pool = stagePool(st, 0);
   G.bossDef = BOSSES[st.boss];
   buildTerrain(st);
   G.boss = null; G.hz = {}; G.paused = false; G.lair = null;
@@ -5331,6 +5471,7 @@ function showTitle(){
   hideScreens();
   UI.bossBar.classList.add('hidden');
   el('titleMute').classList.toggle('off', SAVE.muted);
+  el('titleBadge').innerHTML = titleChip();
   UI.start.classList.remove('hidden');
   applyTitleArt();
 }
@@ -5519,6 +5660,8 @@ el('pAdmin').addEventListener('click', e => {
     if ((G.stage.hazards || []).includes('crown')) { if (!G.hz.crownOpen) HAZARDS.crown.open(); G.hz.crownT = 0; }
     else { if (!G.lair) openLair(); G.lair.t = 0; }
   }
+  if (G.stage.endless && (k === 'lair' || k === 'boss')) { if (!G.boss) endlessSpawnBoss(); SFX.ui(); resumeGame(); return; }
+  if (G.stage.endless && k === 'clear') { G.endless.t += ENDLESS_STEP; SFX.ui(); resumeGame(); return; }   // 끝없는 바다 — 한 단계 더 깊이
   if (k === 'boss' && !G.bossSpawned) spawnBoss();
   if (k === 'evo' && p.stage < EVO.length - 1) { p.growth = EVO[p.stage].need; evolve(); }
   if (k === 'item') ['heal', 'magnet', 'bolt', 'shield', 'rage'].forEach((kind, i) => {
@@ -5540,11 +5683,12 @@ function startRun(){
   const st = STAGE_BY_ID[SAVE.stage] || STAGES[0];
   G.stage = st;
   WORLD.w = st.world.w; WORLD.h = st.world.h;
-  G.pool = st.fish.map(id => FISH_BY_ID[id]).filter(Boolean);
+  G.pool = stagePool(st, 0);
   G.bossDef = BOSSES[st.boss];
+  if (st.endless) endlessStart(st);
   buildTerrain(st);
   SFX.ready(); SFX.resume(); SFX.stageBed(st);
-  BGM.play(st.id);
+  BGM.play(st.artId || st.id);              // 끝없는 바다는 지금 깊이의 해역 곡
   G.player = makePlayer();
   G.fish.length = 0; G.parts.length = 0;
   G.t = 0; G.eaten = 0; G.pearls = 0; G.shake = 0; G.danger = 0; G.newSpecies = 0;
@@ -5563,6 +5707,7 @@ function startRun(){
   UI.bossBar.classList.add('hidden');
   newFishQ.length = 0; nextNewFish(); showHint('');
   document.body.classList.remove('menu');
+  document.body.classList.toggle('endless', !!st.endless);
   G.over = false; G.running = true;
   /* 입장 안내 — 이 해역에만 있는 장치를 한 줄씩 */
   let tips = stageHazards(st).map(h => h.icon + ' ' + h.name + ' — ' + h.tip).join('\n');
@@ -5592,7 +5737,14 @@ function finishRun(cleared){
   showHint(''); hideToast();
   newFishQ.length = 0; nextNewFish();
   const p = G.player;
-  const id = G.stage.id, i = stageIndex(id), next = STAGES[i + 1] || null;
+  const id = G.stage.id, i = stageIndex(id);
+  const after = STAGES[i + 1] || null, next = after && !after.endless ? after : null;   // 끝없는 바다는 "다음 해역"이 아니다
+  let endlessRec = null;
+  if (G.stage.endless && G.endless) {                 // 끝없는 바다 기록
+    const E = G.endless, R0 = SAVE.endless;
+    endlessRec = { t: E.t, kills: E.kills, level: E.level, newT: E.t > R0.best, newK: E.kills > R0.bestKills };
+    R0.best = Math.max(R0.best, E.t); R0.bestKills = Math.max(R0.bestKills, E.kills);
+  }
 
   let pearls = G.pearls;
   if (cleared) pearls += BOSS_PEARLS;
@@ -5638,8 +5790,10 @@ function finishRun(cleared){
 
   const allDone = cleared && !next;
   if (!cleared) SFX.dead();
-  el('overTitle').textContent = allDone && first ? '👑 바다의 왕!' : cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
-  el('overSub').textContent = cleared
+  el('overTitle').textContent = endlessRec ? '♾️ 끝없는 바다' : allDone && first ? '👑 바다의 왕!' : cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
+  el('overSub').textContent = endlessRec
+    ? '버틴 시간 ' + fmtTime(endlessRec.t) + ' · 깊이 ' + (endlessRec.level + 1) + ' · 보스 ' + endlessRec.kills + '마리'
+    : cleared
     ? G.bossDef.name + '를 쓰러뜨렸다. ' + (next ? '더 깊은 바다가 기다린다.' : '모든 바다를 정복했다!')
     : p.hunger <= 0 ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
                     : '더 큰 것은 피하고, 자란 뒤에 돌아와라.';
@@ -5667,9 +5821,12 @@ function finishRun(cleared){
     msgs.push('⭐ 레벨 업! Lv ' + (lvUps[0].lv - 1) + ' → ' + lvUps[lvUps.length - 1].lv +
       ' (+' + pe + ' 진주' + (rv ? ' · 🐚 부활 조개 ' + rv + '개' : '') + ')');
   }
-  if (G.newAch) msgs.push('🏆 업적 ' + G.newAch + '개 달성 — 기지에서 확인');
+  if (G.newAch) msgs.push('🏆 업적 ' + G.newAch + '개 달성 · 새 칭호 — 업적 화면에서 달 수 있다');
   if (G.revived) msgs.push('🐚 부활 조개를 썼다');
-  if (allDone && first) msgs.push('더 깊은 바다는 지금 만드는 중이에요');
+  if (allDone && first && after && after.endless) msgs.push('♾️ 끝없는 바다가 열렸다 — 지도 맨 아래');
+  if (endlessRec && (endlessRec.newT || endlessRec.newK))
+    msgs.push('🏆 신기록! ' + fmtTime(SAVE.endless.best) + ' · 보스 ' + SAVE.endless.bestKills + '마리');
+  else if (endlessRec && SAVE.endless.best) msgs.push('최고 기록 ' + fmtTime(SAVE.endless.best) + ' · 보스 ' + SAVE.endless.bestKills + '마리');
   const note = el('unlockNote');
   if (msgs.length) { note.textContent = msgs.join('\n'); note.classList.remove('hidden'); }
   else note.classList.add('hidden');
@@ -5729,6 +5886,7 @@ function step(dt){
   hazardsCall('update', dt);
   updateLair(dt);
   updateItems(dt);
+  if (G.stage.endless) updateEndless(dt);
   G.glowT = Math.max(0, (G.glowT || 0) - dt);
   G.glowR = lerp(G.glowR || 0, G.glowT > 0 ? 130 : 0, clamp(dt*3, 0, 1));
   if (G.comboT > 0) { G.comboT -= dt; if (G.comboT <= 0) G.combo = 0; }
@@ -5816,6 +5974,8 @@ if (location.search.indexOf('debug') >= 0) {
   window.__pause = () => pauseGame(); window.__startRun = () => startRun();
   window.__finishRun = c => finishRun(c);
   window.__openLair = () => openLair();
+  window.__endless = () => G.endless;
+  window.__currentTitle = () => currentTitle();
   window.__BOSSES = BOSSES; window.__STAGES = STAGES; window.__showEnding = () => showEnding();
   window.__spawnItem = k => { spawnItem(); if (k) G.items[G.items.length - 1].kind = k; };
   window.__checkAch = () => checkAch(); window.__openAch = () => openAch(); window.__ITEMS = ITEMS; window.__ACH = ACH;
@@ -5831,6 +5991,7 @@ resize();
 setupAttract();                          // 타이틀 배경용
 G.attract = true;
 el('titleMute').classList.toggle('off', SAVE.muted);
+el('titleBadge').innerHTML = titleChip();
 applyTitleArt();
 BGM.play('title');          // 첫 터치로 오디오가 깨어날 때 이 곡부터 흐른다
 requestAnimationFrame(frame);
