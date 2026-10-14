@@ -698,10 +698,27 @@
     <button class="pbtn" data-bgm="shore">🎵 햇살 연안</button>
     <button class="pbtn" data-bgm="coral">🎵 산호 정원</button>
     <button class="pbtn" data-bgm="wreck">🎵 난파선 해구</button>
+    <button class="pbtn" data-bgm="ice">🎵 빙하 해역</button>
+    <button class="pbtn" data-bgm="vent">🎵 심해 열수구</button>
+    <button class="pbtn" data-bgm="throne">🎵 왕좌의 해구</button>
     <button class="pbtn" data-bgm="boss">🎵 보스</button>
   </div>
   <p class="pauseInfo" id="admMsg"></p>
   <button class="btn" id="admBack">기지로</button>
+</div>
+
+<div id="endingScreen" class="screen hidden" style="background:radial-gradient(ellipse at 50% 20%,#3a2a6e,#0a0618 70%);z-index:45;overflow-y:auto;justify-content:flex-start;padding-top:calc(env(safe-area-inset-top) + 40px)">
+  <div style="font-size:64px;line-height:1">👑</div>
+  <h1>바다의 왕</h1>
+  <p>메갈로돈을 쓰러뜨렸다.<br>작은 치어에서 시작해 이제 바다의 왕이 되었다!</p>
+  <dl class="stats" id="endStats"></dl>
+  <p style="font-size:12px;line-height:1.9;margin-top:6px">
+    <b>만든 사람</b><br>꼬마 선장과 가족 · Claude<br>
+    <b>그림</b><br>AI 와 함께 그리고 다듬음<br>
+    <b>음악 · 효과음</b><br>전부 코드로 연주 (오디오 파일 0개)<br>
+    <b>고마운 친구들</b><br>바다의 모든 물고기</p>
+  <p style="font-size:12px;color:#ffd34f">🥚 상어알을 얻었다 — 부화기에 넣으면 새 상어가 태어난다</p>
+  <button class="btn" id="endBtn">계속</button>
 </div>
 
 <div id="achScreen" class="screen dex ach hidden">
@@ -854,8 +871,51 @@ const FISH = [
   { shape:'predator', id:'hammer',   name:'귀상어',    tier:6, len:92, body:'#a8b6bf', fin:'#74838d', behavior:'aggro',  speed:98, depth:[.2,.8] },
   { shape:'predator', id:'blueshark',name:'청새리상어',tier:6, len:88, body:'#6e92c4', fin:'#45628d', behavior:'aggro',  speed:102, depth:[.2,.85] },
   { shape:'mine', id:'mine',     name:'기뢰',      tier:9, len:30, body:'#3b4046', fin:'#20242a', behavior:'float',  speed:0,  depth:[.2,.9], shock:true, mine:true },
+
+  /* --- 빙하 해역 --- */
+  { shape:'shrimp', id:'krill',   name:'크릴',      tier:3, len:14, body:'#ff9a7a', fin:'#e0684a', behavior:'school', speed:50, depth:[.2,.7], school:true },
+  { shape:'dart', id:'herring',   name:'청어',      tier:4, len:24, body:'#d8e6ee', fin:'#7fa2b4', behavior:'school', speed:66, depth:[.15,.6], school:true },
+  { shape:'fish', id:'cod',       name:'대구',      tier:4, len:40, body:'#b8a050', fin:'#7d6a2c', behavior:'drift',  speed:40, depth:[.4,.9] },
+  { shape:'fish', id:'salmon',    name:'연어',      tier:5, len:50, body:'#c9d4dc', fin:'#e08a8a', behavior:'flee',   speed:110, depth:[.2,.7] },
+  { shape:'crab', id:'kingcrab',  name:'왕게',      tier:5, len:38, body:'#e0482a', fin:'#a02a14', behavior:'bottom', speed:22, depth:[.92,.99], shell:true, fixed:true },
+  { shape:'dart', id:'penguin',   name:'펭귄',      tier:6, len:46, body:'#20262e', fin:'#f0f0f0', behavior:'flee',   speed:120, depth:[.15,.6], zigzag:true },
+  { shape:'fish', id:'seal',      name:'바다표범',  tier:6, len:58, body:'#9aa4ac', fin:'#6a747c', behavior:'flee',   speed:100, depth:[.2,.75], popup:true },
+  { shape:'fish', id:'walrus',    name:'바다코끼리',tier:7, len:80, body:'#b07a62', fin:'#7a4a36', behavior:'aggro',  speed:52, depth:[.5,.95], tough:true },
+  { shape:'predator', id:'leopardseal', name:'레오파드바다표범', tier:7, len:76, body:'#a8b0b8', fin:'#5a6268', behavior:'aggro', speed:96, depth:[.2,.8] },
+  { shape:'jelly', id:'icejelly', name:'사자갈기해파리', tier:9, len:30, body:'#bfe8ff', fin:'#7fc4e0', behavior:'float', speed:14, depth:[.15,.85], shock:true, art:'jelly', tint:'#7fe0ff' },
+
+  /* --- 심해 열수구 --- */
+  { shape:'puffer', id:'glowplankton', name:'발광 플랑크톤', tier:4, len:18, body:'#5ef0d8', fin:'#2aa898', behavior:'school', speed:30, depth:[.1,.8], school:true, glow:true, fixed:true },
+  { shape:'shrimp', id:'deepshrimp', name:'심해새우', tier:5, len:20, body:'#ff5a4a', fin:'#c02a20', behavior:'drift',  speed:34, depth:[.4,.9], glow:true },
+  { shape:'disc', id:'hatchet',   name:'도끼고기',  tier:5, len:22, body:'#c8d4e0', fin:'#7f8ea0', behavior:'school', speed:58, depth:[.15,.6], school:true, glow:true },
+  { shape:'clam', id:'tubeworm',  name:'관벌레',    tier:5, len:36, body:'#f0e8e0', fin:'#e02a3a', behavior:'bottom', speed:0,  depth:[.93,.99], shell:true, fixed:true },
+  { shape:'squid', id:'vampsquid',name:'흡혈오징어',tier:6, len:44, body:'#7a1a2a', fin:'#4a0a16', behavior:'drift',  speed:52, depth:[.2,.8], ink:true },
+  { shape:'eel', id:'gulper',     name:'풍선장어',  tier:6, len:60, body:'#2a2030', fin:'#ff6aa0', behavior:'aggro',  speed:64, depth:[.3,.9] },
+  { shape:'ray', id:'manta',      name:'심해 만타', tier:7, len:80, body:'#3a4050', fin:'#5a7aff', behavior:'drift',  speed:44, depth:[.3,.8] },
+  { shape:'predator', id:'greenland', name:'그린란드상어', tier:7, len:90, body:'#6a5a4a', fin:'#4a3e32', behavior:'aggro', speed:56, depth:[.4,.9] },
+  { shape:'eel', id:'oarfish',    name:'산갈치',    tier:8, len:110, body:'#d0d8e8', fin:'#ff3a4a', behavior:'drift', speed:36, depth:[.2,.8] },
+  { shape:'jelly', id:'siphon',   name:'관해파리',  tier:9, len:34, body:'#d8b0ff', fin:'#9a5ad0', behavior:'float', speed:12, depth:[.15,.85], shock:true, art:'jelly', tint:'#c070ff' },
+
+  /* --- 왕좌의 해구 (새로 그린 것 — 엘리트는 아래에서 만든다) --- */
+  { shape:'fish', id:'seahorse',  name:'해마 기사', tier:6, len:30, body:'#7a4ad0', fin:'#ffd34f', behavior:'flee',   speed:70, depth:[.2,.8] },
+  { shape:'puffer', id:'nautilus',name:'앵무조개',  tier:6, len:34, body:'#e8d8c0', fin:'#c0502a', behavior:'drift',  speed:30, depth:[.3,.85], shell:true },
+  { shape:'fish', id:'guardian',  name:'유적 수호어', tier:8, len:60, body:'#7a7a70', fin:'#ffd34f', behavior:'bottom', speed:10, depth:[.88,.97], shell:true },
+  { shape:'jelly', id:'crownjelly',name:'왕관해파리', tier:9, len:32, body:'#ffe9a8', fin:'#d8a83a', behavior:'float', speed:12, depth:[.15,.85], shock:true, art:'jelly', tint:'#ffd34f' },
 ];
+/* 엘리트 변종 — 왕좌의 해구. 지난 바다의 물고기를 보랏빛으로 물들이고 왕관을 씌운다 (새 그림 0장).
+   체력 2배 (fishHp), 티어는 이 해역에 맞게 다시 매긴다 */
+[ ['e_mackerel', 'mackerel',    '엘리트 고등어',   5],
+  ['e_squid',    'squid',       '엘리트 오징어',   6],
+  ['e_tuna',     'tuna',        '엘리트 참치',     7],
+  ['e_barra',    'barra',       '엘리트 바라쿠다', 7],
+  ['e_hammer',   'hammer',      '엘리트 귀상어',   8],
+  ['e_leopard',  'leopardseal', '엘리트 레오파드', 9],
+].forEach(([id, from, name, tier]) => {
+  const src = FISH.find(d => d.id === from);
+  FISH.push({ ...src, id, name, tier, art: from, tint: '#9a6bff', elite: true, ink: false, depth: [.15, .85] });
+});
 const FISH_BY_ID = {}; FISH.forEach(d => FISH_BY_ID[d.id] = d);
+const fishHp = def => def.tier*16 * (def.elite || def.tough ? 2 : 1);
 
 /* ---------------- 보스 ---------------- */
 const BOSSES = {
@@ -868,6 +928,19 @@ const BOSSES = {
   rogue_white: { name:'무법자 백상아리', tier:8, len:165, hp:950, shape:'shark',
     body:'#d3dde2', fin:'#7b8c97', contact:15, staggerMul:2.0,
     summon:['sardine','yellowray'] },
+  /* 해역 4~6 — patterns[페이즈-1] 에서 고른다 (pickPattern). 새 동작은 BOSS_MOVES */
+  orca_alpha: { name:'범고래 알파', tier:9, len:210, hp:1300, shape:'shark',
+    body:'#1e2733', fin:'#e8eef2', contact:17, staggerMul:2.0,
+    summon:['herring','krill'],
+    patterns:[['dash', 'dash', 'breach'], ['dash', 'breach', 'summon'], ['dash', 'breach', 'sonar', 'summon']] },
+  kraken: { name:'크라켄', tier:10, len:230, hp:1700, shape:'kraken',
+    body:'#7a1f3d', fin:'#c04070', contact:19, staggerMul:2.0, kraken:true,
+    summon:['glowplankton','deepshrimp'],
+    patterns:[['sweep', 'grab', 'sweep'], ['sweep', 'grab', 'summon', 'ink'], ['sweep', 'grab', 'ink', 'summon', 'sweep']] },
+  megalodon: { name:'메갈로돈', tier:11, len:260, hp:2400, shape:'shark',
+    body:'#2c3e56', fin:'#ffd34f', contact:22, staggerMul:2.0, stag3:2.2,
+    summon:['e_mackerel','e_squid'],
+    patterns:[['dash', 'chomp'], ['dash', 'chomp', 'summon', 'vortex'], ['dash2', 'chomp', 'vortex', 'summon']] },
 };
 const BOSS_TRIGGER_STAGE = 2;   // 진화 3단계(기본 티어 +2) 도달 시 보스 굴이 열린다
 const LAIR_ENTER    = 240;      // 굴에 이만큼 다가가면 보스가 나온다
@@ -907,17 +980,43 @@ const STAGES = [
     fish:['sardine','yellowray','angler','conger','tuna','swordfish','hammer','blueshark','mine','jelly'],
     boss:'rogue_white', hungerMul:1.2, reqBase:3,
     icon:'⚓', hazards:['mine','lure'] },
+
+  { id:'ice', name:'빙하 해역', depth:'0 ~ 150m',
+    blurb:'차갑고 맑다. 위는 얼음, 머리를 조심해라',
+    world:{ w:3600, h:1900 },
+    water:['#7fc4dc','#1f5f7e'], deep:['#0e3448','#04121c'],
+    light:'shafts', terrain:'ice', ceil:150,
+    mote:'rgba(235,250,255,.5)', flora:'rgba(20,50,45,.55)', rock:'rgba(10,40,60,.55)',
+    fish:['krill','herring','cod','salmon','kingcrab','penguin','seal','walrus','leopardseal','icejelly'],
+    boss:'orca_alpha', hungerMul:1.3, reqBase:4,
+    icon:'🧊', hazards:['icicle','cold'] },
+
+  { id:'vent', name:'심해 열수구', depth:'1000 ~ 4000m',
+    blurb:'빛이 없는 바다. 빛나는 걸 먹으면 내가 빛난다',
+    world:{ w:3800, h:2100 },
+    water:['#3a1a1a','#160606'], deep:['#120404','#050101'],
+    light:'dark', darkBase:170, terrain:'coral',
+    mote:'rgba(255,150,90,.28)', flora:'rgba(120,30,40,.45)', rock:'rgba(20,6,6,.7)',
+    fish:['glowplankton','deepshrimp','hatchet','tubeworm','vampsquid','gulper','manta','greenland','oarfish','siphon'],
+    boss:'kraken', hungerMul:1.4, reqBase:5,
+    icon:'🌋', hazards:['vent','glow','ink'] },
+
+  { id:'throne', name:'왕좌의 해구', depth:'???',
+    blurb:'모든 바다의 강자가 모인 곳. 왕관 조각을 모아 문을 열어라',
+    world:{ w:4000, h:2200 },
+    water:['#3a2a5e','#120a26'], deep:['#140c2a','#06030e'],
+    light:'dark', darkBase:340, terrain:'wreck',
+    mote:'rgba(255,215,120,.35)', flora:'rgba(150,115,50,.5)', rock:'rgba(30,18,50,.6)',
+    fish:['e_mackerel','seahorse','nautilus','e_squid','e_tuna','e_barra','e_hammer','guardian','e_leopard','crownjelly'],
+    boss:'megalodon', hungerMul:1.5, reqBase:6, goldChance:0.06,
+    icon:'👑', hazards:['crown','whirl'] },
 ];
 const STAGE_BY_ID = {}; STAGES.forEach(x => STAGE_BY_ID[x.id] = x);
 
 /* 지도에만 보이는 다음 바다 — 아직 데이터가 없다. 해역을 만들면 STAGES 로 옮기고 여기서 지운다 */
 const SOON = [
-  { name:'빙하 해역',   depth:'0 ~ 150m',  water:['#5b9fb8','#1d4f66'], icon:'🧊',
-    teaser:'얼음 천장 아래, 바다표범과 범고래의 바다' },
-  { name:'심해 열수구', depth:'1000m ~',   water:['#6a2e20','#1a0a08'], icon:'🌋',
-    teaser:'뜨거운 물이 솟는 칠흑의 바다' },
-  { name:'왕좌의 해구', depth:'???',       water:['#4a3a7e','#0e0820'], icon:'👑',
-    teaser:'바다의 왕이 기다린다' },
+  { name:'끝없는 바다', depth:'∞', water:['#1a3a5a','#050a14'], icon:'♾️',
+    teaser:'왕좌를 깬 자만 들어갈 수 있는 바다. 얼마나 오래 버틸까?' },
 ];
 
 /* 도감 한 줄 설명 — 아이가 읽는 글이라 짧게, 게임에서 쓸모 있는 말로 */
@@ -952,10 +1051,45 @@ const FISH_TIP = {
   blueshark:'파란 상어. 끈질기게 쫓아온다',
   mine:'오래된 기뢰. 닿으면 펑! 보스를 유인해서 터뜨릴 수도 있다',
 };
+Object.assign(FISH_TIP, {
+  krill:'작고 맛있는 간식. 떼 속으로 돌진해 콤보를 쌓자',
+  herring:'은빛 큰 떼. 한 번에 여러 마리!',
+  cod:'느리고 통통한 물고기',
+  salmon:'아주 빠르다. BOOST 로 쫓아가자',
+  kingcrab:'뾰족한 껍질 — BOOST 로 들이받아 깬다',
+  penguin:'지그재그로 피한다! 방향을 잘 읽자',
+  seal:'가까이 가면 위로 휙 솟구친다',
+  walrus:'느리지만 맷집이 두 배. 크면 쫓아온다',
+  leopardseal:'빠른 포식자. 빨간 테두리면 도망쳐!',
+  icejelly:'차가운 해파리. 닿으면 찌릿!',
+  glowplankton:'먹으면 10초 동안 내가 환하게 빛난다',
+  deepshrimp:'파랗게 빛나는 새우. 먹으면 밝아진다',
+  hatchet:'납작한 은빛 떼. 배가 반짝인다',
+  tubeworm:'열수구 옆에 사는 관벌레. BOOST 로 깬다',
+  vampsquid:'가까이 가면 먹물을 뿜는다',
+  gulper:'입이 몸보다 크다! 크면 덤빈다',
+  manta:'크고 느리게 활공한다. 큰 먹이',
+  greenland:'느리지만 끈질기게 쫓아온다',
+  oarfish:'아주 길고 희귀하다. 먹으면 대박!',
+  siphon:'긴 사슬 해파리. 닿으면 찌릿!',
+  seahorse:'왕궁을 지키는 해마 기사. 재빨리 도망친다',
+  nautilus:'단단한 소용돌이 껍질. BOOST 로 깬다',
+  guardian:'돌로 된 유적 수호어. 껍질처럼 단단하다',
+  crownjelly:'왕관처럼 빛나는 해파리. 닿으면 찌릿!',
+  e_mackerel:'보랏빛 왕관을 쓴 고등어 떼. 체력이 두 배',
+  e_squid:'왕궁의 오징어. 체력이 두 배',
+  e_tuna:'엄청 빠른 엘리트 참치',
+  e_barra:'엘리트 바라쿠다. 크면 쫓아온다',
+  e_hammer:'엘리트 귀상어. 끈질긴 사냥꾼',
+  e_leopard:'왕좌를 지키는 가장 강한 엘리트',
+});
 const BOSS_TIP = {
   giant_barra:'빨간 점선이 보이면 옆으로 피하고, 멈췄을 때 꼬리를 물어라',
   giant_moray:'몸이 엄청 길다. 머리 쪽은 위험, 꼬리 쪽은 안전',
   rogue_white:'난파선 해구의 무법자. 기뢰 쪽으로 돌진하게 만들면 큰 피해!',
+  orca_alpha:'빨간 기둥이 보이면 옆으로! 얼음에 박히면 한참 못 움직인다',
+  kraken:'촉수를 2개 이상 끊으면 본체가 나온다. 뜨거운 물기둥으로 유인!',
+  megalodon:'바다의 왕. 턱 범위를 피하고, 지치면 꼬리를 물어라',
 };
 
 /* ---------------- 상어 로스터 ---------------- */
@@ -974,6 +1108,18 @@ const SHARKS = [
   { id:'mako',   name:'청상아리',  tag:'속도', base:4,
     desc:'바다에서 가장 빠르다. 대신 몸이 약하다',
     hp:0.8,  speed:1.22, suction:1.0, shellBreaker:false, skin:'#3f6f9e' },
+  { id:'white',  name:'백상아리',  tag:'일격', base:5,
+    desc:'일격 — 동급을 물면 피해 2배. 큰 먹이를 빨리 잡는다',
+    hp:1.15, speed:1.0,  suction:1.0, shellBreaker:false, skin:'#6f7f8c', biteMul:2 },
+  { id:'orca',   name:'범고래',    tag:'음파', base:6,
+    desc:'음파 — BOOST 를 켜면 주변 작은 물고기가 잠깐 기절한다',
+    hp:1.3,  speed:0.95, suction:1.0, shellBreaker:false, skin:'#1e2733', sonar:true },
+  { id:'megalodon', name:'메갈로돈', tag:'군림', base:7,
+    desc:'군림 — 동급도 물지 않고 바로 먹는다. 바다의 왕',
+    hp:1.5,  speed:0.9,  suction:1.1, shellBreaker:false, skin:'#3c5a78', crush:true },
+  { id:'goblin', name:'고블린 상어', tag:'턱 사출', base:5,
+    desc:'턱 사출 — 흡입 반경이 아주 넓다. 업적을 모은 사람에게만 나타나는 비밀 상어',
+    hp:0.9,  speed:1.0,  suction:1.6, shellBreaker:false, skin:'#c79aa8', secret:true },
 ];
 const SHARK_BY_ID = {}; SHARKS.forEach(x => SHARK_BY_ID[x.id] = x);
 
@@ -1114,6 +1260,9 @@ const ART = {
   'stage.shore':          'stage/shore.jpg',
   'stage.coral':          'stage/coral.jpg',
   'stage.wreck':          'stage/wreck.jpg',
+  'stage.ice':            'stage/ice.jpg',
+  'stage.vent':           'stage/vent.jpg',
+  'stage.throne':         'stage/throne.jpg',
   /* 플레이어 상어 — shark.<상어id>.<진화단계 0~3> */
   'shark.reef.0':         'shark/reef_0.png',
   'shark.reef.1':         'shark/reef_1.png',
@@ -1131,6 +1280,11 @@ const ART = {
   'shark.mako.1':         'shark/mako_1.png',
   'shark.mako.2':         'shark/mako_2.png',
   'shark.mako.3':         'shark/mako_3.png',
+  'shark.white.0': 'shark/white_0.png', 'shark.white.1': 'shark/white_1.png', 'shark.white.2': 'shark/white_2.png', 'shark.white.3': 'shark/white_3.png',
+  'shark.orca.0':  'shark/orca_0.png',  'shark.orca.1':  'shark/orca_1.png',  'shark.orca.2':  'shark/orca_2.png',  'shark.orca.3':  'shark/orca_3.png',
+  'shark.megalodon.0': 'shark/megalodon_0.png', 'shark.megalodon.1': 'shark/megalodon_1.png',
+  'shark.megalodon.2': 'shark/megalodon_2.png', 'shark.megalodon.3': 'shark/megalodon_3.png',
+  'shark.goblin.0': 'shark/goblin_0.png', 'shark.goblin.1': 'shark/goblin_1.png', 'shark.goblin.2': 'shark/goblin_2.png', 'shark.goblin.3': 'shark/goblin_3.png',
   /* 물고기 — fish.<어종id> */
   'fish.anchovy':         'fish/anchovy.png',
   'fish.barra':           'fish/barra.png',
@@ -1161,10 +1315,35 @@ const ART = {
   'fish.hammer':          'fish/hammer.png',
   'fish.blueshark':       'fish/blueshark.png',
   'fish.mine':            'fish/mine.png',
+  'fish.krill': 'fish/krill.png',
+  'fish.herring': 'fish/herring.png',
+  'fish.cod': 'fish/cod.png',
+  'fish.salmon': 'fish/salmon.png',
+  'fish.kingcrab': 'fish/kingcrab.png',
+  'fish.penguin': 'fish/penguin.png',
+  'fish.seal': 'fish/seal.png',
+  'fish.walrus': 'fish/walrus.png',
+  'fish.leopardseal': 'fish/leopardseal.png',
+  'fish.glowplankton': 'fish/glowplankton.png',
+  'fish.deepshrimp': 'fish/deepshrimp.png',
+  'fish.hatchet': 'fish/hatchet.png',
+  'fish.tubeworm': 'fish/tubeworm.png',
+  'fish.vampsquid': 'fish/vampsquid.png',
+  'fish.gulper': 'fish/gulper.png',
+  'fish.manta': 'fish/manta.png',
+  'fish.greenland': 'fish/greenland.png',
+  'fish.oarfish': 'fish/oarfish.png',
+  'fish.seahorse': 'fish/seahorse.png',
+  'fish.nautilus': 'fish/nautilus.png',
+  'fish.guardian': 'fish/guardian.png',
+  'item.crown':           'fish/crownshard.png',
   /* 보스 — boss.<보스id> */
   'boss.giant_barra':     'boss/giant_barra.png',
   'boss.giant_moray':     'boss/giant_moray.png',
   'boss.rogue_white':     'boss/rogue_white.png',
+  'boss.orca_alpha':      'boss/orca_alpha.png',
+  'boss.kraken':          'boss/kraken.png',
+  'boss.megalodon':       'boss/megalodon.png',
 };
 const ART_BASE  = 'assets/';
 /* 상어별 그림 폭 배율 (진화 단계 0~3). 톱상어는 긴 톱날이 가로폭을 먹어서 몸통이
@@ -1428,6 +1607,36 @@ const TRACKS = {
     chords:['A2 C3 E3', 'F2 A2 C3', 'C3 E3 G3', 'G2 B2 D3'],
     bass:bassLine(['A1', 'F1', 'C2', 'G1'], 'R . . . . . . . . . F . . . . .'),
     drum:bar(`k . . . . . . . . . h . . . . .`) },
+
+  /* 빙하 해역 — Am F C G · 100. 맑고 반짝이는 고음 */
+  ice: { bpm:100, lead:bar(`
+    E5 .  .  .  A5 .  .  .  G5 .  E5 .  .  .  C5 .
+    F5 .  .  .  E5 .  C5 .  A4 .  .  .  .  .  .  .
+    E5 .  .  .  G5 .  .  .  C6 .  B5 .  G5 .  .  .
+    D5 .  .  .  G5 .  .  .  B4 .  .  .  .  .  .  . `),
+    chords:['A3 C4 E4', 'F3 A3 C4', 'C4 E4 G4', 'G3 B3 D4'],
+    bass:bassLine(['A1', 'F1', 'C2', 'G1'], 'R . . . . . F . R . . . . . . .'),
+    drum:bar(`k . . h . . h . . . h . . . h .`) },
+
+  /* 심해 열수구 — Cm Ab Eb Bb · 92. 낮게 웅웅, 느린 심장박동 */
+  vent: { bpm:92, lead:bar(`
+    C5  . .  . D#5 . .  . G5  . .  . .  . . .
+    G#4 . .  . C5  . .  . D#5 . .  . .  . . .
+    G4  . .  . A#4 . .  . D#5 . D5 . .  . . .
+    A#4 . .  . D5  . .  . F5  . .  . .  . . . `),
+    chords:['C3 D#3 G3', 'G#2 C3 D#3', 'D#3 G3 A#3', 'A#2 D3 F3'],
+    bass:bassLine(['C2', 'G#1', 'D#2', 'A#1'], 'R . . . . . . . R . . . F . . .'),
+    drum:bar(`k . . . . . h . k . . . . . h .`) },
+
+  /* 왕좌의 해구 — D A Bm G · 116. 웅장하게 */
+  throne: { bpm:116, lead:bar(`
+    D5  . .  . F#5 . A5  . .  . D6 . .  . A5 .
+    C#6 . .  . A5  . E5  . .  . .  . .  . .  .
+    B5  . .  . F#5 . D5  . .  . B4 . D5 . F#5 .
+    G5  . .  . B5  . D6  . .  . .  . .  . .  . `),
+    chords:['D3 F#3 A3', 'A2 C#3 E3', 'B2 D3 F#3', 'G2 B2 D3'],
+    bass:bassLine(['D2', 'A1', 'B1', 'G1'], 'R . . r . . F . R . . . F . . .'),
+    drum:bar(`k . h . s . h . k . h . s . h .`) },
 
   /* 보스 — Em C G D · 132. 힘차게, 하지만 찢어지지 않게 */
   boss: { bpm:132, lead:bar(`
@@ -1717,7 +1926,7 @@ function spawnFish(){
     if (Math.abs(ox) > vx || Math.abs(oy) > vy) break;
   }
   let x = clamp(p.x + ox, 40, WORLD.w-40);
-  let y = clamp(p.y + oy, 30, WORLD.h-30);
+  let y = clamp(p.y + oy, G.stage.ceil ? G.stage.ceil + 30 : 30, WORLD.h-30);
   // 서식 수심 보정
   const band = rand(def.depth[0], def.depth[1]) * WORLD.h;
   y = lerp(y, band, 0.3);
@@ -1726,12 +1935,12 @@ function spawnFish(){
   const dir = Math.random() < 0.5 ? -1 : 1;
   const f = {
     def, x, y, vx: def.speed*dir*0.6, vy: rand(-8,8),
-    hp: def.tier*16, maxHp: def.tier*16,
+    hp: fishHp(def), maxHp: fishHp(def),
     phase: rand(0, 6.28), wob: rand(0.8, 1.4), dead:false,
     tx: x, ty: y, retarget: 0, lead: null,
   };
   // 황금 변종 — 떼·껍질·독·못 먹는 것은 제외
-  if (!G.attract && !def.school && !def.shock && !def.shell && !def.toxic && Math.random() < GOLDEN_CHANCE) {
+  if (!G.attract && !def.school && !def.shock && !def.shell && !def.toxic && Math.random() < (G.stage.goldChance || GOLDEN_CHANCE)) {
     f.golden = true; f.hp = f.maxHp = f.maxHp*1.5;
   }
   // 무리 어종: 리더를 따라 다니는 작은 떼로 생성
@@ -1855,30 +2064,15 @@ const HAZARDS = {
     update(dt){
       const p = G.player;
       for (const n of G.hz.nets) n.x = n.x0 + Math.sin(G.t*0.25 + n.ph)*60;
-      p.snareImm = Math.max(0, p.snareImm - dt);
-      if (p.snare > 0) {
-        if (IN.boost && !p.boostPrev) {                 // 누를 때마다 한 번씩 몸부림
-          p.snare -= 0.4; G.shake = Math.max(G.shake, 3); SFX.bite();
-          burst(p.x, p.y, 'rgba(230,240,255,.85)', 5, 80, 'bubble');
-        }
-        p.snare -= dt*0.5;                               // 안 눌러도 언젠가는 풀린다
-        if (p.snare <= 0) {
-          p.snare = 0; p.snareImm = 1.6;                 // 빠져나온 직후 바로 다시 걸리지 않게
-          if (++SAVE.stats.nets === 10) checkAch();
-          floatText(p.x, p.y - p.len*0.8, '탈출!', '#7dffd0');
-        }
-      } else if (p.snareImm <= 0) {
-        for (const n of G.hz.nets) {                     // 그물은 수면(y=0)에서 아래로 늘어진다
-          if (Math.abs(p.x - n.x) < n.w*0.5 && p.y < n.h + 6) {
-            p.snare = 2.2; p.vx *= 0.15; p.vy *= 0.15;
-            SFX.net(); G.shake = Math.max(G.shake, 4);
-            floatText(p.x, p.y - p.len*0.8, '그물에 걸렸다!', '#ffd84d');
-            break;
-          }
+      if (p.snare > 0 || p.snareImm > 0) return;
+      for (const n of G.hz.nets) {                       // 그물은 수면(y=0)에서 아래로 늘어진다
+        if (Math.abs(p.x - n.x) < n.w*0.5 && p.y < n.h + 6) {
+          p.snare = 2.2; p.snareBy = 'net'; p.vx *= 0.15; p.vy *= 0.15;
+          SFX.net(); G.shake = Math.max(G.shake, 4);
+          floatText(p.x, p.y - p.len*0.8, '그물에 걸렸다!', '#ffd84d');
+          break;
         }
       }
-      p.boostPrev = IN.boost;
-      showHint(p.snare > 0 ? '🕸️ BOOST 연타!' : '');
     },
     drawWorld(){
       const c = G.cam;
@@ -1940,7 +2134,7 @@ const HAZARDS = {
         if (c.life > 0.8 && Math.hypot(p.x - c.x, p.y - c.y) < c.r*0.8) inside = true;
       }
       G.hz.inked = clamp(G.hz.inked + (inside ? dt*3 : -dt*0.9), 0, 1);
-      showHint(inside ? '🦑 먹물! 밖으로 헤엄쳐!' : '');
+      if (inside !== G.hz.inkIn) { G.hz.inkIn = inside; showHint(inside ? '🦑 먹물! 밖으로 헤엄쳐!' : ''); }
     },
     drawWorld(){
       for (const c of G.hz.clouds) {
@@ -2021,6 +2215,287 @@ const HAZARDS = {
       ctx.restore();
     },
   },
+
+  /* ================= 빙하 해역 ================= */
+  /* 고드름 — 얼음 천장 밑을 지나가면 흔들리다(1초 예고) 떨어진다. 맞으면 피해 + 느려짐, 물고기는 기절 */
+  icicle: {
+    icon:'🧊', name:'고드름', tip:'얼음 밑에서 고드름이 흔들리면 비켜라',
+    init(){
+      const rng = mulberry(8100 + WORLD.w);
+      G.hz.icicles = [];
+      for (let x = 140; x < WORLD.w - 100; x += 190 + rng()*60)
+        G.hz.icicles.push({ x, len: 40 + rng()*34, st:'hang', t:0, y:0, vy:0 });
+      G.hz.iceEdge = [];                                   // 얼음 천장 아래 울퉁불퉁한 가장자리
+      for (let x = -400; x < WORLD.w + 400; x += 60) G.hz.iceEdge.push(rng()*26);
+    },
+    update(dt){
+      const p = G.player, ceil = G.stage.ceil || 0;
+      for (const c of G.hz.icicles) {
+        c.t += dt;
+        if (c.st === 'hang') {
+          if (Math.abs(p.x - c.x) < 70 && p.y > ceil && p.y < ceil + 650) { c.st = 'shake'; c.t = 0; }
+        } else if (c.st === 'shake') {
+          if (c.t > 1.0) { c.st = 'fall'; c.t = 0; c.y = ceil; c.vy = 0; }
+        } else if (c.st === 'fall') {
+          c.vy += 1500*dt; c.y += c.vy*dt;
+          const tipY = c.y + c.len;
+          if (Math.abs(p.x - c.x) < p.len*0.35 + 10 && Math.abs(p.y - tipY) < p.len*0.3 + 14) {
+            hurtPlayer(10, 0, 1, 0.8); p.slow = 1;
+            c.st = 'gone'; c.t = 0; burst(c.x, tipY, 'rgba(220,245,255,.95)', 14, 160, 'bubble');
+            continue;
+          }
+          for (const f of G.fish) if (!f.def.shock && Math.abs(f.x - c.x) < f.def.len*0.5 && Math.abs(f.y - tipY) < 20) f.stun = 2.4;
+          if (tipY > WORLD.h - 20) { c.st = 'gone'; c.t = 0; burst(c.x, WORLD.h - 30, 'rgba(220,245,255,.9)', 12, 140, 'bubble'); }
+        } else if (c.st === 'gone' && c.t > 8) { c.st = 'hang'; c.t = 0; }
+      }
+    },
+    drawWorld(){
+      const ceil = G.stage.ceil || 0, c = G.cam, x0 = c.x - c.w*0.6 - 100, x1 = c.x + c.w*0.6 + 100;
+      const g = ctx.createLinearGradient(0, ceil - 160, 0, ceil + 20);
+      g.addColorStop(0, 'rgba(235,250,255,.95)'); g.addColorStop(1, 'rgba(160,215,240,.85)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.moveTo(x0, -400);
+      for (let i = 0; i < G.hz.iceEdge.length; i++) {
+        const x = -400 + i*60;
+        if (x < x0 - 60 || x > x1 + 60) continue;
+        ctx.lineTo(x, ceil + G.hz.iceEdge[i] - 10);
+      }
+      ctx.lineTo(x1, -400); ctx.closePath(); ctx.fill();
+      for (const k of G.hz.icicles) {
+        if (k.st === 'gone' || k.x < x0 || k.x > x1) continue;
+        const sx = k.st === 'shake' ? Math.sin(k.t*70)*2.5 : 0, y = k.st === 'fall' ? k.y : ceil;
+        ctx.fillStyle = k.st === 'shake' ? 'rgba(255,255,255,.98)' : 'rgba(215,240,255,.95)';
+        ctx.beginPath(); ctx.moveTo(k.x - 9 + sx, y); ctx.lineTo(k.x + 9 + sx, y); ctx.lineTo(k.x + sx, y + k.len);
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(90,150,190,.6)'; ctx.lineWidth = 1.2; ctx.stroke();
+      }
+    },
+  },
+
+  /* 차가운 물 — 푸르게 얼어붙은 세로 띠. 안에 있으면 포만감이 두 배로 빨리 닳고 조금 느려진다 */
+  cold: {
+    icon:'❄️', name:'차가운 물', tip:'파랗게 언 물에선 배가 빨리 고프다. 돌아가라',
+    init(){
+      const rng = mulberry(8300 + WORLD.w);
+      G.hz.colds = [0.22, 0.52, 0.8].map(k => ({ x: WORLD.w*k + (rng() - 0.5)*200, w: 240 + rng()*80 }));
+      G.hz.coldIn = false;
+    },
+    update(dt){
+      const p = G.player;
+      p.cold = G.hz.colds.some(c => Math.abs(p.x - c.x) < c.w*0.5);
+      if (p.cold && !(ADMIN.on && ADMIN.food)) p.hunger = Math.max(0, p.hunger - HUNGER_DRAIN*G.stage.hungerMul*dt);
+      if (p.cold !== G.hz.coldIn) { G.hz.coldIn = p.cold; showHint(p.cold ? '❄️ 차가운 물! 배가 빨리 고프다' : ''); }
+    },
+    drawWorld(){
+      const c = G.cam;
+      for (const z of G.hz.colds) {
+        if (Math.abs(z.x - c.x) > c.w*0.5 + z.w) continue;
+        const g = ctx.createLinearGradient(z.x - z.w/2, 0, z.x + z.w/2, 0);
+        g.addColorStop(0, 'rgba(170,225,255,0)'); g.addColorStop(0.5, 'rgba(190,235,255,.22)'); g.addColorStop(1, 'rgba(170,225,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(z.x - z.w/2, c.y - c.h, z.w, c.h*2);
+        ctx.fillStyle = 'rgba(240,252,255,.7)';
+        for (let i = 0; i < 10; i++) {                   // 서리 가루
+          const yy = ((i*173 + G.t*30) % c.h) + c.y - c.h/2, xx = z.x + Math.sin(i*2.1 + G.t)*z.w*0.35;
+          ctx.beginPath(); ctx.arc(xx, yy, 1.8, 0, 6.2832); ctx.fill();
+        }
+      }
+    },
+    drawScreen(W, H){
+      if (!G.player.cold) return;
+      const g = ctx.createRadialGradient(W/2, H/2, Math.min(W, H)*0.3, W/2, H/2, Math.max(W, H)*0.62);
+      g.addColorStop(0, 'rgba(210,240,255,0)'); g.addColorStop(1, 'rgba(210,240,255,.38)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    },
+  },
+
+  /* ================= 심해 열수구 ================= */
+  /* 열수 분출 — 바닥 굴뚝이 주기적으로 뜨거운 물기둥을 뿜는다. 1.5초 전 거품(예고).
+     물고기는 기절, 보스·크라켄 촉수도 다친다 → 굴뚝 위로 유인하는 전략 */
+  vent: {
+    icon:'🌋', name:'열수 분출', tip:'바닥에서 거품이 보글보글하면 곧 뜨거운 물기둥!',
+    init(){
+      const rng = mulberry(8500 + WORLD.w), n = 6;
+      G.hz.vents = [];
+      for (let i = 0; i < n; i++)
+        G.hz.vents.push({ x: WORLD.w*(i + 0.5)/n + (rng() - 0.5)*160, st:'idle', t: rng()*4, dur: 4 + rng()*3, id: 0 });
+    },
+    update(dt){
+      const p = G.player, b = G.boss, top = WORLD.h - 560;
+      for (const v of G.hz.vents) {
+        v.t += dt;
+        if (v.st === 'idle' && v.t > v.dur) { v.st = 'warn'; v.t = 0; }
+        else if (v.st === 'warn') {
+          if (Math.random() < 0.5 && G.parts.length < 330)
+            G.parts.push({ x: v.x + rand(-14, 14), y: WORLD.h - 70, vx: rand(-8, 8), vy: rand(-90, -50), life: 0.8, max: 0.8, r: rand(2, 4), color: 'rgba(255,200,150,.85)', kind:'bubble' });
+          if (v.t > 1.5) { v.st = 'erupt'; v.t = 0; v.id++; v.hitP = v.hitB = false; SFX.ink(); }
+        } else if (v.st === 'erupt') {
+          const inCol = (x, y) => Math.abs(x - v.x) < 46 && y > top;
+          if (!v.hitP && inCol(p.x, p.y)) { v.hitP = true; hurtPlayer(12, 0, -1, 0.8); p.vy -= 520; }
+          for (const f of G.fish) if (!f.def.shock && inCol(f.x, f.y)) { f.stun = 1.5; f.vy -= 200*dt*6; }
+          if (b && b.state !== 'dead' && !b.hide) {
+            if (!v.hitB && inCol(b.x, b.y)) { v.hitB = true; b.hp -= 40; b.flash = 1; floatText(b.x, b.y - 40, '앗 뜨거! -40', '#ffb347'); if (b.hp <= 0) bossDown(); }
+            if (b.tents) for (const tn of b.tents) {
+              if (!tn.alive || tn.hitBy === v.x + ':' + v.id) continue;
+              if (tn.pts && tn.pts.some(q => inCol(q.x, q.y))) { tn.hitBy = v.x + ':' + v.id; krakenTentHit(b, tn, 100, '촉수가 익었다!'); }
+            }
+          }
+          if (v.t > 1.6) { v.st = 'idle'; v.t = 0; v.dur = 4 + Math.random()*3; }
+        }
+      }
+    },
+    drawWorld(){
+      const c = G.cam;
+      for (const v of G.hz.vents) {
+        if (Math.abs(v.x - c.x) > c.w*0.6 + 80) continue;
+        ctx.fillStyle = '#1a0c0a';                       // 굴뚝
+        ctx.beginPath(); ctx.moveTo(v.x - 40, WORLD.h + 20); ctx.lineTo(v.x - 16, WORLD.h - 70);
+        ctx.lineTo(v.x + 16, WORLD.h - 70); ctx.lineTo(v.x + 40, WORLD.h + 20); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,120,40,' + (v.st === 'idle' ? 0.45 : 0.95) + ')'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(v.x - 8, WORLD.h - 66); ctx.lineTo(v.x - 2, WORLD.h - 30); ctx.lineTo(v.x - 12, WORLD.h); ctx.stroke();
+      }
+    },
+    drawScreen(W, H){                                  // 어둠 위에 — 깜깜해도 물기둥과 굴뚝 불빛은 보인다
+      const c = G.cam;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const v of G.hz.vents) {
+        const x = W/2 + v.x - c.x, by = H/2 + WORLD.h - 70 - c.y;
+        if (x < -80 || x > W + 80) continue;
+        const gl = ctx.createRadialGradient(x, by, 2, x, by, v.st === 'warn' ? 60 : 34);
+        gl.addColorStop(0, 'rgba(255,140,60,' + (v.st === 'warn' ? 0.7 : 0.4) + ')'); gl.addColorStop(1, 'rgba(255,90,30,0)');
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, by, 60, 0, 6.2832); ctx.fill();
+        if (v.st === 'erupt') {
+          const k = Math.min(1, v.t/0.2), topY = by - 490*k;
+          const g = ctx.createLinearGradient(0, by, 0, topY);
+          g.addColorStop(0, 'rgba(255,230,160,.85)'); g.addColorStop(0.6, 'rgba(255,140,60,.5)'); g.addColorStop(1, 'rgba(255,90,30,0)');
+          ctx.fillStyle = g;
+          const wob = Math.sin(G.t*30)*5;
+          ctx.beginPath(); ctx.moveTo(x - 30, by); ctx.lineTo(x - 46 + wob, topY); ctx.lineTo(x + 46 - wob, topY); ctx.lineTo(x + 30, by); ctx.closePath(); ctx.fill();
+        }
+      }
+      ctx.restore();
+    },
+  },
+
+  /* 빛 먹기 — 시야가 아주 좁다. 빛나는 생물을 먹으면 10초 동안 시야가 넓어진다 (eatFish 에서 glowT).
+     빛나는 생물은 어둠 위에 그려서 멀리서도 보인다 */
+  glow: {
+    icon:'✨', name:'빛 먹기', tip:'깜깜하다. 빛나는 생물을 먹으면 내가 환해진다',
+    drawScreen(W, H){
+      const c = G.cam;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const f of G.fish) {
+        if (!f.def.glow) continue;
+        const x = W/2 + f.x - c.x, y = H/2 + f.y - c.y;
+        if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+        const r = f.def.len*0.9, a = 0.35 + 0.15*Math.sin(G.t*3 + f.phase);
+        const g = ctx.createRadialGradient(x, y, 1, x, y, r);
+        g.addColorStop(0, hexA(f.def.body, a)); g.addColorStop(1, hexA(f.def.body, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+      }
+      ctx.restore();
+    },
+  },
+
+  /* ================= 왕좌의 해구 ================= */
+  /* 왕관 조각 — 보스 굴 대신. 진화 3단계가 되면 맵에 조각 3개가 나타나고, 다 모으면 왕좌의 문이 열린다 */
+  crown: {
+    icon:'👑', name:'왕관 조각', tip:'크게 자라면 왕관 조각 3개가 나타난다. 다 모으면 왕좌의 문이 열린다',
+    init(){ G.hz.crowns = []; G.hz.crownOpen = false; G.hz.crownT = 0; },
+    open(){
+      G.hz.crownOpen = true; G.hz.crownT = -LAIR_DELAY;
+      const W = WORLD.w, H = WORLD.h;
+      G.hz.crowns = [[0.1, 0.5], [0.9, 0.42], [0.5, 0.86]].map(([kx, ky]) => ({ x: W*kx, y: H*ky, got: false, ph: Math.random()*6 }));
+    },
+    update(dt){
+      if (!G.hz.crownOpen || G.bossSpawned) return;
+      const p = G.player;
+      G.hz.crownT += dt;
+      if (G.hz.crownT >= 0 && !G.hz.crownShown) {
+        G.hz.crownShown = true;
+        showToast('왕관 조각을 모아라', '왕 좌 의  문', '👑 화살표를 따라 조각 3개를 모으면\n메갈로돈이 깨어난다', 3.2);
+        SFX.lair();
+      }
+      for (const c of G.hz.crowns) {
+        if (c.got || Math.hypot(p.x - c.x, p.y - c.y) > p.len*0.4 + 44) continue;
+        c.got = true;
+        const n = G.hz.crowns.filter(k => k.got).length;
+        burst(c.x, c.y, '#ffd34f', 22, 200); SFX.medal();
+        showBanner('👑', '왕관 조각 ' + n + ' / 3', n < 3 ? '나머지도 찾아라!' : '왕좌의 문이 열린다!');
+        if (n === 3) {
+          G.lair = { x: WORLD.w*0.5, y: WORLD.h*0.55, t: 0, shown: true };
+          spawnBoss();
+          showToast(G.bossDef.name, '왕 좌 의  문', '바다의 왕이 깨어났다!', 2.4);
+        }
+      }
+      if (!G.bossSpawned && G.hz.crownT > 180) {        // 너무 오래 못 찾으면 왕이 직접 온다
+        spawnBoss(); showToast(G.bossDef.name, '경  고', '기다리다 지친 왕이 직접 왔다!', 2.4);
+      }
+    },
+    drawWorld(){
+      if (!G.hz.crownOpen) return;
+      const im = art('item.crown');
+      for (const c of G.hz.crowns) {
+        if (c.got) continue;
+        const y = c.y + Math.sin(G.t*2 + c.ph)*8;
+        ctx.save(); ctx.translate(c.x, y);
+        if (im) { const w = 46, h = w*im.naturalHeight/im.naturalWidth; ctx.drawImage(im, -w/2, -h/2, w, h); }
+        else {
+          ctx.fillStyle = '#ffd34f';
+          ctx.beginPath(); ctx.moveTo(-18, 10); ctx.lineTo(-18, -8); ctx.lineTo(-8, 2); ctx.lineTo(0, -14); ctx.lineTo(8, 2); ctx.lineTo(18, -8); ctx.lineTo(18, 10); ctx.closePath(); ctx.fill();
+        }
+        ctx.restore();
+      }
+    },
+    drawScreen(W, H){
+      if (!G.hz.crownOpen || G.bossSpawned || !G.hz.crownShown) return;
+      const c = G.cam;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const k of G.hz.crowns) {                     // 어둠 속에서도 반짝
+        if (k.got) continue;
+        const x = W/2 + k.x - c.x, y = H/2 + k.y - c.y;
+        if (x < -60 || x > W + 60 || y < -60 || y > H + 60) continue;
+        const g = ctx.createRadialGradient(x, y, 2, x, y, 60);
+        g.addColorStop(0, 'rgba(255,220,120,' + (0.5 + 0.2*Math.sin(G.t*4)) + ')'); g.addColorStop(1, 'rgba(255,200,80,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 60, 0, 6.2832); ctx.fill();
+      }
+      ctx.restore();
+      const p = G.player, left = G.hz.crowns.filter(k => !k.got);
+      if (!left.length) return;
+      const t = left.reduce((a, b) => Math.hypot(a.x - p.x, a.y - p.y) < Math.hypot(b.x - p.x, b.y - p.y) ? a : b);
+      drawArrowTo(W, H, t.x, t.y, '👑 ' + (3 - left.length) + '/3', '👑 왕관 조각');
+    },
+  },
+
+  /* 소용돌이 — 고정된 소용돌이 3개. 가까이 가면 끌려간다 (BOOST 로 탈출). 물고기도 끌려가 먹이가 많다 */
+  whirl: {
+    icon:'🌀', name:'소용돌이', tip:'소용돌이에 끌려가면 BOOST! 대신 먹이가 모여 있다',
+    init(){
+      G.hz.whirls = [[0.25, 0.4], [0.62, 0.3], [0.8, 0.66]].map(([kx, ky]) => ({ x: WORLD.w*kx, y: WORLD.h*ky, R: 280 }));
+    },
+    update(dt){
+      const p = G.player;
+      for (const w of G.hz.whirls) {
+        const pull = (x, y, k) => { const dx = w.x - x, dy = w.y - y, d = Math.hypot(dx, dy) || 1;
+          if (d > w.R) return null; const f = (1 - d/w.R)*k; return { fx: dx/d*f - dy/d*f*0.6, fy: dy/d*f + dx/d*f*0.6 }; };
+        const a = pull(p.x, p.y, 420);
+        if (a) { p.vx += a.fx*dt; p.vy += a.fy*dt; }
+        for (const f of G.fish) { if (f.def.shock) continue; const b = pull(f.x, f.y, 260); if (b) { f.vx += b.fx*dt; f.vy += b.fy*dt; } }
+      }
+    },
+    drawWorld(){
+      const c = G.cam;
+      for (const w of G.hz.whirls) {
+        if (Math.abs(w.x - c.x) > c.w*0.5 + w.R || Math.abs(w.y - c.y) > c.h*0.5 + w.R) continue;
+        ctx.save(); ctx.translate(w.x, w.y);
+        for (let i = 0; i < 4; i++) {
+          ctx.rotate(G.t*0.9 + i*1.57);
+          ctx.strokeStyle = 'rgba(200,170,255,' + (0.18 + i*0.05) + ')'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.arc(0, 0, w.R*(0.3 + i*0.18), 0, 3.6); ctx.stroke();
+        }
+        ctx.restore();
+      }
+    },
+  },
 };
 const stageHazards = st => (st && st.hazards || []).map(k => HAZARDS[k]).filter(Boolean);
 /* G.hz.on 은 런을 시작할 때만 켜진다 — 타이틀·기지 뒤 배경에서는 장치가 돌지 않는다 */
@@ -2087,7 +2562,7 @@ function updatePlayer(dt){
   // 부스트: 스태미나가 바닥이면 시작 불가 (이미 켜져 있으면 0까지 소진)
   const wasBoosting = p.boosting;
   p.boosting = IN.boost && mag > 0.1 && p.stam > (p.boosting ? 0.5 : STAM_MIN);
-  if (p.boosting && !wasBoosting) SFX.boost();
+  if (p.boosting && !wasBoosting) { SFX.boost(); if (p.st.shark.sonar) sonarPulse(p); }   // 범고래 — 음파
   if (p.fx.bolt > 0) p.stam = 100;                     // ⚡ 번개 — 부스트 무한
   else if (p.boosting) p.stam = Math.max(0, p.stam - (STAM_USE/p.st.stam)*dt);
   else            p.stam = Math.min(100, p.stam + STAM_REGEN*dt);
@@ -2095,14 +2570,15 @@ function updatePlayer(dt){
   p.tier = p.st.base + p.stage + (p.fx.rage > 0 ? 1 : 0);   // 🔥 광폭 — 티어 +1
   const slowF = p.slow > 0 ? 0.55 : 1;
   p.slow = Math.max(0, p.slow - dt);
+  updateSnare(p, dt);
   const snareF = p.snare > 0 ? 0.12 : 1;               // 그물 — 거의 못 움직인다
-  const speed = e.speed * p.st.speed * (p.boosting ? BOOST_MULT : 1) * slowF * snareF;
+  const speed = e.speed * p.st.speed * (p.boosting ? BOOST_MULT : 1) * slowF * snareF * (p.cold ? 0.85 : 1);
 
   const acc = mag > 0 ? 7.5 : 2.0;
   p.vx = lerp(p.vx, dx*speed*mag, clamp(acc*dt, 0, 1));
   p.vy = lerp(p.vy, dy*speed*mag, clamp(acc*dt, 0, 1));
   p.x = clamp(p.x + p.vx*dt, 26, WORLD.w - 26);
-  p.y = clamp(p.y + p.vy*dt, 24, WORLD.h - 24);
+  p.y = clamp(p.y + p.vy*dt, Math.max(24, G.stage.ceil || 0), WORLD.h - 24);   // 빙하 해역은 얼음 천장
   p.phase += (1.1 + Math.hypot(p.vx, p.vy)/70) * dt * 6;
 
   // 포만감 — 멈추면 죽는 압박 장치
@@ -2123,6 +2599,26 @@ function updatePlayer(dt){
   if (p.hp <= 0) gameOver();
 }
 
+/* 붙잡힘 — 그물이든 촉수든 BOOST 를 누를 때마다 몸부림, 안 눌러도 언젠가 풀린다 */
+function updateSnare(p, dt){
+  p.snareImm = Math.max(0, p.snareImm - dt);
+  if (p.snare > 0) {
+    if (IN.boost && !p.boostPrev) {
+      p.snare -= 0.4; G.shake = Math.max(G.shake, 3); SFX.bite();
+      burst(p.x, p.y, 'rgba(230,240,255,.85)', 5, 80, 'bubble');
+    }
+    p.snare -= dt*0.5;
+    if (p.snare <= 0) {
+      p.snare = 0; p.snareImm = 1.6;                   // 빠져나온 직후 바로 다시 걸리지 않게
+      if (p.snareBy === 'net' && ++SAVE.stats.nets === 10) checkAch();
+      p.snareBy = null;
+      floatText(p.x, p.y - p.len*0.8, '탈출!', '#7dffd0');
+      showHint('');
+    } else showHint((p.snareBy === 'kraken' ? '🦑' : '🕸️') + ' BOOST 연타!');
+  }
+  p.boostPrev = IN.boost;
+}
+
 function eatFish(f){
   const p = G.player, def = f.def;
   f.dead = true;
@@ -2136,6 +2632,10 @@ function eatFish(f){
   dexRecord(def, f);
   comboHit(f);
   if (f.golden) eatGolden(f);
+  if (def.glow && (G.stage.hazards || []).includes('glow')) {      // 빛 먹기 — 10초 동안 시야 확장
+    if (!(G.glowT > 0)) floatText(p.x, p.y - p.len*0.9, '✨ 환해졌다!', '#bfffe8');
+    G.glowT = 10;
+  }
   if (def.toxic) {          // 복어: 먹으면 중독 — "보고 먹어라"를 가르치는 장치
     p.hp -= 8; p.slow = 1.5; p.hurtFlash = 1;
     G.shake = Math.max(G.shake, 5);
@@ -2229,7 +2729,7 @@ const ACH = [
   { id:'dex20',    icon:'📚', name:'물고기 박사',     desc:'도감 20종 발견',               goal:20,   get:dexFound, pearls:200 },
   { id:'dexAll',   icon:'🎓', name:'도감 완성',       desc:'도감의 모든 물고기 발견',       goal:FISH.length, get:dexFound, pearls:500 },
   { id:'boss1',    icon:'👑', name:'첫 보스 격파',     desc:'보스를 처음 쓰러뜨리기',        goal:1,    get:() => sumObj(SAVE.bossKills), pearls:60 },
-  { id:'bossAll',  icon:'🏰', name:'삼대 보스',       desc:'세 보스를 모두 쓰러뜨리기',     goal:3,    get:() => Object.keys(BOSSES).filter(k => SAVE.bossKills[k]).length, pearls:300 },
+  { id:'bossAll',  icon:'🏰', name:'모든 보스',       desc:'모든 보스를 쓰러뜨리기',        goal:Object.keys(BOSSES).length,    get:() => Object.keys(BOSSES).filter(k => SAVE.bossKills[k]).length, pearls:300 },
   { id:'boss10',   icon:'🗡️', name:'보스 사냥꾼',     desc:'보스 10번 쓰러뜨리기',          goal:10,   get:() => sumObj(SAVE.bossKills), pearls:300 },
   { id:'nohit',    icon:'🛡️', name:'한 대도 안 맞았다', desc:'보스전에서 한 번도 안 맞고 이기기', goal:1, get:() => SAVE.stats.noHitBoss, pearls:250 },
   { id:'fast',     icon:'⏱️', name:'번개 정복',       desc:'3분 안에 해역 클리어',          goal:1,    get:() => SAVE.stats.fastClear, pearls:150 },
@@ -2242,11 +2742,12 @@ const ACH = [
   { id:'nets10',   icon:'🕸️', name:'탈출 명인',       desc:'그물에서 10번 탈출',            goal:10,   get:() => SAVE.stats.nets, pearls:100 },
   { id:'shells20', icon:'🦀', name:'껍질 파괴자',     desc:'껍질 생물 20번 깨기',           goal:20,   get:() => SAVE.stats.shells, pearls:100 },
   { id:'mineBoss', icon:'💣', name:'기뢰 전술가',     desc:'보스를 기뢰로 3번 터뜨리기',    goal:3,    get:() => SAVE.stats.mineBoss, pearls:200 },
-  { id:'clearAll', icon:'🌊', name:'모든 바다 정복',   desc:'세 해역을 모두 클리어',         goal:STAGES.length, get:() => STAGES.filter(s => stageCleared(s.id)).length, pearls:400 },
+  { id:'clearAll', icon:'🌊', name:'모든 바다 정복',   desc:'모든 해역을 클리어',         goal:STAGES.length, get:() => STAGES.filter(s => stageCleared(s.id)).length, pearls:400 },
   { id:'sharkAll', icon:'🥚', name:'상어 수집가',     desc:'상어 4종을 모두 얻기',          goal:SHARKS.length, get:() => SHARKS.filter(s => SAVE.sharks[s.id]).length, pearls:300 },
   { id:'upgMax',   icon:'⚙️', name:'만렙 능력치',     desc:'능력치 하나를 MAX 로',          goal:UPG_MAX, get:() => Math.max(...Object.values(SAVE.upg)), pearls:200 },
   { id:'lv10',     icon:'⭐', name:'레벨 10',         desc:'레벨 10 달성',                  goal:10,   get:() => levelOf(SAVE.xp).lv, pearls:300 },
 ];
+ACH.push({ id:'king', icon:'👑', name:'바다의 왕', desc:'메갈로돈을 쓰러뜨리기', goal:1, get:() => SAVE.bossKills.megalodon || 0, pearls:800 });
 const achXp = a => Math.round(a.pearls/2);
 /* 새로 달성한 업적을 찾아 보상을 주고 목록을 돌려준다.
    런 중이면 배너로 알리고, 기지에서는 업적 타일에 NEW 표시만 한다 */
@@ -2263,6 +2764,10 @@ function checkAch(){
     }
   }
   if (got.length) { G.newAch = (G.newAch || 0) + got.length; writeSave(); }
+  if (!SAVE.sharks.goblin && ACH.filter(a => SAVE.ach[a.id]).length >= 20) {   // 비밀 상어
+    SAVE.sharks.goblin = true; writeSave();
+    if (G.running) showBanner('🦈', '비밀 상어 등장!', '고블린 상어를 얻었다');
+  }
   return got;
 }
 const achUnseen = () => ACH.filter(a => SAVE.ach[a.id] === 1).length;   // 1 = 달성했지만 아직 안 봄, 2 = 봄
@@ -2429,7 +2934,9 @@ function evolve(){
   burst(p.x, p.y, 'rgba(180,255,228,.9)', 28, 190, 'bubble');
   showToast(evoName(p.st.shark, p.stage));
   if (p.stage > SAVE.stats.maxStage) { SAVE.stats.maxStage = p.stage; if (p.stage === 3) checkAch(); }
-  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned && !G.lair) openLair();
+  if (p.stage >= BOSS_TRIGGER_STAGE && !G.bossSpawned && !G.lair && !G.hz.crownOpen) {
+    if ((G.stage.hazards || []).includes('crown')) HAZARDS.crown.open(); else openLair();   // 왕좌는 왕관 조각
+  }
 }
 
 function hurtPlayer(dmg, nx, ny, cd){
@@ -2472,12 +2979,12 @@ function handleContact(f, nx, ny){
     return;
   }
 
-  if (def.tier < p.tier) { eatFish(f); return; }
+  if (def.tier < p.tier || (def.tier === p.tier && p.st.shark.crush)) { eatFish(f); return; }   // 메갈로돈 — 동급도 바로
 
   if (def.tier === p.tier) {             // 동급: 물어서 체력을 깎아야 포식 가능
     if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      f.hp -= BITE_DMG * p.st.bite * (p.boosting ? 2.5 : 1);
+      f.hp -= BITE_DMG * p.st.bite * (p.st.shark.biteMul || 1) * (p.boosting ? 2.5 : 1);   // 백상아리 — 일격
       burst(f.x, f.y, def.body, 5, 85); SFX.bite(); chompFx(f, false);
       G.shake = Math.max(G.shake, p.boosting ? 7 : 3);
       if (f.hp <= 0) { eatFish(f); return; }
@@ -2562,40 +3069,7 @@ function drawLair(){
 function drawLairArrow(W, H){
   const L = G.lair;
   if (!L || !L.shown || G.bossSpawned) return;
-  const sx = W/2 + L.x - G.cam.x, sy = H/2 + L.y - G.cam.y;
-  const dist = Math.round(Math.hypot(L.x - G.player.x, L.y - G.player.y)/10);
-  const bob = Math.sin(G.t*6)*5;
-  ctx.save();
-  ctx.font = '900 14px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)';
-  const top = 150, bot = H - 130, pad = 34;            // HUD 와 버튼을 피한다
-  if (sx > pad && sx < W - pad && sy > top && sy < bot) {
-    // 화면 안 — 굴 위에서 통통 튀는 표시
-    ctx.fillStyle = '#ffd34f';
-    ctx.beginPath();
-    ctx.moveTo(sx, sy - 120 + bob); ctx.lineTo(sx - 14, sy - 140 + bob); ctx.lineTo(sx + 14, sy - 140 + bob);
-    ctx.closePath(); ctx.fill();
-    ctx.strokeText('👑 보스의 굴', sx, sy - 156 + bob); ctx.fillText('👑 보스의 굴', sx, sy - 156 + bob);
-  } else {
-    // 화면 밖 — 가장자리에 방향 화살표
-    const cx = W/2, cy = (top + bot)/2;
-    const a = Math.atan2(sy - cy, sx - cx);
-    const kx = Math.abs(Math.cos(a)) > 1e-3 ? (W/2 - pad)/Math.abs(Math.cos(a)) : 1e9;
-    const ky = Math.abs(Math.sin(a)) > 1e-3 ? ((bot - top)/2)/Math.abs(Math.sin(a)) : 1e9;
-    const r = Math.min(kx, ky) + bob*0.6;
-    const ax = cx + Math.cos(a)*r, ay = cy + Math.sin(a)*r;
-    ctx.save(); ctx.translate(ax, ay); ctx.rotate(a);
-    ctx.fillStyle = 'rgba(255,80,100,.95)';
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-12, -15); ctx.lineTo(-5, 0); ctx.lineTo(-12, 15);
-    ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.restore();
-    const lx = clamp(ax - Math.cos(a)*44, 50, W - 50), ly = clamp(ay - Math.sin(a)*30, top, bot);
-    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)'; ctx.fillStyle = '#ffd34f';
-    ctx.strokeText('👑 ' + dist + 'm', lx, ly); ctx.fillText('👑 ' + dist + 'm', lx, ly);
-  }
-  ctx.restore();
+  drawArrowTo(W, H, L.x, L.y, '👑', '👑 보스의 굴');
 }
 
 function spawnBoss(){
@@ -2611,6 +3085,7 @@ function spawnBoss(){
     state: 'intro', t: 0, phase: 1, cd: 1.0,
     dx: -side, dy: 0, flash: 0,
   };
+  if (G.bossDef.kraken) krakenInit(G.boss);
   G.bossSpawned = true;
   showToast(G.bossDef.name, '경  고');
   SFX.bossIn(); SFX.stageBed(G.stage);
@@ -2629,21 +3104,302 @@ function bossSummon(b){
       x: clamp(b.x + Math.cos(a)*r, 30, WORLD.w - 30),
       y: clamp(b.y + Math.sin(a)*r, 25, WORLD.h - 25),
       vx: Math.cos(a)*def.speed, vy: Math.sin(a)*def.speed,
-      hp: def.tier*16, maxHp: def.tier*16,
+      hp: fishHp(def), maxHp: fishHp(def),
       phase: rand(0, 6.28), wob: 1, dead: false,
       tx: 0, ty: 0, retarget: 0, lead: null });
   }
   burst(b.x, b.y, 'rgba(158,216,255,.9)', 18, 150, 'bubble');
 }
 
+/* 보스 패턴 — BOSSES[id].patterns 의 페이즈별 목록에서 고른다. 기본 3종(dash·summon·vortex) 외 동작은 BOSS_MOVES */
 function pickPattern(b, nx, ny){
-  const k = pick(b.phase === 1 ? ['dash']
-              :  b.phase === 2 ? ['dash', 'dash', 'summon']
-              :                  ['dash', 'summon', 'vortex']);
+  const P = G.bossDef.patterns || [['dash'], ['dash', 'dash', 'summon'], ['dash', 'summon', 'vortex']];
+  const k = pick(P[b.phase - 1]);
   b.t = 0;
-  if (k === 'dash')   { b.state = 'telegraph'; b.dx = nx; b.dy = ny; return; }
+  if (k === 'dash' || k === 'dash2') { b.state = 'telegraph'; b.dx = nx; b.dy = ny; b.dashLeft = k === 'dash2' ? 1 : 0; return; }
   if (k === 'summon') { b.state = 'summon'; bossSummon(b); return; }
-  b.state = 'vortex';
+  if (k === 'vortex') { b.state = 'vortex'; return; }
+  const mv = BOSS_MOVES[k];
+  if (mv && mv.start) { mv.start(b, nx, ny); return; }
+  b.state = 'idle'; b.cd = 0.5;
+}
+const toIdle = (b, a, c) => { b.state = 'idle'; b.t = 0; b.cd = rand(a || 0.9, c || 1.5); };
+
+/* 상태 이름 → { start(시작할 때), update(매 틱), draw(월드 좌표, 보스보다 먼저) } */
+const BOSS_MOVES = {
+  /* 범고래 알파 — 위로 사라졌다가 빨간 기둥 예고 → 얼음을 깨고 수직으로 내리꽂힌다. 박히면 오래 경직 */
+  breach: { start(b){ b.state = 'breachUp'; b.t = 0; } },
+  breachUp: {
+    update(b){ b.vy = -620; b.vx *= 0.9;
+      if (b.t > 0.5) { b.hide = true; b.state = 'breachMark'; b.t = 0; b.tx = G.player.x; b.vx = b.vy = 0; } },
+  },
+  breachMark: {
+    update(b){
+      b.vx = b.vy = 0;
+      if (b.t < 0.75) b.tx = lerp(b.tx, G.player.x, 0.08);           // 처음엔 따라오다 고정
+      if (b.t > 1.2) {
+        b.hide = false; b.state = 'breachDown'; b.t = 0;
+        b.x = clamp(b.tx, 120, WORLD.w - 120); b.y = (G.stage.ceil || 90) + 50;
+        b.dx = 0; b.dy = 1; b.vx = 0; b.vy = 980; SFX.dash(); G.shake = Math.max(G.shake, 10);
+        burst(b.x, b.y, 'rgba(230,248,255,.95)', 20, 220, 'bubble');
+      }
+    },
+    draw(b){
+      const c = G.cam, w = G.bossDef.len*0.42, a = 0.34 + 0.2*Math.sin(b.t*22);
+      ctx.fillStyle = 'rgba(255,40,60,' + a + ')';
+      ctx.fillRect(b.tx - w/2, (G.stage.ceil || 0), w, WORLD.h);
+      ctx.strokeStyle = 'rgba(255,90,110,' + (a + 0.3) + ')'; ctx.lineWidth = 3; ctx.setLineDash([12, 10]);
+      ctx.strokeRect(b.tx - w/2, (G.stage.ceil || 0), w, WORLD.h); ctx.setLineDash([]);
+      ctx.font = '900 34px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+      ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(120,0,20,.8)';
+      for (const k of [-0.3, 0, 0.3]) { ctx.strokeText('!', b.tx, c.y + c.h*k); ctx.fillText('!', b.tx, c.y + c.h*k); }
+      ctx.textAlign = 'left';
+    },
+  },
+  breachDown: {
+    update(b){ b.vx = 0; b.vy = 980;
+      if (b.t > 0.65 || b.y >= WORLD.h - 110) {
+        b.state = 'stagger'; b.t = 0; b.stagT = 2.5; b.vy = 0;
+        G.shake = Math.max(G.shake, 14); burst(b.x, b.y + 40, 'rgba(200,230,255,.9)', 26, 240, 'bubble');
+        floatText(b.x, b.y - 60, '꽝! 지금이야!', '#ffd84d');
+      } },
+  },
+  /* 범고래 알파 — 음파 고리 3개. 맞으면 느려진다. BOOST 중이면 뚫고 지나간다 */
+  sonar: {
+    start(b){ b.state = 'sonar'; b.t = 0; b.rings = []; b.ringN = 0; },
+    update(b, dt, nx, ny, dist){
+      b.vx = lerp(b.vx, 0, 0.08); b.vy = lerp(b.vy, 0, 0.08);
+      if (b.ringN < 3 && b.t > b.ringN*0.4) { b.rings.push({ r: 30, hit: false }); b.ringN++; SFX.dash(); }
+      const p = G.player;
+      for (const r of b.rings) {
+        r.r += 290*dt;
+        if (!r.hit && Math.abs(dist - r.r) < 20) {
+          r.hit = true;
+          if (!p.boosting) { p.slow = 1.6; hurtPlayer(6, nx, ny, 0.5); floatText(p.x, p.y - 30, '음파!', '#9fe9ff'); }
+        }
+      }
+      if (b.t > 2.4) { b.rings = null; toIdle(b, 0.8, 1.3); }
+    },
+    draw(b){
+      if (!b.rings) return;
+      for (const r of b.rings) {
+        ctx.strokeStyle = 'rgba(170,235,255,' + clamp(1 - r.r/700, 0, 0.8) + ')'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(b.x, b.y, r.r, 0, 6.2832); ctx.stroke();
+      }
+    },
+  },
+  /* 메갈로돈 — 앞쪽에 커다란 턱 범위 예고 → 쾅. 안에 있으면 큰 피해, 끝나면 잠깐 경직 */
+  chomp: {
+    start(b, nx, ny){ b.state = 'chompWind'; b.t = 0; b.cx = b.x + nx*G.bossDef.len*0.5; b.cy = b.y + ny*G.bossDef.len*0.5; },
+  },
+  chompWind: {
+    update(b, dt, nx, ny){
+      const L = G.bossDef.len;
+      b.vx = lerp(b.vx, nx*40, 0.05); b.vy = lerp(b.vy, ny*30, 0.05); b.dx = nx; b.dy = ny;
+      if (b.t < 0.55) { b.cx = lerp(b.cx, b.x + nx*L*0.5, 0.15); b.cy = lerp(b.cy, b.y + ny*L*0.5, 0.15); }
+      if (b.t > 0.95) {
+        const p = G.player, R = L*0.42;
+        G.shake = Math.max(G.shake, 12); SFX.bossIn();
+        burst(b.cx, b.cy, 'rgba(255,255,255,.9)', 18, 200, 'bubble');
+        if (Math.hypot(p.x - b.cx, p.y - b.cy) < R) hurtPlayer(Math.round(G.bossDef.contact*1.2), p.x - b.x > 0 ? 1 : -1, 0, HIT_CD);
+        b.state = 'stagger'; b.t = 0; b.stagT = 1.3;
+      }
+    },
+    draw(b){
+      const R = G.bossDef.len*0.42, k = clamp(b.t/0.95, 0, 1);
+      ctx.fillStyle = 'rgba(255,60,80,' + (0.1 + 0.18*k) + ')';
+      ctx.beginPath(); ctx.arc(b.cx, b.cy, R, 0, 6.2832); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,80,100,' + (0.5 + 0.4*k) + ')'; ctx.lineWidth = 4;
+      const gap = R*0.9*(1 - k);                      // 위아래 턱 선이 닫힌다
+      ctx.beginPath(); ctx.arc(b.cx, b.cy - gap*0.5, R*0.85, Math.PI*1.1, Math.PI*1.9); ctx.stroke();
+      ctx.beginPath(); ctx.arc(b.cx, b.cy + gap*0.5, R*0.85, Math.PI*0.1, Math.PI*0.9); ctx.stroke();
+    },
+  },
+  /* 크라켄 — 촉수 휘두르기 · 붙잡기 · 먹물 */
+  sweep: {
+    start(b){
+      const t = krakenPickTent(b);
+      if (!t) { toIdle(b, 0.4, 0.7); return; }
+      const p = G.player, a = Math.atan2(p.y - t.ry, p.x - t.rx), side = Math.random() < 0.5 ? -1 : 1;
+      t.mode = 'wind'; t.t = 0; t.a0 = a - side*1.0; t.a1 = a + side*1.0;
+      b.state = 'krakenWait'; b.t = 0; b.wait = 1.6;
+    },
+  },
+  grab: {
+    start(b){
+      const t = krakenPickTent(b);
+      if (!t) { toIdle(b, 0.4, 0.7); return; }
+      t.mode = 'reach'; t.t = 0;
+      b.state = 'krakenWait'; b.t = 0; b.wait = 1.4;
+    },
+  },
+  ink: {
+    start(b){
+      b.state = 'krakenWait'; b.t = 0; b.wait = 1.0;
+      const p = G.player;
+      if (G.hz.clouds) for (let i = 0; i < 4; i++)
+        G.hz.clouds.push({ x: p.x + rand(-120, 120), y: p.y + rand(-90, 90), r: 20, R: 150 + Math.random()*40,
+          vx: 0, vy: 0, life: 5, max: 5, seed: Math.random()*6.28 });
+      SFX.ink(); floatText(b.x, b.y - 60, '먹물!', '#d8a0ff');
+    },
+  },
+  krakenWait: { update(b){ b.vx = lerp(b.vx, 0, 0.1); b.vy = lerp(b.vy, 0, 0.1); if (b.t > b.wait) toIdle(b, 0.6, 1.1); } },
+};
+
+/* ---------------- 크라켄 촉수 ----------------
+   본체는 굴 근처에 머물고 촉수 4개가 싸운다. 촉수를 물어 끊고(체력 200), 2개 이상 끊기면
+   본체가 드러나 3초 경직 — 그때만 본체를 물 수 있다. 끊긴 촉수는 18초 뒤 다시 자란다 */
+const TENT_HP = 200, TENT_LEN = 210;
+function krakenInit(b){
+  b.hx = b.x; b.hy = b.y; b.exposed = false;
+  b.tents = [Math.PI*0.95, Math.PI*0.68, Math.PI*0.32, Math.PI*0.05].map((base, i) => ({
+    base, ang: base, len: TENT_LEN, hp: TENT_HP, alive: true, regrow: 0, mode: 'idle', t: 0, i, pts: [] }));
+}
+function krakenPickTent(b){
+  const live = b.tents.filter(t => t.alive && t.mode === 'idle');
+  if (!live.length) return null;
+  const p = G.player;
+  live.sort((a, c) => Math.hypot(p.x - a.rx, p.y - a.ry) - Math.hypot(p.x - c.rx, p.y - c.ry));
+  return live[Math.random() < 0.7 ? 0 : (Math.random()*live.length)|0];
+}
+function krakenTentHit(b, t, dmg, label){
+  t.hp -= dmg; b.flash = 1;
+  floatText(t.pts.length ? t.pts[3].x : b.x, (t.pts.length ? t.pts[3].y : b.y) - 20, label || '촉수!', '#ffb3c7');
+  if (t.hp <= 0 && t.alive) {
+    t.alive = false; t.regrow = 18; t.mode = 'idle';
+    const q = t.pts[t.pts.length - 1] || b;
+    burst(q.x, q.y, G.bossDef.body, 22, 200); SFX.shell(); G.shake = Math.max(G.shake, 8);
+    if (G.player.snareBy === 'kraken') { G.player.snare = 0.01; }      // 붙잡던 촉수가 끊기면 풀려난다
+  }
+}
+function krakenUpdate(b, dt, nx, ny, dist){
+  const p = G.player, L = G.bossDef.len;
+  for (const t of b.tents) {
+    t.t += dt;
+    t.rx = b.x + Math.cos(t.base)*L*0.22; t.ry = b.y + L*0.12 + Math.sin(t.base)*L*0.1;
+    if (!t.alive) {
+      t.regrow -= dt; t.len = 40;
+      if (t.regrow <= 0) { t.alive = true; t.hp = TENT_HP; t.len = TENT_LEN; floatText(t.rx, t.ry, '촉수가 다시 자랐다', '#ffb3c7'); }
+    } else if (t.mode === 'idle') {
+      t.ang = lerp(t.ang, t.base + Math.sin(G.t*1.3 + t.i)*0.25, 0.08); t.len = lerp(t.len, TENT_LEN, 0.08);
+    } else if (t.mode === 'wind') {
+      t.ang = lerp(t.ang, t.a0, 0.12); t.len = lerp(t.len, 300, 0.1);
+      if (t.t > 0.8) { t.mode = 'sweep'; t.t = 0; SFX.dash(); }
+    } else if (t.mode === 'sweep') {
+      t.ang = lerp(t.a0, t.a1, clamp(t.t/0.45, 0, 1));
+      if (t.t > 0.5) { t.mode = 'idle'; t.t = 0; }
+    } else if (t.mode === 'reach') {
+      const a = Math.atan2(p.y - t.ry, p.x - t.rx);
+      t.ang = lerp(t.ang, a, 0.1);
+      t.len = lerp(t.len, clamp(Math.hypot(p.x - t.rx, p.y - t.ry) + 30, 120, 560), 0.06);
+      const tip = t.pts[t.pts.length - 1];
+      if (tip && Math.hypot(p.x - tip.x, p.y - tip.y) < p.len*0.4 + 26 && p.snareImm <= 0 && !p.snare) {
+        p.snare = 2.4; p.snareBy = 'kraken'; p.vx *= 0.1; p.vy *= 0.1;
+        t.mode = 'hold'; t.t = 0; floatText(p.x, p.y - 34, '붙잡혔다!', '#ffb3c7'); SFX.net();
+      } else if (t.t > 1.6) { t.mode = 'idle'; t.t = 0; }
+    } else if (t.mode === 'hold') {
+      const tip = t.pts[t.pts.length - 1];
+      if (tip) { p.x = lerp(p.x, tip.x, 0.15); p.y = lerp(p.y, tip.y, 0.15); }
+      t.len = lerp(t.len, Math.max(140, t.len - 60*dt), 0.5);
+      if (p.iframe <= 0) hurtPlayer(Math.round(G.bossDef.contact*0.3), 0, 0, 1.0);
+      if (!(p.snare > 0) || p.snareBy !== 'kraken') { t.mode = 'idle'; t.t = 0; }
+    }
+    /* 촉수 모양 — 뿌리에서 끝까지 8점, 살짝 출렁인다 */
+    t.pts.length = 0;
+    const n = 8;
+    for (let k = 1; k <= n; k++) {
+      const u = k/n, wob = Math.sin(G.t*3 + t.i*1.7 + u*4)*12*u;
+      const a = t.ang + Math.sin(G.t*2 + t.i + u*2)*0.12*u;
+      t.pts.push({ x: t.rx + Math.cos(a)*t.len*u - Math.sin(a)*wob, y: t.ry + Math.sin(a)*t.len*u + Math.cos(a)*wob });
+    }
+    if (!t.alive) continue;
+    /* 플레이어가 촉수에 닿으면: 물어서 깎는다 / 휘두르는 중이면 맞는다 */
+    let touch = null;
+    for (let k = 2; k < t.pts.length; k++) if (Math.hypot(p.x - t.pts[k].x, p.y - t.pts[k].y) < p.len*0.35 + 22 - k) { touch = t.pts[k]; break; }
+    if (touch) {
+      if (t.mode === 'sweep' && p.iframe <= 0) hurtPlayer(Math.round(G.bossDef.contact*0.8), p.x - touch.x > 0 ? 1 : -1, p.y - touch.y > 0 ? 1 : -1, HIT_CD);
+      else if (p.biteCd <= 0) {
+        p.biteCd = BITE_CD;
+        krakenTentHit(b, t, BITE_DMG * p.st.bite * (p.st.shark.biteMul || 1) * (p.boosting ? 2.5 : 1));
+        burst(touch.x, touch.y, G.bossDef.body, 4, 90); SFX.bossHit(); chompFx(null, false);
+      }
+    }
+  }
+  const alive = b.tents.filter(t => t.alive).length;
+  if (alive <= 2 && !b.exposed) {
+    b.exposed = true; b.state = 'stagger'; b.t = 0; b.stagT = 3.2;
+    showToast('본체가 나왔다!', '크 라 켄', '지금 몸통을 물어라!', 1.8);
+  } else if (alive > 2 && b.exposed && b.state !== 'stagger') b.exposed = false;
+}
+function drawTentacles(b){
+  if (!b.tents) return;
+  for (const t of b.tents) {
+    if (!t.pts.length) continue;
+    if (t.mode === 'wind') {                           // 휘두를 범위 예고
+      ctx.fillStyle = 'rgba(255,60,90,' + (0.12 + 0.1*Math.sin(t.t*20)) + ')';
+      ctx.beginPath(); ctx.moveTo(t.rx, t.ry);
+      ctx.arc(t.rx, t.ry, 320, Math.min(t.a0, t.a1), Math.max(t.a0, t.a1)); ctx.closePath(); ctx.fill();
+    }
+    ctx.lineCap = 'round';
+    let px = t.rx, py = t.ry;
+    for (let k = 0; k < t.pts.length; k++) {
+      const q = t.pts[k], w = (t.alive ? 26 : 18)*(1 - k/t.pts.length) + 5;
+      ctx.strokeStyle = b.flash > 0 ? '#ffb3c7' : G.bossDef.body; ctx.lineWidth = w;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(q.x, q.y); ctx.stroke();
+      if (t.alive && k % 2 === 1) { ctx.fillStyle = 'rgba(255,190,210,.7)'; ctx.beginPath(); ctx.arc(q.x, q.y, w*0.18, 0, 6.2832); ctx.fill(); }
+      px = q.x; py = q.y;
+    }
+    if (t.alive && t.hp < TENT_HP) {                   // 촉수 체력
+      const q = t.pts[2];
+      ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(q.x - 18, q.y - 26, 36, 4);
+      ctx.fillStyle = '#ff8ab0'; ctx.fillRect(q.x - 18, q.y - 26, 36*(t.hp/TENT_HP), 4);
+    }
+  }
+}
+
+/* ---------------- 범고래 상어 — 음파 ---------------- BOOST 를 켜는 순간 주변 작은 물고기 기절 */
+function sonarPulse(p){
+  let n = 0;
+  for (const f of G.fish) if (!f.def.shock && f.def.tier < p.tier && Math.hypot(f.x - p.x, f.y - p.y) < 220) { f.stun = 1.0; n++; }
+  G.parts.push({ x: p.x, y: p.y, vx: 0, vy: 0, life: 0.45, max: 0.45, r: 20, grow: 480, kind: 'pop' });
+  if (n) floatText(p.x, p.y - p.len*0.7, '음파!', '#9fe9ff');
+}
+
+/* ---------------- 화면 가장자리 화살표 — 보스 굴 · 왕관 조각 공용 ---------------- */
+function drawArrowTo(W, H, wx, wy, farLabel, nearLabel){
+  const sx = W/2 + wx - G.cam.x, sy = H/2 + wy - G.cam.y;
+  const dist = Math.round(Math.hypot(wx - G.player.x, wy - G.player.y)/10);
+  const bob = Math.sin(G.t*6)*5;
+  ctx.save();
+  ctx.font = '900 14px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)';
+  const top = 150, bot = H - 130, pad = 34;            // HUD 와 버튼을 피한다
+  if (sx > pad && sx < W - pad && sy > top && sy < bot) {
+    ctx.fillStyle = '#ffd34f';
+    ctx.beginPath();
+    ctx.moveTo(sx, sy - 120 + bob); ctx.lineTo(sx - 14, sy - 140 + bob); ctx.lineTo(sx + 14, sy - 140 + bob);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeText(nearLabel, sx, sy - 156 + bob); ctx.fillText(nearLabel, sx, sy - 156 + bob);
+  } else {
+    const cx = W/2, cy = (top + bot)/2;
+    const a = Math.atan2(sy - cy, sx - cx);
+    const kx = Math.abs(Math.cos(a)) > 1e-3 ? (W/2 - pad)/Math.abs(Math.cos(a)) : 1e9;
+    const ky = Math.abs(Math.sin(a)) > 1e-3 ? ((bot - top)/2)/Math.abs(Math.sin(a)) : 1e9;
+    const r = Math.min(kx, ky) + bob*0.6;
+    const ax = cx + Math.cos(a)*r, ay = cy + Math.sin(a)*r;
+    ctx.save(); ctx.translate(ax, ay); ctx.rotate(a);
+    ctx.fillStyle = 'rgba(255,80,100,.95)';
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-12, -15); ctx.lineTo(-5, 0); ctx.lineTo(-12, 15);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    const lx = clamp(ax - Math.cos(a)*44, 50, W - 50), ly = clamp(ay - Math.sin(a)*30, top, bot);
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,10,20,.8)'; ctx.fillStyle = '#ffd34f';
+    const txt = farLabel + ' ' + dist + 'm';
+    ctx.strokeText(txt, lx, ly); ctx.fillText(txt, lx, ly);
+  }
+  ctx.restore();
 }
 
 function bossDown(){
@@ -2691,15 +3447,24 @@ function updateBoss(dt){
     burst(b.x, b.y, '#ffd84d', 26, 210);
   }
 
+  if (G.bossDef.kraken) krakenUpdate(b, dt, nx, ny, dist);
+  if (b.state === 'dead') return;
+
   switch (b.state) {
     case 'intro':
       b.vx = lerp(b.vx, nx*70, 0.03); b.vy = lerp(b.vy, ny*50, 0.03);
       if (b.t > 2.0) { b.state = 'idle'; b.t = 0; b.cd = 0.9; }
       break;
     case 'idle': {
+      if (G.bossDef.kraken) {                             // 크라켄 — 굴 근처에 머문다
+        b.vx = lerp(b.vx, (b.hx - b.x)*0.8 + nx*12, 0.05);
+        b.vy = lerp(b.vy, (b.hy - b.y)*0.8 + ny*8, 0.05);
+        b.dx = nx > 0 ? 1 : -1; b.dy = 0;
+      } else {
       const k = dist > 320 ? 1 : dist < 180 ? -0.6 : 0;   // 간격을 재며 맴돈다
       b.vx = lerp(b.vx, nx*62*k, 0.04);
       b.vy = lerp(b.vy, ny*46*k, 0.04);
+      }
       b.cd -= dt;
       if (b.cd <= 0) pickPattern(b, nx, ny);
       break; }
@@ -2709,11 +3474,14 @@ function updateBoss(dt){
       break;
     case 'dash':
       b.vx = b.dx*640; b.vy = b.dy*640;
-      if (b.t > 0.55) { b.state = 'stagger'; b.t = 0; }
+      if (b.t > 0.55) {
+        if (b.dashLeft > 0) { b.dashLeft--; b.state = 'telegraph'; b.t = 0; b.dx = nx; b.dy = ny; }   // 2연속 돌진
+        else { b.state = 'stagger'; b.t = 0; }
+      }
       break;
     case 'stagger':                                       // 약점 창 1.5초
       b.vx = lerp(b.vx, 0, 0.08); b.vy = lerp(b.vy, 0, 0.08);
-      if (b.t > 1.7) { b.state = 'idle'; b.t = 0; b.cd = rand(0.8, 1.4); }
+      if (b.t > (b.stagT || (b.phase === 3 && G.bossDef.stag3) || 1.7)) { b.state = 'idle'; b.t = 0; b.stagT = 0; b.cd = rand(0.8, 1.4); }
       break;
     case 'summon':
       b.vx = lerp(b.vx, 0, 0.06); b.vy = lerp(b.vy, 0, 0.06);
@@ -2725,12 +3493,16 @@ function updateBoss(dt){
       b.vx = lerp(b.vx, 0, 0.06); b.vy = lerp(b.vy, 0, 0.06);
       if (b.t > 2.4) { b.state = 'idle'; b.t = 0; b.cd = rand(1.0, 1.6); }
       break; }
+    default: {                                            // 해역 4~6 의 새 동작
+      const mv = BOSS_MOVES[b.state];
+      if (mv && mv.update) mv.update(b, dt, nx, ny, dist);
+    }
   }
 
   b.x = clamp(b.x + b.vx*dt, 100, WORLD.w - 100);
-  b.y = clamp(b.y + b.vy*dt, 90,  WORLD.h - 90);
+  b.y = clamp(b.y + b.vy*dt, G.stage.ceil ? G.stage.ceil + 50 : 90, WORLD.h - 90);
 
-  if (b.state === 'intro') return;
+  if (b.state === 'intro' || b.hide) return;
 
   // 기뢰를 들이받으면 보스도 터진다 — 기뢰 쪽으로 유인하는 전략
   for (const f of G.fish) {
@@ -2745,9 +3517,13 @@ function updateBoss(dt){
   if (dist < G.bossDef.len*0.34 + p.len*0.45) {
     const staggered = b.state === 'stagger';
     const z = bossZone(b, p);
-    if (p.biteCd <= 0) {
+    const armored = G.bossDef.kraken && !b.exposed;
+    if (p.biteCd <= 0 && armored) {
+      p.biteCd = BITE_CD; SFX.shell();
+      floatText(p.x, p.y - p.len*0.7, '촉수를 먼저 끊어라!', '#ffb3c7');
+    } else if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      b.hp -= BITE_DMG * p.st.bite * z.deal
+      b.hp -= BITE_DMG * p.st.bite * (p.st.shark.biteMul || 1) * z.deal
             * (p.boosting ? 2.5 : 1) * (staggered ? G.bossDef.staggerMul : 1);
       b.flash = 1; SFX.bossHit();
       burst(p.x, p.y, staggered ? '#ffd84d' : z.color, staggered ? 7 : 4, 100);
@@ -2757,7 +3533,7 @@ function updateBoss(dt){
       if (b.hp <= 0) { bossDown(); return; }
     }
     // 경직 중이거나 꼬리를 물고 있으면 반격을 받지 않는다
-    const dmg = G.bossDef.contact * (staggered ? 0 : z.taken);
+    const dmg = G.bossDef.contact * (staggered ? 0 : z.taken) * (armored ? 0.5 : 1);
     if (dmg > 0) hurtPlayer(dmg, nx, ny, HIT_CD);
   }
 }
@@ -2765,6 +3541,10 @@ function updateBoss(dt){
 function drawBoss(){
   const b = G.boss;
   if (!b || b.state === 'dead') return;
+  const mv = BOSS_MOVES[b.state];
+  if (mv && mv.draw) mv.draw(b);                    // 예고 표시 — 기둥 · 음파 · 턱 범위
+  if (G.bossDef.kraken) drawTentacles(b);
+  if (b.hide) return;
   const L = G.bossDef.len, H = L*0.17;
 
   if (b.state === 'telegraph') {                    // 돌진 예고선
@@ -2960,6 +3740,11 @@ function updateFish(dt){
         if (dist < 150 && p.tier >= def.tier) {
           f.vx = lerp(f.vx, -nx*def.speed*1.5, 0.07);
           f.vy = lerp(f.vy, -ny*def.speed*1.5, 0.07);
+          if (def.zigzag) {                                // 펭귄 — 옆으로 휙휙
+            const z = Math.sin(G.t*9 + f.phase)*def.speed*5*dt;
+            f.vx += -ny*z; f.vy += nx*z;
+          }
+          if (def.popup) f.vy = lerp(f.vy, -def.speed*1.8, 0.08);   // 바다표범 — 위로 솟구친다
         } else wander(f, dt);
         break;
       case 'aggro':
@@ -3003,7 +3788,7 @@ function updateFish(dt){
     }
 
     f.x = clamp(f.x + f.vx*dt, 20, WORLD.w - 20);
-    f.y = clamp(f.y + f.vy*dt, 18, WORLD.h - 18);
+    f.y = clamp(f.y + f.vy*dt, G.stage.ceil ? G.stage.ceil + 14 : 18, WORLD.h - 18);
     f.phase += (1 + Math.hypot(f.vx, f.vy)/55) * dt * 7;
 
     if (dist < p.len*0.46 + def.len*0.34) handleContact(f, nx, ny);
@@ -3323,9 +4108,21 @@ function drawCreature(f, p){
     ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(0, 0, L*0.9, 0, 6.2832); ctx.fill();
   }
 
-  const sp = art('fish.' + def.id);
+  if (def.elite) {                                 // 엘리트 — 보랏빛 오라 + 머리 위 작은 왕관
+    const gl = ctx.createRadialGradient(0, 0, 2, 0, 0, L*0.85);
+    gl.addColorStop(0, 'rgba(170,110,255,' + (0.3 + 0.1*Math.sin(G.t*4 + f.phase)) + ')');
+    gl.addColorStop(1, 'rgba(150,90,255,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(0, 0, L*0.85, 0, 6.2832); ctx.fill();
+    const cy = -L*0.42, cw = clamp(L*0.16, 7, 14);
+    ctx.fillStyle = '#ffd34f'; ctx.strokeStyle = 'rgba(80,40,0,.7)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-cw, cy); ctx.lineTo(-cw, cy - cw*0.9); ctx.lineTo(-cw*0.45, cy - cw*0.4);
+    ctx.lineTo(0, cy - cw*1.1); ctx.lineTo(cw*0.45, cy - cw*0.4); ctx.lineTo(cw, cy - cw*0.9); ctx.lineTo(cw, cy);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  let sp = art('fish.' + (def.art || def.id));
+  if (sp && def.tint) sp = tintOf(sp, def.tint, def.elite ? 0.38 : 0.5);
   if (sp) {                                        // 그림이 있으면 그림으로
-    const fixed = shape === 'jelly' || shape === 'urchin' || shape === 'mine' || shape === 'clam';
+    const fixed = def.fixed || shape === 'jelly' || shape === 'urchin' || shape === 'mine' || shape === 'clam';
     if (!fixed) faceHeading(f.vx, f.vy);
     const dp = Math.hypot(f.x - p.x, f.y - p.y);
     /* 외곽선은 스프라이트와 같은 배율로 그려야 한다. span 을 다르게 주면
@@ -3849,7 +4646,7 @@ function drawParts(){
 function drawDark(W, H){
   if (G.stage.light !== 'dark') return;
   const p = G.player;
-  const r = Math.round((235 + 34*SAVE.upg.sense) * (p.st.shark.suction > 1.5 ? 1.35 : 1) / 16)*16;
+  const r = Math.round(((G.stage.darkBase || 235) + 34*SAVE.upg.sense + (G.glowR || 0)) * (p.st.shark.suction > 1.5 ? 1.35 : 1) / 16)*16;
   const cx = W/2 + (p.x - G.cam.x), cy = H/2 + (p.y - G.cam.y);
   const g = cachedGrad('dark|' + r, () => {
     const gg = ctx.createRadialGradient(0, 0, r*0.5, 0, 0, r*1.9);
@@ -3880,6 +4677,12 @@ function drawOverlay(W, H){
     const g = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.3, W/2, H/2, Math.max(W,H)*0.6);
     g.addColorStop(0, 'rgba(255,170,30,0)');
     g.addColorStop(1, 'rgba(255,160,20,' + clamp(a,0,0.45) + ')');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  if (G.boss && G.boss.state !== 'dead' && G.stage.boss === 'megalodon' && G.boss.phase === 3) {
+    const a = 0.12 + 0.1*Math.sin(G.t*5);
+    const g = ctx.createRadialGradient(W/2, H/2, Math.min(W, H)*0.3, W/2, H/2, Math.max(W, H)*0.65);
+    g.addColorStop(0, 'rgba(255,30,50,0)'); g.addColorStop(1, 'rgba(200,20,40,' + a + ')');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
   // 진화 플래시
@@ -4092,7 +4895,7 @@ function dexGroups(){
 /* 다른 화면을 전부 닫는다 — 화면이 늘어나도 한 곳만 고치면 된다 */
 function hideScreens(){
   for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, UI.ach, el('helpScreen'), el('installScreen'),
-                   el('adminLogin'), el('adminScreen')])
+                   el('adminLogin'), el('adminScreen'), el('endingScreen')])
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
   hideToast();
@@ -4133,7 +4936,7 @@ function renderHub(){
         ? '<img class="shk' + (owned ? '' : ' sil') + '" src="' + art('shark.' + sh.id + '.2').src + '" alt="">'
         : '<i class="dot" style="background:' + sh.skin + '"></i>') +
       '<div class="tx"><div class="nm">' + sh.name + '<em>' + sh.tag + '</em></div>' +
-      '<div class="ds">' + (owned ? sh.desc : '상어알을 부화시켜 해금') + '</div>' +
+      '<div class="ds">' + (owned ? sh.desc : sh.secret ? '업적 20개를 모으면 나타나는 비밀 상어' : '상어알을 부화시켜 해금') + '</div>' +
       '<div class="sub">기본 티어 ' + sh.base + '</div></div>' +
       '<div class="st">' + (on ? '사용 중' : owned ? '선택' : '잠김') + '</div></div>';
   }).join('');
@@ -4150,7 +4953,7 @@ function renderHub(){
       '</div>';
   }).join('');
 
-  const h = SAVE.hatch, locked = SHARKS.filter(x => !SAVE.sharks[x.id]);
+  const h = SAVE.hatch, locked = SHARKS.filter(x => !SAVE.sharks[x.id] && !x.secret);
   let html;
   if (h.sharkId) {
     html = '<div class="hl"><div class="hn">' + SHARK_BY_ID[h.sharkId].name + ' 알</div>' +
@@ -4196,7 +4999,7 @@ el('upgList').addEventListener('click', e => {
 });
 el('hatchBox').addEventListener('click', e => {
   if (e.target.id !== 'putEgg' || SAVE.eggs < 1) return;
-  const locked = SHARKS.filter(x => !SAVE.sharks[x.id]);
+  const locked = SHARKS.filter(x => !SAVE.sharks[x.id] && !x.secret);   // 비밀 상어는 알로 안 나온다
   if (!locked.length) return;
   SAVE.eggs -= 1;
   SAVE.hatch = { sharkId: locked[0].id, progress: 0 };
@@ -4712,7 +5515,10 @@ el('pAdmin').addEventListener('click', e => {
   const b = e.target.closest('[data-adm]');
   if (!b || !ADMIN.on || !G.running) return;
   const p = G.player, k = b.dataset.adm;
-  if (k === 'lair' && !G.bossSpawned) { if (!G.lair) openLair(); G.lair.t = 0; }
+  if (k === 'lair' && !G.bossSpawned) {
+    if ((G.stage.hazards || []).includes('crown')) { if (!G.hz.crownOpen) HAZARDS.crown.open(); G.hz.crownT = 0; }
+    else { if (!G.lair) openLair(); G.lair.t = 0; }
+  }
   if (k === 'boss' && !G.bossSpawned) spawnBoss();
   if (k === 'evo' && p.stage < EVO.length - 1) { p.growth = EVO[p.stage].need; evolve(); }
   if (k === 'item') ['heal', 'magnet', 'bolt', 'shield', 'rage'].forEach((kind, i) => {
@@ -4747,7 +5553,7 @@ function startRun(){
   G.paused = false;
   G.hz = {}; hazardsCall('init'); G.hz.on = st.id;
   G.combo = 0; G.comboT = 0; G.xp = 0; G.items = []; G.itemCd = 10; G.newAch = 0; G.maxComboRun = 0;
-  G.revived = false; G.bossHits = 0;
+  G.revived = false; G.bossHits = 0; G.glowT = 0; G.glowR = 0;
   UI.combo.classList.remove('show'); UI.fxRow.__v = null;
   const packed = packItems();
   G.cam.x = G.player.x; G.cam.y = G.player.y;
@@ -4881,8 +5687,21 @@ function finishRun(cleared){
   UI.bossBar.classList.add('hidden');
   UI.over.classList.remove('hidden');
   document.body.classList.add('menu');
+  if (allDone && first) showEnding();               // 마지막 해역 첫 클리어 — 엔딩
+}
+function showEnding(){
+  const L = levelOf(SAVE.xp);
+  el('endStats').innerHTML =
+    '<dt>지금까지 먹은 물고기</dt><dd>' + (SAVE.totalEaten || 0).toLocaleString() + '</dd>' +
+    '<dt>도감</dt><dd>' + FISH.filter(d => isKnown(d.id)).length + ' / ' + FISH.length + '</dd>' +
+    '<dt>쓰러뜨린 보스</dt><dd>' + Object.keys(BOSSES).filter(k => SAVE.bossKills[k]).length + ' / ' + Object.keys(BOSSES).length + '</dd>' +
+    '<dt>레벨</dt><dd>' + L.lv + '</dd>';
+  BGM.play('title');
+  el('endingScreen').classList.remove('hidden');
+  el('endingScreen').scrollTop = 0;
 }
 
+el('endBtn').addEventListener('click', () => { SFX.ui(); el('endingScreen').classList.add('hidden'); BGM.play('hub'); });
 el('startBtn').addEventListener('click', () => { SFX.ready(); SFX.resume(); SFX.ui(); openHub(); });
 el('titleHelp').addEventListener('click', () => {
   SFX.ui(); UI.start.classList.add('hidden'); el('helpScreen').classList.remove('hidden');
@@ -4910,6 +5729,8 @@ function step(dt){
   hazardsCall('update', dt);
   updateLair(dt);
   updateItems(dt);
+  G.glowT = Math.max(0, (G.glowT || 0) - dt);
+  G.glowR = lerp(G.glowR || 0, G.glowT > 0 ? 130 : 0, clamp(dt*3, 0, 1));
   if (G.comboT > 0) { G.comboT -= dt; if (G.comboT <= 0) G.combo = 0; }
   updateParts(dt);
   updateCam(dt);
@@ -4995,6 +5816,7 @@ if (location.search.indexOf('debug') >= 0) {
   window.__pause = () => pauseGame(); window.__startRun = () => startRun();
   window.__finishRun = c => finishRun(c);
   window.__openLair = () => openLair();
+  window.__BOSSES = BOSSES; window.__STAGES = STAGES; window.__showEnding = () => showEnding();
   window.__spawnItem = k => { spawnItem(); if (k) G.items[G.items.length - 1].kind = k; };
   window.__checkAch = () => checkAch(); window.__openAch = () => openAch(); window.__ITEMS = ITEMS; window.__ACH = ACH;
   /* 화면이 가려져 rAF 가 멈춘 상태에서도 시뮬레이션을 돌려 볼 수 있게 — n 틱(1/60초) 진행 */
