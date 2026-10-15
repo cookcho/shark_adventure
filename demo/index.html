@@ -447,6 +447,102 @@
   body.admin #pAdmin{display:grid;grid-template-columns:1fr 1fr;gap:7px}
   #pAdmin .pbtn{padding:10px 6px;font-size:12.5px;border-color:rgba(255,107,127,.5)}
 
+  /* ================= 해저 기지 — 버블 아쿠아리움 (2026-10-16 시안 A) ================= */
+  .screen.hub2{justify-content:flex-start;align-items:stretch;gap:0;padding:0 0 calc(env(safe-area-inset-bottom) + 110px);
+    overflow-y:auto;overflow-x:hidden;text-align:left;font-weight:800;
+    background:linear-gradient(180deg,#7fe0ff 0%,#3fb2e8 35%,#1f7fc6 75%,#165fa8 100%)}
+  .hbubs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .hbubs i{position:absolute;bottom:-30px;border-radius:50%;border:2px solid rgba(255,255,255,.6);
+    background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.7),rgba(255,255,255,.08) 60%);animation:hrise linear infinite}
+  @keyframes hrise{from{transform:translateY(0);opacity:.85}to{transform:translateY(-110vh);opacity:0}}
+  @keyframes hbob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+  @keyframes hwig{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  @keyframes hpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  .h2top{position:relative;display:flex;align-items:center;gap:7px;padding:calc(env(safe-area-inset-top) + 14px) 14px 10px}
+  .hround{width:40px;height:40px;flex:0 0 auto;border-radius:50%;border:none;background:#fff;color:#1f7fc6;
+    font-size:19px;font-weight:900;box-shadow:0 3px 0 rgba(0,60,110,.35);display:flex;align-items:center;justify-content:center}
+  .hround:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,60,110,.35)}
+  .hround.off{color:#9db4c4;text-decoration:line-through}
+  .hround.adm{color:#9db4c4;font-size:16px}
+  .hround.adm.on{color:#ff5d8f}
+  .hlv{display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:4px 12px 4px 4px;
+    box-shadow:0 3px 0 rgba(0,60,110,.35);color:#1f5f99}
+  .hlv b{width:32px;height:32px;border-radius:50%;background:linear-gradient(180deg,#ffd84d,#ff9f1c);color:#fff;font-size:15px;
+    display:flex;align-items:center;justify-content:center;text-shadow:0 1px 0 #c2650a}
+  .hlv small{display:block;font-size:10px;color:#5a86a8;font-variant-numeric:tabular-nums}
+  .hlv i{display:block;width:62px;height:8px;border-radius:5px;background:#d8eefc;overflow:hidden;margin-top:2px}
+  .hlv em{display:block;height:100%;background:linear-gradient(90deg,#4fd1ff,#2a9df4);border-radius:5px}
+  .hpearl{margin-left:auto;background:#fff;border-radius:999px;padding:7px 13px;color:#c27a00;font-size:16px;font-weight:900;
+    box-shadow:0 3px 0 rgba(0,60,110,.35);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hub2 .admBar{margin:0 14px 8px}
+  .hub2>*{flex:0 0 auto}
+  .tank{position:relative;margin:4px 14px 0;height:clamp(190px,30vh,250px);border-radius:30px;border:5px solid #fff;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 112%,#ffe9a8 0 24%,transparent 25%),linear-gradient(180deg,#bff0ff,#62cdf2);
+    box-shadow:0 8px 0 rgba(0,50,100,.25),inset 0 0 30px rgba(255,255,255,.6)}
+  #tankShark{position:absolute;left:50%;top:42%;width:min(62%,240px);transform-origin:center;
+    translate:-50% -50%;animation:hbob 3s ease-in-out infinite;filter:drop-shadow(0 8px 6px rgba(0,60,100,.25))}
+  #tankShark.sil{filter:brightness(0) opacity(.45)}
+  #tankEmoji{display:none;position:absolute;left:50%;top:42%;translate:-50% -50%;font-size:90px;animation:hbob 3s ease-in-out infinite}
+  .tweed{position:absolute;bottom:14px;font-size:34px;transform-origin:bottom center;animation:hwig 2.4s ease-in-out infinite}
+  .tweed.l{left:16px} .tweed.r{right:18px;animation-delay:.6s}
+  .tarrow{position:absolute;top:42%;translate:0 -50%;width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:#1f7fc6;
+    font-size:18px;box-shadow:0 3px 0 rgba(0,60,110,.3)}
+  .tarrow.l{left:10px} .tarrow.r{right:10px}
+  .tarrow:active{transform:translateY(2px)}
+  .tankTag{position:absolute;left:12px;top:10px;background:rgba(255,255,255,.85);color:#1f5f99;font-size:11px;padding:4px 9px;border-radius:999px}
+  .tankUse{position:absolute;right:12px;top:10px;font-size:11px;padding:4px 9px;border-radius:999px;background:#2fd17a;color:#fff}
+  .tankUse.lock{background:rgba(30,60,90,.75)}
+  .tankUse:empty{display:none}
+  .ribbon{position:absolute;left:50%;bottom:10px;translate:-50% 0;border:none;background:linear-gradient(180deg,#ff8fb1,#ff5d8f);color:#fff;
+    padding:6px 20px 7px;border-radius:14px;font-size:18px;font-weight:900;box-shadow:0 4px 0 #c2366a;white-space:nowrap;
+    display:flex;flex-direction:column;align-items:center;gap:3px;max-width:86%}
+  .ribbon .tchip{font-size:11px;padding:2px 9px;background:rgba(255,255,255,.92)}
+  .ribbon:active{transform:translateY(2px);box-shadow:0 2px 0 #c2366a}
+  .hgrid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 14px 0}
+  .hbtn{position:relative;height:clamp(84px,12.5vh,106px);border-radius:24px;border:3px solid rgba(255,255,255,.8);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;font-size:15px;font-weight:900;
+    text-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .hbtn .ic{font-size:clamp(30px,4.6vh,38px);line-height:1.1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.15))}
+  .hbtn small{font-size:10px;font-weight:800;opacity:.92;max-width:96%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hbtn:active{transform:translateY(4px)}
+  .hbtn.b1{background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 6px 0 #138149}
+  .hbtn.b2{background:linear-gradient(180deg,#ffc36b,#ff8a24);box-shadow:0 6px 0 #c55a06}
+  .hbtn.b3{background:linear-gradient(180deg,#d7a0ff,#9a5cf0);box-shadow:0 6px 0 #6a34b8}
+  .hbtn.b4{background:linear-gradient(180deg,#ff8fa8,#f04a72);box-shadow:0 6px 0 #b42550}
+  .hbtn.b5{background:linear-gradient(180deg,#7fd6ff,#2a9df4);box-shadow:0 6px 0 #1868b3}
+  .hbtn.b6{background:linear-gradient(180deg,#fff08a,#ffc61a);box-shadow:0 6px 0 #c8920a;color:#7a4a00;text-shadow:none}
+  .hbtn:active.b1{box-shadow:0 2px 0 #138149} .hbtn:active.b2{box-shadow:0 2px 0 #c55a06} .hbtn:active.b3{box-shadow:0 2px 0 #6a34b8}
+  .hbtn:active.b4{box-shadow:0 2px 0 #b42550} .hbtn:active.b5{box-shadow:0 2px 0 #1868b3} .hbtn:active.b6{box-shadow:0 2px 0 #c8920a}
+  .hbadge{position:absolute;top:-9px;right:-6px;background:#1f7fc6;color:#fff;font-size:11px;font-weight:900;padding:3px 8px;
+    border-radius:999px;border:2px solid #fff;text-shadow:none}
+  .hbadge.red{background:#ff3b5c}
+  .hbadge.hidden,.hbadge:empty{display:none}
+  .hgo{position:fixed;left:0;right:0;bottom:0;z-index:31;padding:12px 14px calc(env(safe-area-inset-bottom) + 18px);
+    background:linear-gradient(180deg,rgba(22,95,168,0),rgba(22,95,168,.85) 45%)}
+  .hgo button{width:100%;height:74px;border-radius:40px;border:4px solid #fff;background:linear-gradient(180deg,#ffe066,#ffb703);
+    box-shadow:0 8px 0 #c77d00;color:#7a3e00;font-size:25px;font-weight:900;animation:hpulse 1.6s ease-in-out infinite}
+  .hgo button:active{transform:translateY(4px);box-shadow:0 4px 0 #c77d00;animation:none}
+  @media (orientation:landscape) and (max-height:500px){
+    .tank{height:200px}
+    .hbtn{height:84px}
+    .hgo button{height:56px;font-size:21px}
+    .screen.hub2{padding-bottom:96px}
+  }
+  /* 아래에서 올라오는 창 */
+  .hsheet{position:fixed;inset:0;z-index:36}
+  .hsheet.hidden{display:none}
+  .hsBack{position:absolute;inset:0;background:rgba(0,20,40,.45)}
+  .hsPanel{position:absolute;left:0;right:0;bottom:0;max-height:78vh;display:flex;flex-direction:column;
+    border-radius:26px 26px 0 0;background:linear-gradient(180deg,#0e4a78,#062c4a);border-top:4px solid #fff;
+    box-shadow:0 -10px 30px rgba(0,0,0,.35);animation:hsUp .22s ease-out}
+  @keyframes hsUp{from{transform:translateY(40%);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .hsHead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+  .hsHead b{color:#fff;font-size:19px;font-weight:900}
+  .hsHead button{width:36px;height:36px;border-radius:50%;border:none;background:#fff;color:#1f7fc6;font-size:16px;font-weight:900}
+  .hsBody{overflow-y:auto;padding:0 14px calc(env(safe-area-inset-bottom) + 18px)}
+  .hsBody>[data-pane]{display:none}
+  .hsBody>[data-pane].on{display:block}
+
   /* ---------- 일시정지 ---------- */
   .screen.pause{background:rgba(2,16,28,.78);z-index:40;gap:10px}
   .pauseBox{display:flex;flex-direction:column;gap:10px;width:min(100%,280px)}
@@ -648,24 +744,51 @@
   <p class="pauseInfo" id="pauseInfo"></p>
 </div>
 
-<div id="hubScreen" class="screen hub hidden">
-  <div class="hubTop"><div class="ttl"><button class="back" id="hubBack" aria-label="타이틀로">‹</button><h2>해저 기지</h2></div>
-    <div><button id="admBtn" class="adm" aria-label="관리자">⚙</button><button id="muteBtn" class="mute">♪</button><span class="pl">◈ <span id="hubPearls">0</span></span></div>
+<div id="hubScreen" class="screen hub2 hidden">
+  <div class="hbubs" aria-hidden="true"><i style="left:8%;width:16px;height:16px;animation-duration:7s"></i>
+    <i style="left:78%;width:24px;height:24px;animation-duration:9s;animation-delay:2s"></i>
+    <i style="left:52%;width:12px;height:12px;animation-duration:6s;animation-delay:1s"></i>
+    <i style="left:30%;width:18px;height:18px;animation-duration:11s;animation-delay:4s"></i></div>
+  <div class="h2top">
+    <button class="hround" id="hubBack" aria-label="타이틀로">‹</button>
+    <div class="hlv"><b id="lvNum">1</b><div><small id="lvTxt">0 / 120</small><i><em id="lvFill"></em></i></div></div>
+    <div class="hpearl">◈ <span id="hubPearls">0</span></div>
+    <button class="hround" id="muteBtn" aria-label="소리">♪</button>
+    <button class="hround adm" id="admBtn" aria-label="관리자">⚙</button>
   </div>
   <div class="admBar">🔧 관리자 모드 — 테스트 저장을 쓰는 중 (아이 진행도는 그대로)</div>
-  <button class="titleRowHub" id="titleRow">칭호 <span id="hubTitle"></span> <span style="opacity:.7">› 바꾸기</span></button>
-  <div class="lvRow"><div class="lvB">Lv <b id="lvNum">1</b></div>
-    <div class="lvBar"><i id="lvFill"></i></div><div class="lvT" id="lvTxt">0 / 120</div></div>
-  <div class="tiles three">
-    <button class="tile" id="openMap"><div class="ic">🗺️</div><div class="tn">바다 지도</div><div class="td" id="mapTileSub">햇살 연안</div></button>
-    <button class="tile dex" id="openDex"><div class="ic">📖</div><div class="tn">물고기 도감</div><div class="td" id="dexTileSub">0 / 0 발견</div></button>
-    <button class="tile ach" id="openAch"><div class="ic">🏆</div><div class="tn">업적</div><div class="td" id="achTileSub">0 / 0</div><span class="nb hidden" id="achNew">NEW</span></button>
+  <div class="tank" id="tank">
+    <span class="tankTag" id="tankTag"></span>
+    <span class="tankUse" id="tankUse"></span>
+    <div class="tweed l">🌿</div><div class="tweed r">🪸</div>
+    <img id="tankShark" alt=""><div id="tankEmoji">🦈</div>
+    <button class="tarrow l" id="tankPrev" aria-label="이전 상어">◀</button>
+    <button class="tarrow r" id="tankNext" aria-label="다음 상어">▶</button>
+    <button class="ribbon" id="titleRow"><span id="tankName">리프 샤크</span><small id="hubTitle"></small></button>
   </div>
-  <div class="hubSec"><h3>상어</h3><div id="sharkList" class="cards"></div></div>
-  <div class="hubSec"><h3>가방</h3><div id="shopList"></div></div>
-  <div class="hubSec"><h3>능력치</h3><div id="upgList"></div></div>
-  <div class="hubSec"><h3>부화기</h3><div id="hatchBox" class="hatch"></div></div>
-  <div class="hubGo"><button class="btn" id="diveBtn">바다로 ▶</button></div>
+  <div class="hgrid">
+    <button class="hbtn b1" id="openMap"><span class="ic">🗺️</span>바다 지도<small id="mapTileSub"></small></button>
+    <button class="hbtn b2" id="openDex"><span class="ic">📖</span>도감<span class="hbadge" id="dexTileSub"></span></button>
+    <button class="hbtn b3" id="openAch"><span class="ic">🏆</span>업적<span class="hbadge red hidden" id="achNew">NEW</span><small id="achTileSub"></small></button>
+    <button class="hbtn b4" id="openUpg"><span class="ic">💪</span>능력치<span class="hbadge red hidden" id="upgBadge">!</span></button>
+    <button class="hbtn b5" id="openBag"><span class="ic">🎒</span>가방<span class="hbadge hidden" id="bagBadge"></span></button>
+    <button class="hbtn b6" id="openHatch"><span class="ic">🥚</span>부화기<span class="hbadge hidden" id="hatchBadge"></span></button>
+  </div>
+  <div class="hgo"><button id="diveBtn">🦈 바다로 출발!</button></div>
+</div>
+
+<!-- 기지에서 아래에서 올라오는 창 — 상어 목록 · 능력치 · 가방 · 부화기 -->
+<div class="hsheet hidden" id="hsheet">
+  <div class="hsBack" id="hsBack"></div>
+  <div class="hsPanel">
+    <div class="hsHead"><b id="hsTitle"></b><button id="hsClose" aria-label="닫기">✕</button></div>
+    <div class="hsBody">
+      <div data-pane="sharks"><div id="sharkList" class="cards"></div></div>
+      <div data-pane="upg"><div id="upgList"></div></div>
+      <div data-pane="bag"><div id="shopList"></div></div>
+      <div data-pane="hatch"><div id="hatchBox" class="hatch"></div></div>
+    </div>
+  </div>
 </div>
 
 <div id="mapScreen" class="screen map hidden">
@@ -5024,6 +5147,7 @@ function hideScreens(){
                    el('adminLogin'), el('adminScreen'), el('endingScreen')])
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
+  if (el('hsheet')) el('hsheet').classList.add('hidden');
   hideToast();
 }
 function hideToast(){ toastTimer = 0; UI.toast.classList.remove('show'); }
@@ -5036,16 +5160,25 @@ function renderHub(){
   el('muteBtn').classList.toggle('off', SAVE.muted);
 
   const cur = STAGE_BY_ID[SAVE.stage] || STAGES[0];
-  el('mapTileSub').textContent = cur.icon + ' ' + cur.name + (stageCleared(cur.id) ? ' ✓' : ' 도전 중');
+  el('mapTileSub').textContent = cur.icon + ' ' + cur.name;
   const allIds = FISH.map(d => d.id);
-  el('dexTileSub').textContent = allIds.filter(isKnown).length + ' / ' + allIds.length + ' 발견';
-  el('achTileSub').textContent = ACH.filter(a => SAVE.ach[a.id]).length + ' / ' + ACH.length;
   el('achNew').classList.toggle('hidden', !achUnseen());
   const L = levelOf(SAVE.xp);
   el('lvNum').textContent = L.lv;
   el('lvFill').style.width = (100*L.cur/L.need).toFixed(1) + '%';
   el('lvTxt').textContent = L.cur + ' / ' + L.need;
   el('hubTitle').innerHTML = titleChip();
+  if (SAVE.sharks[SHARKS[hubView].id] && SAVE.active !== SHARKS[hubView].id)   // 가진 상어를 보고 있으면 늘 지금 상어
+    hubView = Math.max(0, SHARKS.findIndex(x => x.id === SAVE.active));
+  renderTank();
+  el('dexTileSub').textContent = allIds.filter(isKnown).length + '/' + allIds.length;
+  el('achTileSub').textContent = ACH.filter(a => SAVE.ach[a.id]).length + ' / ' + ACH.length;
+  el('upgBadge').classList.toggle('hidden', !UPGRADES.some(u => SAVE.upg[u.id] < UPG_MAX && SAVE.pearls >= upgCost(SAVE.upg[u.id])));
+  const bagN = SHOP.reduce((a, it) => a + (SAVE.inv[it.id] || 0), 0);
+  el('bagBadge').textContent = bagN ? '×' + bagN : ''; el('bagBadge').classList.toggle('hidden', !bagN);
+  const hb = SAVE.hatch.sharkId ? Math.floor(SAVE.hatch.progress) + '%' : SAVE.eggs > 0 ? '알 ' + SAVE.eggs : '';
+  el('hatchBadge').textContent = hb; el('hatchBadge').classList.toggle('hidden', !hb);
+  el('hatchBadge').classList.toggle('red', !SAVE.hatch.sharkId && SAVE.eggs > 0);
 
   el('shopList').innerHTML = SHOP.map(it => {
     const n = SAVE.inv[it.id] || 0, on = SAVE.bring[it.id];
@@ -5099,6 +5232,44 @@ function renderHub(){
   el('hatchBox').innerHTML = html;
 }
 
+/* ---------------- 기지 — 수조 · 큰 버튼 · 올라오는 창 ---------------- */
+let hubView = 0;                                     // 수조에 보이는 상어 (SHARKS 번호)
+function renderTank(){
+  const sh = SHARKS[hubView], owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
+  const im = art('shark.' + sh.id + '.2'), img = el('tankShark');
+  img.style.display = im ? '' : 'none';
+  el('tankEmoji').style.display = im ? 'none' : 'block';
+  if (im) { img.src = im.src; img.classList.toggle('sil', !owned); }
+  el('tankName').textContent = owned ? sh.name : '???';
+  el('tankTag').textContent = (owned ? sh.tag + ' · ' : '') + '기본 티어 ' + sh.base;
+  const u = el('tankUse');
+  u.textContent = on ? '✔ 사용 중' : owned ? '' : (sh.secret ? '🔒 업적 20개' : '🔒 알을 깨면 나와요');
+  u.classList.toggle('lock', !owned);
+}
+function hubShark(step){
+  hubView = (hubView + step + SHARKS.length) % SHARKS.length;
+  const sh = SHARKS[hubView];
+  if (SAVE.sharks[sh.id]) { SAVE.active = sh.id; fixStageSel(); writeSave(); }   // 가진 상어는 넘기면 바로 고른다
+  SFX.ui(); renderHub();
+}
+const SHEET_TITLE = { sharks: '🦈 내 상어들', upg: '💪 능력치', bag: '🎒 가방', hatch: '🥚 부화기' };
+function openSheet(pane){
+  el('hsTitle').textContent = SHEET_TITLE[pane];
+  el('hsheet').querySelectorAll('[data-pane]').forEach(x => x.classList.toggle('on', x.dataset.pane === pane));
+  el('hsheet').classList.remove('hidden');
+  SFX.ui();
+}
+const closeSheet = () => el('hsheet').classList.add('hidden');
+el('tankPrev').addEventListener('click', e => { e.stopPropagation(); hubShark(-1); });
+el('tankNext').addEventListener('click', e => { e.stopPropagation(); hubShark(1); });
+el('tankShark').addEventListener('click', () => openSheet('sharks'));
+el('tankEmoji').addEventListener('click', () => openSheet('sharks'));
+el('openUpg').addEventListener('click', () => openSheet('upg'));
+el('openBag').addEventListener('click', () => openSheet('bag'));
+el('openHatch').addEventListener('click', () => openSheet('hatch'));
+el('hsClose').addEventListener('click', () => { SFX.ui(); closeSheet(); });
+el('hsBack').addEventListener('click', closeSheet);
+
 el('muteBtn').addEventListener('click', () => {
   SAVE.muted = !SAVE.muted; writeSave();
   SFX.setMuted(SAVE.muted);
@@ -5112,6 +5283,7 @@ el('sharkList').addEventListener('click', e => {
   if (!SAVE.sharks[id]) return;
   SAVE.active = id;
   fixStageSel();               // 상어를 바꿔 고른 해역이 잠기면 갈 수 있는 곳으로
+  hubView = Math.max(0, SHARKS.findIndex(x => x.id === id));
   writeSave(); SFX.ui(); renderHub();
 });
 el('upgList').addEventListener('click', e => {
@@ -5485,6 +5657,8 @@ function openHub(){
   UI.bossBar.classList.add('hidden');
   showHint('');
   checkAch(); payLevels();
+  closeSheet();
+  hubView = Math.max(0, SHARKS.findIndex(x => x.id === SAVE.active));
   renderHub();
   UI.hub.classList.remove('hidden');
 }
