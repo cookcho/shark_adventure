@@ -4247,7 +4247,14 @@ function bossZone(b, p){
 
 function updateBoss(dt){
   const b = G.boss, p = G.player;
-  if (!b || b.state === 'dead') return;
+  if (b && b.state === 'dead') {                       // 쓰러지는 연출 — 배를 뒤집고 가라앉는다 (그리기는 drawBoss)
+    b.deathT = (b.deathT || 0) + dt;
+    if (b.deathT < 1.4 && Math.random() < 0.6 && G.parts.length < 340)
+      G.parts.push({ x: b.x + rand(-60, 60), y: b.y + b.deathT*50 + rand(-30, 30), vx: rand(-20, 20), vy: rand(-90, -40),
+        life: 0.8, max: 0.8, r: rand(3, 7), color: 'rgba(230,248,255,.85)', kind: 'bubble' });
+    return;
+  }
+  if (!b) return;
   b.t += dt;
   b.flash = Math.max(0, b.flash - dt*4);
 
@@ -4327,6 +4334,7 @@ function updateBoss(dt){
     }
     if (b.ring.r > 560) b.ring = null;
   }
+  bossFx(b, dt);
   b.x = clamp(b.x + b.vx*dt, 100, WORLD.w - 100);
   b.y = clamp(b.y + b.vy*dt, G.stage.ceil ? G.stage.ceil + 50 : 90, WORLD.h - 90);
 
@@ -4354,12 +4362,13 @@ function updateBoss(dt){
       floatText(p.x, p.y - p.len*0.7, '촉수를 먼저 끊어라!', '#ffb3c7');
     } else if (p.biteCd <= 0) {
       p.biteCd = BITE_CD;
-      b.hp -= BITE_DMG * p.st.bite * (p.st.shark.biteMul || 1) * z.deal
+      const dealt = BITE_DMG * p.st.bite * (p.st.shark.biteMul || 1) * z.deal
             * (p.boosting ? 2.5 : 1) * (staggered ? G.bossDef.staggerMul : 1);
+      b.hp -= dealt;
       b.flash = 1; SFX.bossHit();
       burst(p.x, p.y, staggered ? '#ffd84d' : z.color, staggered ? 7 : 4, 100);
       chompFx(null, false);
-      floatText(p.x, p.y - p.len*0.7, z.label, z.color);
+      floatText(p.x, p.y - p.len*0.7, z.label + ' -' + Math.round(dealt) + (staggered ? '!' : ''), staggered ? '#ffd84d' : z.color);
       G.shake = Math.max(G.shake, staggered ? 6 : 3);
       if (b.hp <= 0) { bossDown(); return; }
     }
@@ -4367,6 +4376,105 @@ function updateBoss(dt){
     const dmg = G.bossDef.contact * (staggered ? 0 : z.taken) * (armored ? 0.5 : 1);
     if (dmg > 0) hurtPlayer(dmg, nx, ny, HIT_CD);
   }
+}
+
+/* ---------------- 보스 몸짓 (2026-10-18) ----------------
+   그림 한 장이라도 살아 있게: 세로 띠로 잘라 꼬리를 출렁이고(헤엄), 상태마다 자세를 바꾼다.
+   보이는 것만 바뀐다 — 판정은 그대로. 파티클은 여기(update)서만 만든다 */
+const WINDUP = { telegraph:1, zigTele:1, chompWind:1, tidalWind:1, burrowDown:1, breachUp:1, leapUp:1, ambushOut:1 };
+const RUSH   = { dash:1, zigDash:1, ambushDash:1, burrowUp:1, breachDown:1 };
+function bossFx(b, dt){
+  const spd = Math.hypot(b.vx, b.vy);
+  if (b.state !== b.prevState) {                       // 상태가 바뀌는 순간 — 효과 한 번
+    const prev = b.prevState; b.prevState = b.state; b.stT = 0;
+    if (RUSH[b.state]) G.parts.push({ x: b.x, y: b.y, vx: 0, vy: 0, life: 0.35, max: 0.35, r: 20, grow: 420, kind: 'pop' });
+    if (b.state === 'stagger' && RUSH[prev]) {          // 들이받고 멈춤 — 쿵
+      G.parts.push({ x: b.x + b.dx*G.bossDef.len*0.4, y: b.y + b.dy*G.bossDef.len*0.4, vx: 0, vy: 0, life: 0.4, max: 0.4, r: 30, grow: 520, kind: 'pop' });
+      burst(b.x + b.dx*G.bossDef.len*0.4, b.y + b.dy*G.bossDef.len*0.4, 'rgba(255,255,255,.9)', 14, 200, 'bubble');
+      G.shake = Math.max(G.shake, 8);
+    }
+    if (b.state === 'summon') burst(b.x, b.y, 'rgba(255,220,120,.9)', 22, 220);
+  }
+  b.stT = (b.stT || 0) + dt;
+  if (b.hide || G.parts.length > 330) return;
+  if (spd > 360) for (let i = 0; i < 2; i++)            // 빠를 때 거품 꼬리
+    G.parts.push({ x: b.x - b.vx*0.06 + rand(-14, 14), y: b.y - b.vy*0.06 + rand(-14, 14),
+      vx: -b.vx*0.08 + rand(-30, 30), vy: -b.vy*0.08 + rand(-30, 30), life: 0.55, max: 0.55, r: rand(2, 5.5),
+      color: 'rgba(225,246,255,.85)', kind: 'bubble' });
+  if (b.phase === 3 && Math.random() < 0.35)            // 3페이즈 — 화난 붉은 거품
+    G.parts.push({ x: b.x + rand(-50, 50), y: b.y + rand(-30, 20), vx: rand(-15, 15), vy: rand(-80, -40),
+      life: 0.7, max: 0.7, r: rand(2, 4.5), color: 'rgba(255,100,70,.8)', kind: 'bubble' });
+  if (WINDUP[b.state] && Math.random() < 0.5)            // 힘 모으기 — 몸에서 빨간 불똥
+    G.parts.push({ x: b.x + rand(-40, 40), y: b.y + rand(-25, 25), vx: rand(-60, 60), vy: rand(-60, 60),
+      life: 0.3, max: 0.3, r: rand(1.5, 3), color: 'rgba(255,90,100,.9)', kind: 'bubble' });
+}
+/* 세로 띠로 잘라 그린다 — 0 = 꼬리(왼쪽) … 1 = 머리. 꼬리로 갈수록 크게 출렁 */
+function drawSpriteWave(im, L, span, amp, ph, k){
+  const w = L*span, h = w*im.naturalHeight/(im.naturalWidth || 1);
+  if (amp < 0.5) { ctx.drawImage(im, -w/2, -h/2, w, h); return { w, h }; }
+  const N = 18, sw = im.naturalWidth/N, dw = w/N;
+  for (let i = 0; i < N; i++) {
+    const u = i/(N - 1), off = Math.sin(ph - u*k)*amp*Math.pow(1 - u, 1.5);
+    ctx.drawImage(im, i*sw, 0, Math.min(sw + 1, im.naturalWidth - i*sw), im.naturalHeight, -w/2 + i*dw, -h/2 + off, dw + 0.8, h);
+  }
+  return { w, h };
+}
+/* 상태 → 자세 { sx, sy 늘이기 · lunge 앞으로 · amp/freq 출렁임 · shake 떨림 · tilt 기울기 · glow 빨간 기운 } */
+function bossPose(b){
+  const D = G.bossDef, L = D.len, t = b.stT || 0, P = { sx: 1, sy: 1, lunge: 0, amp: L*0.03, freq: 6, shake: 0, tilt: 0, glow: 0, ghost: 0 };
+  const spd = Math.hypot(b.vx, b.vy);
+  P.freq = 5 + spd/60; P.amp = L*(0.025 + Math.min(0.03, spd/12000));
+  if (D.shape === 'eel') P.amp *= 2.2;
+  if (WINDUP[b.state]) {
+    const k = Math.min(1, t/0.5);
+    P.sx = 1 - 0.1*k; P.sy = 1 + 0.1*k; P.lunge = -L*0.06*k; P.shake = 2 + 3*k; P.glow = 0.35 + 0.25*Math.sin(G.t*24); P.freq = 14;
+    if (b.state === 'chompWind' && t > 0.75) { P.lunge = L*0.14; P.sx = 1.12; P.sy = 0.92; }   // 덥석!
+  }
+  if (RUSH[b.state]) { P.sx = 1.16; P.sy = 0.88; P.freq = 22; P.amp = L*0.05; P.ghost = 3; }
+  if (b.state === 'stagger') {
+    P.freq = 2.5; P.amp = L*0.015; P.tilt = Math.sin(G.t*7)*0.14; P.sy = 1 - 0.04*Math.sin(G.t*7);
+  }
+  if (b.state === 'roar') { const q = 1 + 0.07*Math.abs(Math.sin(t*26)); P.sx = q; P.sy = q; P.shake = 6; P.glow = 0.5; P.lunge = L*0.05; }
+  if (b.state === 'circling') P.tilt = -0.18*(b.cdir || 1);
+  if (b.state === 'summon') { const q = 1 + 0.06*Math.sin(t*14); P.sx = q; P.sy = q; P.glow = 0.3; }
+  if (b.state === 'intro') { const k = Math.min(1, t/0.7), e = 1 + Math.sin(k*Math.PI)*0.18; P.sx = P.sy = (0.55 + 0.45*k)*e; }
+  if (D.kraken) { P.amp = 0; const q = Math.sin(G.t*2.4)*0.045; P.sx *= 1 + q; P.sy *= 1 - q; }   // 크라켄 — 숨쉬기
+  if (b.flash > 0) P.shake += b.flash*5;
+  return P;
+}
+/* 보스 그림 + 몸짓 한 번에 — 빨간 기운 · 잔상 · 흰 번쩍 · 경직 별 */
+function drawBossSprite(b, bsp, L){
+  const P = bossPose(b), ph = G.t*P.freq, left = (b.vx || b.dx) < 0;
+  const jx = P.shake ? rand(-P.shake, P.shake) : 0, jy = P.shake ? rand(-P.shake, P.shake) : 0;
+  if (P.ghost) {                                       // 잔상 — 지나온 자리에 흐리게
+    const sp = Math.hypot(b.vx, b.vy) || 1;
+    for (let i = P.ghost; i >= 1; i--) {
+      ctx.save(); ctx.globalAlpha = 0.16/i*2;
+      ctx.translate(b.x - b.vx/sp*i*L*0.22, b.y - b.vy/sp*i*L*0.22);
+      faceHeading(b.vx || b.dx, b.vy); ctx.scale(P.sx, P.sy);
+      drawSprite(tintOf(bsp, '#bfe9ff', 0.5), L, 1.3);
+      ctx.restore();
+    }
+  }
+  ctx.save();
+  ctx.translate(b.x + jx, b.y + jy);
+  if (P.glow > 0) {                                    // 힘 모으기 — 빨간 기운
+    const R0 = L*0.62, rg = ctx.createRadialGradient(0, 0, R0*0.25, 0, 0, R0);
+    rg.addColorStop(0, 'rgba(255,60,70,' + P.glow + ')'); rg.addColorStop(1, 'rgba(255,60,70,0)');
+    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(0, 0, R0, 0, 6.2832); ctx.fill();
+  }
+  faceHeading(b.vx || b.dx, b.vy);
+  ctx.rotate(P.tilt);
+  ctx.translate(P.lunge, 0);
+  ctx.scale(P.sx, P.sy);
+  const box = drawSpriteWave(bsp, L, 1.3, P.amp, ph, 4.2);
+  if (b.flash > 0) {                                   // 맞으면 하얗게 번쩍
+    ctx.globalAlpha = Math.min(1, b.flash)*0.85;
+    drawSpriteWave(tintOf(bsp, '#ffffff', 0.85), L, 1.3, P.amp, ph, 4.2);
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+  return { box, P, left };
 }
 
 /* 메갈로돈 꼬리 해일 — 구멍 하나 뚫린 물벽 */
@@ -4385,7 +4493,19 @@ function drawTidal(w){
 
 function drawBoss(){
   const b = G.boss;
-  if (!b || b.state === 'dead') return;
+  if (!b) return;
+  if (b.state === 'dead') {                            // 배를 뒤집고 반짝이며 가라앉는다
+    const bsp = art('boss.' + G.stage.boss), T = b.deathT || 0;
+    if (!bsp || T > 1.5) return;
+    const k = Math.min(1, T/0.7);
+    ctx.save();
+    ctx.globalAlpha = clamp(1.5 - T, 0, 1);
+    ctx.translate(b.x, b.y + T*60);
+    faceHeading(b.vx || b.dx, 0); ctx.rotate(k*Math.PI*0.9*(b.dx < 0 ? -1 : 1)); ctx.scale(1 - 0.15*k, 1 - 0.15*k);
+    drawSprite(Math.floor(T*10) % 2 ? tintOf(bsp, '#ffffff', 0.8) : bsp, G.bossDef.len, 1.3);
+    ctx.restore();
+    return;
+  }
   const mv = BOSS_MOVES[b.state];
   if (mv && mv.draw) mv.draw(b);                    // 예고 표시 — 기둥 · 음파 · 턱 범위
   if (G.bossDef.kraken) drawTentacles(b);
@@ -4420,14 +4540,12 @@ function drawBoss(){
     }
   }
 
-  ctx.save();
-  ctx.translate(b.x, b.y);
-
   const bsp = art('boss.' + G.stage.boss);
   if (bsp) {
+    const { box } = drawBossSprite(b, bsp, L);
+    ctx.save();
+    ctx.translate(b.x, b.y);
     faceHeading(b.vx || b.dx, b.vy);
-    if (b.flash > 0) { ctx.globalAlpha = 0.75; }
-    const box = drawSprite(bsp, L, 1.3);
     if (b.state !== 'stagger') {                  // 부위 표시 — 빨강 위험 / 초록 약점
       const hw = box.w, hh = box.h;
       const hg = ctx.createRadialGradient(hw*0.3, 0, 2, hw*0.3, 0, hw*0.22);
@@ -4438,15 +4556,26 @@ function drawBoss(){
       ctx.fillStyle = tg; ctx.fillRect(-hw*0.6, -hh, hw*0.5, hh*2);
     }
     ctx.restore();
-    if (b.state === 'stagger') {                  // 경직 표시는 그림 위에도 유지
+    if (b.state === 'stagger') {                  // 경직 표시는 그림 위에도 유지 + 머리 위 빙글빙글 별
       ctx.strokeStyle = 'rgba(255,216,77,.75)'; ctx.lineWidth = 3;
       ctx.setLineDash([9, 9]);
       ctx.beginPath(); ctx.arc(b.x, b.y, L*0.42, 0, 6.2832); ctx.stroke();
       ctx.setLineDash([]);
+      ctx.font = '900 30px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 4;
+      for (let i = 0; i < 4; i++) {
+        const a = G.t*4 + i*1.571, sx = b.x + Math.cos(a)*L*0.28, sy = b.y - box.h*0.48 + Math.sin(a)*L*0.07;
+        const front = Math.sin(a) > 0;                     // 앞쪽 별은 크고 밝게 — 빙글빙글 도는 느낌
+        ctx.globalAlpha = front ? 1 : 0.6;
+        ctx.strokeStyle = 'rgba(90,50,0,.85)'; ctx.fillStyle = i % 2 ? '#fff3a8' : '#ffd23f';
+        ctx.strokeText('★', sx, sy); ctx.fillText('★', sx, sy);
+      }
+      ctx.globalAlpha = 1; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     }
     return;
   }
 
+  ctx.save();
+  ctx.translate(b.x, b.y);
   faceHeading(b.vx || b.dx, b.vy);
   const sw = Math.sin(b.t*7)*0.5;
   const hurt = b.flash > 0;
