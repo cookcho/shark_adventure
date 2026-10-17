@@ -543,6 +543,185 @@
   .hsBody>[data-pane]{display:none}
   .hsBody>[data-pane].on{display:block}
 
+  /* ================= 기지 메뉴 — 업적 · 도감 · 창 · 지도 (2026-10-17, 버블 아쿠아리움 통일) ================= */
+  .screen.aq{justify-content:flex-start;align-items:stretch;gap:0;overflow-y:auto;overflow-x:hidden;text-align:left;font-weight:800;
+    padding:0 0 calc(env(safe-area-inset-bottom) + 28px);
+    background:linear-gradient(180deg,#7fe0ff 0%,#3fb2e8 30%,#1f7fc6 70%,#165fa8 100%) fixed}
+  .aq>*{flex:0 0 auto}
+  .aqTop{display:flex;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top) + 14px) 14px 10px}
+  .aqTtl{background:#fff;border-radius:999px;padding:8px 16px;font-size:18px;font-weight:900;color:#1f5f99;
+    box-shadow:0 3px 0 rgba(0,60,110,.35);white-space:nowrap}
+  .aqStk{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:4px 14px 12px}
+  .aqStk>div{border-radius:18px;padding:8px 4px 7px;text-align:center;color:#fff;border:3px solid rgba(255,255,255,.85);
+    text-shadow:0 2px 0 rgba(0,0,0,.15)}
+  .aqStk b{display:block;font-size:20px;font-weight:900;font-variant-numeric:tabular-nums}
+  .aqStk span{font-size:10.5px}
+  .aqStk>div:nth-child(1){background:linear-gradient(180deg,#d7a0ff,#9a5cf0);box-shadow:0 4px 0 #6a34b8}
+  .aqStk>div:nth-child(2){background:linear-gradient(180deg,#ffc36b,#ff8a24);box-shadow:0 4px 0 #c55a06}
+  .aqStk>div:nth-child(3){background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 4px 0 #138149}
+  #dexScreen .aqStk>div:nth-child(1){background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 4px 0 #138149}
+  #dexScreen .aqStk>div:nth-child(3){background:linear-gradient(180deg,#d7a0ff,#9a5cf0);box-shadow:0 4px 0 #6a34b8}
+  .aqTabs{display:flex;gap:6px;padding:0 14px 12px}
+  .aqTabs.scroll{overflow-x:auto;scrollbar-width:none}
+  .aqTabs.scroll::-webkit-scrollbar{display:none}
+  .aqTabs button{flex:0 0 auto;border:none;font-size:12.5px;font-weight:900;padding:7px 12px;border-radius:999px;
+    background:rgba(255,255,255,.35);color:#fff;white-space:nowrap}
+  .aqTabs button.on{background:#fff;color:#1f7fc6;box-shadow:0 3px 0 rgba(0,60,110,.3)}
+  /* 업적 카드 */
+  .aq .achList{gap:12px;padding:0 14px}
+  .aq .acard{position:relative;background:#fff;border:none;border-radius:22px;padding:11px 12px 11px 11px;gap:11px;color:#1f3d5c;
+    box-shadow:0 5px 0 rgba(0,50,100,.22)}
+  .aq .acard .ai{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;
+    background:#eef6fc;border:3px solid #d6e9f7;filter:none}
+  .aq .acard.done{background:#fff}
+  .aq .acard.done .ai{background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc61a);border-color:#ffe066;box-shadow:0 0 0 3px #fff6c9}
+  .aq .acard .an{font-size:15px;color:#1f3d5c;padding-right:62px}
+  .aq .acard .ad{font-size:11px;color:#7a95ad;font-weight:600;margin:1px 0 0}
+  .aq .acard .ab{height:12px;border-radius:8px;background:#e3eff8;margin-top:7px}
+  .aq .acard .ab i{border-radius:8px;background:repeating-linear-gradient(-45deg,#4fd1ff 0 8px,#2fb4ef 8px 16px)}
+  .aq .acard .ap{font-size:10px;color:#7a95ad}
+  .aq .acard .ar{position:absolute;right:10px;top:9px;font-size:11px;color:#c27a00;background:#fff4d6;padding:2px 8px;border-radius:999px}
+  .aq .acard .stamp{position:absolute;right:10px;bottom:9px;transform:rotate(-12deg);border:2px solid #ff5d8f;color:#ff5d8f;
+    font-size:11px;padding:1px 6px;border-radius:6px;opacity:.85}
+  .aq .acard .tl{margin-top:7px}
+  .aq .acard .tl button{padding:4px 12px;border:none;border-radius:999px;font-size:11px;font-weight:900;color:#fff;
+    background:linear-gradient(180deg,#ff8fb1,#ff5d8f);box-shadow:0 3px 0 #c2366a}
+  .aq .acard .tl button.on{background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 3px 0 #138149;color:#fff}
+  .aq .acard .new{vertical-align:2px}
+  .aq .tchip,.ribbon .tchip{border:none}
+  .aq .tchip.r0,.ribbon .tchip.r0{background:#e8f1f8;color:#4d7290}
+  .aq .tchip.r1,.ribbon .tchip.r1{background:#dff3ff;color:#1f7fc6}
+  .aq .tchip.r2,.ribbon .tchip.r2{background:#f3e8ff;color:#7a3fd0}
+  .aq .tchip.r3,.ribbon .tchip.r3{background:#fff1c2;color:#a86400;box-shadow:none}
+  .aqEmpty{margin:20px 14px;padding:22px;border-radius:22px;background:rgba(255,255,255,.85);color:#5a86a8;text-align:center;font-size:14px}
+  /* 도감 앨범 */
+  .aq .dexSec{margin:0 14px 14px;background:#fff;border-radius:26px;padding:12px 10px 14px;box-shadow:0 6px 0 rgba(0,50,100,.22)}
+  .aq .dexSec h3{display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:0;color:#1f5f99;padding:0 4px 8px;margin:0}
+  .aq .dexSec h3 span{font-size:11px;color:#fff;background:#2a9df4;padding:3px 9px;border-radius:999px;font-weight:900}
+  .aq .dexGrid{gap:9px}
+  .aq .dcard{border-radius:20px;border:3px solid #d6f1ff;color:#1f3d5c;padding:12px 3px 6px;
+    background:radial-gradient(circle at 50% 40%,#e9fbff,#bdeaff)}
+  .aq .dcard:active{transform:scale(.96)}
+  .aq .dcard.gold{background:radial-gradient(circle at 50% 40%,#fffbe0,#ffe27a);border-color:#ffd34f}
+  .aq .dcard.unk{background:#e8eef3;border:3px dashed #c6d4df;color:#9aaab8}
+  .aq .dcard.unk canvas{opacity:.22}
+  .aq .dcard .dn{font-size:11px;color:inherit}
+  .aq .dcard .dc{position:absolute;right:4px;top:4px;font-size:9.5px;color:#fff;background:#2fd17a;border-radius:999px;padding:1px 6px}
+  .aq .dcard.gold .dc{background:#ffb703}
+  .aq .dcard.unk .dc{display:none}
+  .aq .dcard .tr{top:auto;bottom:5px;left:6px;font-size:9px;color:#5a86a8;opacity:1}
+  .aq .dcard .md{top:auto;bottom:3px;right:5px;font-size:13px}
+  .aq .dcard .gd{bottom:auto;top:3px;left:5px}
+  /* 도감 — 눌렀을 때 */
+  .dexPop{position:fixed;inset:0;z-index:41;display:flex;align-items:center;justify-content:center;padding:18px}
+  .dexPop.hidden{display:none}
+  .dexPop .dpBack{position:absolute;inset:0;background:rgba(0,30,60,.5)}
+  .dpCard{position:relative;width:min(100%,360px);background:#fff;border-radius:30px;padding:16px;text-align:center;
+    box-shadow:0 10px 0 rgba(0,40,80,.35);animation:hsUp .2s ease-out;max-height:92vh;overflow-y:auto}
+  .dpTank{height:170px;border-radius:24px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at 50% 115%,#ffe9a8 0 22%,transparent 23%),linear-gradient(180deg,#bff0ff,#62cdf2)}
+  .dpTank canvas{width:78%;max-width:240px;height:auto;aspect-ratio:3/2;animation:hbob 3s ease-in-out infinite}
+  .dpTank.unk canvas{opacity:.25;animation:none}
+  .dpCard h3{font-size:22px;font-weight:900;color:#1f3d5c;margin:12px 0 6px}
+  .dpTags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .dpTags i{font-style:normal;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;background:#e6f5ff;color:#1f7fc6}
+  .dpBig{display:flex;gap:9px;margin:12px 0}
+  .dpBig div{flex:1;border-radius:16px;padding:8px 0;background:#eef8ff;color:#5a86a8;font-size:11px}
+  .dpBig b{display:block;font-size:20px;color:#1f7fc6;font-weight:900;font-variant-numeric:tabular-nums}
+  .dpTip{background:#fff7db;border-radius:16px;padding:10px 12px;font-size:12.5px;color:#7a5200;text-align:left;line-height:1.55;font-weight:700}
+  .dpPr{margin-top:9px;font-size:12px;color:#1f7fc6;font-weight:800}
+  .dpX{position:absolute;right:8px;top:8px;width:40px;height:40px;border-radius:50%;border:4px solid #fff;background:#ff5d8f;color:#fff;
+    font-size:17px;font-weight:900;z-index:1}
+  /* 올라오는 창 — 밝은 하늘색 */
+  .hsPanel{background:#f4fbff;border-top:none;border-radius:30px 30px 0 0}
+  .hsGrab{width:46px;height:6px;border-radius:4px;background:#cfe2ef;margin:10px auto 0}
+  .hsHead{justify-content:flex-start;gap:10px;padding:8px 16px 12px}
+  .hsIco{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);flex:0 0 auto}
+  .hsHead b{color:#1f3d5c;font-size:19px}
+  .hsHead small{display:block;font-size:11px;color:#7a95ad;font-weight:600}
+  .hsHead button{margin-left:auto;background:#fff;box-shadow:0 3px 0 #cfe2ef}
+  /* 상어 카드 */
+  .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sc{position:relative;background:#fff;border-radius:22px;padding:8px 8px 10px;box-shadow:0 4px 0 #d7e8f4;text-align:center}
+  .sc:active{transform:scale(.97)}
+  .sc .tk{height:78px;border-radius:16px;background:linear-gradient(180deg,#bff0ff,#62cdf2);display:flex;align-items:center;justify-content:center}
+  .sc .tk img{width:88%;max-height:70px;object-fit:contain}
+  .sc .tk i{width:26px;height:26px;border-radius:50%}
+  .sc b{display:block;font-size:14px;color:#1f3d5c;margin-top:6px}
+  .sc small{display:block;font-size:10px;color:#7a95ad;font-weight:700}
+  .sc .sd{font-size:10px;color:#5a86a8;font-weight:600;line-height:1.35;margin-top:4px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .sc.on{box-shadow:0 0 0 4px #2fd17a,0 4px 0 #d7e8f4}
+  .sc .use{position:absolute;right:6px;top:6px;font-size:10px;background:#2fd17a;color:#fff;padding:2px 7px;border-radius:999px;z-index:1}
+  .sc.lock .tk{background:#e1e9ef}
+  .sc.lock img{filter:brightness(0) opacity(.25)}
+  /* 능력치 */
+  .up{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:10px;margin-bottom:10px;box-shadow:0 4px 0 #d7e8f4}
+  .up .ui{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 auto}
+  .up .un{flex:1;min-width:0}
+  .up .un b{font-size:15px;color:#1f3d5c}
+  .up .un small{font-size:10.5px;color:#7a95ad;font-weight:600;margin-left:4px}
+  .up .pp{display:flex;gap:4px;margin-top:5px}
+  .up .pp i{width:18px;height:18px;border-radius:50%;background:#e3eff8;border:2px solid #d0e2ef}
+  .up .pp i.f{background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc61a);border-color:#f0b000}
+  .ubuy{flex:0 0 auto;border:none;border-radius:16px;padding:9px 10px;min-width:76px;font-size:14px;font-weight:900;color:#fff;
+    background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 4px 0 #138149}
+  .ubuy:active{transform:translateY(3px);box-shadow:0 1px 0 #138149}
+  .ubuy:disabled{background:#dfe8ef;color:#97a9b8;box-shadow:0 4px 0 #c5d3de}
+  .ubuy.max{background:linear-gradient(180deg,#ffe066,#ffb703);color:#7a3e00;box-shadow:0 4px 0 #c77d00}
+  /* 가방 */
+  .bag3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .it{position:relative;background:#fff;border-radius:20px;padding:10px 6px 8px;text-align:center;box-shadow:0 4px 0 #d7e8f4;
+    display:flex;flex-direction:column}
+  .it .e{font-size:34px;line-height:1.2}
+  .it b{font-size:12px;color:#1f3d5c}
+  .it .d{flex:1;font-size:9.5px;color:#7a95ad;font-weight:600;line-height:1.35;margin:3px 0 0}
+  .it .c{position:absolute;right:6px;top:6px;font-size:11px;background:#2a9df4;color:#fff;padding:1px 7px;border-radius:999px}
+  .it .c.z{background:#c6d4df}
+  .it button{border:none;font-weight:900;border-radius:999px;margin-top:6px}
+  .it .tog{font-size:10.5px;padding:5px 0;background:#e3eff8;color:#7a95ad}
+  .it .tog.on{background:#2fd17a;color:#fff}
+  .it .ib{font-size:12px;padding:6px 0;border-radius:12px;color:#7a3e00;background:linear-gradient(180deg,#ffe066,#ffb703);box-shadow:0 3px 0 #c77d00}
+  .it .ib:active{transform:translateY(2px);box-shadow:0 1px 0 #c77d00}
+  .it .ib:disabled{background:#dfe8ef;color:#97a9b8;box-shadow:0 3px 0 #c5d3de}
+  /* 부화기 */
+  .hatch2{background:#fff;border-radius:24px;padding:14px;box-shadow:0 4px 0 #d7e8f4;display:flex;gap:14px;align-items:center}
+  .hegg{width:100px;height:100px;flex:0 0 auto;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+  .hegg::before{content:"";position:absolute;inset:9px;border-radius:50%;background:#fff}
+  .hegg span{position:relative;font-size:46px}
+  .hegg.go span{animation:hwob 1.4s ease-in-out infinite}
+  .hegg.no span{filter:grayscale(1) opacity(.4)}
+  .hegg em{position:absolute;bottom:-6px;font-style:normal;font-size:12px;background:#ffb703;color:#fff;padding:2px 9px;border-radius:999px;border:2px solid #fff}
+  @keyframes hwob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  .hatch2 .hx{flex:1;min-width:0}
+  .hatch2 b{font-size:15px;color:#1f3d5c}
+  .hatch2 p{font-size:11.5px;color:#7a95ad;font-weight:600;margin:3px 0 8px;line-height:1.45;max-width:none}
+  .hchip{display:inline-flex;font-size:11px;padding:3px 9px;border-radius:999px;background:#fff1c2;color:#a86400}
+  #putEgg{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:10px;font-size:14px;font-weight:900;color:#7a3e00;
+    background:linear-gradient(180deg,#ffe066,#ffb703);box-shadow:0 4px 0 #c77d00}
+  #putEgg:disabled{background:#dfe8ef;color:#97a9b8;box-shadow:0 4px 0 #c5d3de}
+  /* 바다 지도 — 흰 정보 카드 + 노란 통통 버튼 */
+  #mapScreen .mapHead{background:linear-gradient(180deg,rgba(20,90,150,.55),rgba(20,90,150,0))}
+  #mapScreen .mapInfo{background:linear-gradient(180deg,rgba(10,50,90,0),rgba(10,50,90,.75) 22%)}
+  #mapScreen .mapInfo .mi{background:#fff;border:none;border-radius:24px;box-shadow:0 5px 0 rgba(0,40,80,.3)}
+  #mapScreen .mi .mn{color:#1f3d5c}
+  #mapScreen .mi .md{color:#5a86a8}
+  #mapScreen .mi .mb{color:#4d6c86;font-weight:600}
+  #mapScreen .mi .mb b{color:#1f3d5c}
+  #mapScreen .mi .chip{background:#e6f5ff;color:#1f7fc6;border:none}
+  #mapScreen .mi .chip.hz{background:#ffe6ec;color:#c2366a}
+  #mapScreen .mi .chip.ok{background:#dcf8e8;color:#138149}
+  #mapScreen .mi .lockMsg{color:#e0335e}
+  #mapScreen .mapInfo .btn{border-radius:40px;border:4px solid #fff;background:linear-gradient(180deg,#ffe066,#ffb703);color:#7a3e00;
+    font-size:21px;font-weight:900;box-shadow:0 7px 0 #c77d00}
+  #mapScreen .mapInfo .btn:active{transform:translateY(4px);box-shadow:0 3px 0 #c77d00}
+  #mapScreen .mapInfo .btn:disabled{background:#dfe8ef;color:#97a9b8;box-shadow:0 6px 0 #a9bac8;border-color:#fff}
+  @media (max-height:700px){ #mapScreen .mapInfo .btn{font-size:18px} }
+  @media (orientation:landscape) and (max-height:560px){
+    #mapScreen .mapInfo{background:linear-gradient(90deg,rgba(10,50,90,0),rgba(10,50,90,.75) 14%)}
+  }
+
   /* ---------- 일시정지 ---------- */
   .screen.pause{background:rgba(2,16,28,.78);z-index:40;gap:10px}
   .pauseBox{display:flex;flex-direction:column;gap:10px;width:min(100%,280px)}
@@ -781,12 +960,14 @@
 <div class="hsheet hidden" id="hsheet">
   <div class="hsBack" id="hsBack"></div>
   <div class="hsPanel">
-    <div class="hsHead"><b id="hsTitle"></b><button id="hsClose" aria-label="닫기">✕</button></div>
+    <div class="hsGrab"></div>
+    <div class="hsHead"><span class="hsIco" id="hsIco"></span><div><b id="hsTitle"></b><small id="hsSub"></small></div>
+      <button id="hsClose" aria-label="닫기">✕</button></div>
     <div class="hsBody">
-      <div data-pane="sharks"><div id="sharkList" class="cards"></div></div>
+      <div data-pane="sharks"><div id="sharkList" class="sgrid"></div></div>
       <div data-pane="upg"><div id="upgList"></div></div>
-      <div data-pane="bag"><div id="shopList"></div></div>
-      <div data-pane="hatch"><div id="hatchBox" class="hatch"></div></div>
+      <div data-pane="bag"><div id="shopList" class="bag3"></div></div>
+      <div data-pane="hatch"><div id="hatchBox"></div></div>
     </div>
   </div>
 </div>
@@ -794,8 +975,8 @@
 <div id="mapScreen" class="screen map hidden">
   <div class="mapScroll" id="mapScroll"><div class="mapSea" id="mapSea"></div></div>
   <div class="mapHead"><div class="ttl" style="display:flex;align-items:center">
-    <button class="back" id="mapBack" aria-label="기지로">‹</button><h2>바다 지도</h2></div>
-    <span class="pl" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,211,79,.16);border:1px solid rgba(255,211,79,.42);border-radius:999px;padding:5px 13px;color:var(--gold);font-size:14px;font-weight:900">◈ <span id="mapPearls">0</span></span>
+    <button class="hround" id="mapBack" aria-label="기지로">‹</button><span class="aqTtl" style="margin-left:8px">🗺️ 바다 지도</span></div>
+    <span class="hpearl">◈ <span id="mapPearls">0</span></span>
   </div>
   <div class="mapInfo"><div class="mi" id="mapInfo"></div><button class="btn" id="mapDive">잠수 시작 ▶</button></div>
 </div>
@@ -863,17 +1044,21 @@
   <button class="btn" id="endBtn">계속</button>
 </div>
 
-<div id="achScreen" class="screen dex ach hidden">
-  <div class="hubTop"><div class="ttl"><button class="back" id="achBack" aria-label="기지로">‹</button><h2 style="color:#f1d9ff">🏆 업적</h2></div></div>
-  <div class="dexSum" id="achSum"></div>
+<div id="achScreen" class="screen aq hidden">
+  <div class="aqTop"><button class="hround" id="achBack" aria-label="기지로">‹</button><span class="aqTtl">🏆 업적</span>
+    <span class="hpearl">◈ <span id="achPearls">0</span></span></div>
+  <div class="aqStk" id="achSum"></div>
+  <div class="aqTabs" id="achTabs"><button data-tab="all">전체</button><button data-tab="todo">모으는 중</button><button data-tab="done">다 모음 ✓</button></div>
   <div class="achList" id="achList"></div>
 </div>
 
-<div id="dexScreen" class="screen dex hidden">
-  <div class="hubTop"><div class="ttl"><button class="back" id="dexBack" aria-label="기지로">‹</button><h2 style="color:#ffe7a8">물고기 도감</h2></div></div>
-  <div class="dexSum" id="dexSum"></div>
+<div id="dexScreen" class="screen aq hidden">
+  <div class="aqTop"><button class="hround" id="dexBack" aria-label="기지로">‹</button><span class="aqTtl">📖 도감</span>
+    <span class="hpearl" id="dexCount"></span></div>
+  <div class="aqStk" id="dexSum"></div>
+  <div class="aqTabs scroll" id="dexTabs"></div>
   <div id="dexBody"></div>
-  <div class="dexDetail hidden" id="dexDetail"></div>
+  <div class="dexPop hidden" id="dexDetail"></div>
 </div>
 
 <div id="startScreen" class="screen title">
@@ -5182,55 +5367,56 @@ function renderHub(){
 
   el('shopList').innerHTML = SHOP.map(it => {
     const n = SAVE.inv[it.id] || 0, on = SAVE.bring[it.id];
-    return '<div class="shop"><div class="si">' + it.icon + '</div>' +
-      '<div class="tx"><div class="nm">' + it.name + '<em>×' + n + '</em></div><div class="ds">' + it.desc + '</div></div>' +
-      '<div class="bt"><button class="buy" data-buy="' + it.id + '"' + (SAVE.pearls < it.cost ? ' disabled' : '') + '>◈ ' + it.cost + '</button>' +
-      '<button class="bring' + (on ? '' : ' off') + '" data-bring="' + it.id + '">' + (on ? '가져감 ✓' : '안 가져감') + '</button></div></div>';
+    return '<div class="it"><span class="c' + (n ? '' : ' z') + '">×' + n + '</span><div class="e">' + it.icon + '</div>' +
+      '<b>' + it.name + '</b><div class="d">' + it.desc + '</div>' +
+      '<button class="tog' + (on ? ' on' : '') + '" data-bring="' + it.id + '">' + (on ? '✔ 가져가기' : '안 가져감') + '</button>' +
+      '<button class="ib" data-buy="' + it.id + '"' + (SAVE.pearls < it.cost ? ' disabled' : '') + '>◈ ' + it.cost + '</button></div>';
   }).join('');
 
   el('sharkList').innerHTML = SHARKS.map(sh => {
-    const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id;
-    return '<div class="card' + (on ? ' on' : '') + (owned ? '' : ' lock') +
-      '" data-shark="' + sh.id + '">' +
-      (art('shark.' + sh.id + '.2')                 // 그림이 있으면 그림 — 잠긴 상어는 실루엣
-        ? '<img class="shk' + (owned ? '' : ' sil') + '" src="' + art('shark.' + sh.id + '.2').src + '" alt="">'
-        : '<i class="dot" style="background:' + sh.skin + '"></i>') +
-      '<div class="tx"><div class="nm">' + sh.name + '<em>' + sh.tag + '</em></div>' +
-      '<div class="ds">' + (owned ? sh.desc : sh.secret ? '업적 20개를 모으면 나타나는 비밀 상어' : '상어알을 부화시켜 해금') + '</div>' +
-      '<div class="sub">기본 티어 ' + sh.base + '</div></div>' +
-      '<div class="st">' + (on ? '사용 중' : owned ? '선택' : '잠김') + '</div></div>';
+    const owned = !!SAVE.sharks[sh.id], on = SAVE.active === sh.id, im = art('shark.' + sh.id + '.2');
+    return '<div class="sc' + (on ? ' on' : '') + (owned ? '' : ' lock') + '" data-shark="' + sh.id + '">' +
+      (on ? '<span class="use">✔ 사용 중</span>' : '') +
+      '<div class="tk">' + (im ? '<img src="' + im.src + '" alt="">'         // 그림이 없으면 색 점
+                               : '<i style="background:' + sh.skin + '"></i>') + '</div>' +
+      '<b>' + (owned ? sh.name : '???') + '</b>' +
+      '<small>' + (owned ? sh.tag + ' · 티어 ' + sh.base : sh.secret ? '🔒 업적 20개' : '🥚 알에서 나와요') + '</small>' +
+      (owned ? '<div class="sd">' + sh.desc + '</div>' : '') + '</div>';
   }).join('');
 
   el('upgList').innerHTML = UPGRADES.map(u => {
-    const lv = SAVE.upg[u.id], maxed = lv >= UPG_MAX, cost = upgCost(lv);
+    const lv = SAVE.upg[u.id], maxed = lv >= UPG_MAX, cost = upgCost(lv), ic = UPG_ICON[u.id] || ['⭐', '#eef6fc'];
     let pips = '';
     for (let i = 0; i < UPG_MAX; i++) pips += '<i class="' + (i < lv ? 'f' : '') + '"></i>';
-    return '<div class="upg"><div class="nm">' + u.name + '</div>' +
-      '<div class="pips">' + pips + '</div>' +
-      (maxed ? '<div class="mx">MAX</div>'
-             : '<button data-upg="' + u.id + '"' +
-               (SAVE.pearls < cost ? ' disabled' : '') + '>◈ ' + cost + '</button>') +
+    return '<div class="up"><span class="ui" style="background:' + ic[1] + '">' + ic[0] + '</span>' +
+      '<div class="un"><b>' + u.name + '</b><small>' + u.desc + ' ' + u.step + '</small><div class="pp">' + pips + '</div></div>' +
+      (maxed ? '<button class="ubuy max" disabled>MAX ⭐</button>'
+             : '<button class="ubuy" data-upg="' + u.id + '"' + (SAVE.pearls < cost ? ' disabled' : '') + '>◈ ' + cost + '</button>') +
       '</div>';
   }).join('');
 
   const h = SAVE.hatch, locked = SHARKS.filter(x => !SAVE.sharks[x.id] && !x.secret);
+  const ring = pct => 'background:conic-gradient(#ffb703 0 ' + pct + '%,#e3eff8 ' + pct + '% 100%)';
   let html;
   if (h.sharkId) {
-    html = '<div class="hl"><div class="hn">' + SHARK_BY_ID[h.sharkId].name + ' 알</div>' +
-      '<div class="he">' + Math.floor(h.progress) + '%</div></div>' +
-      '<div class="ht"><i style="width:' + clamp(h.progress, 0, 100) + '%"></i></div>' +
-      '<p>런에서 물고기를 먹으면 진행됩니다 (1마리 = +' + EGG_PER_FISH + '%). 100%에서 부화합니다.</p>';
+    const pct = clamp(Math.floor(h.progress), 0, 100), left = Math.ceil((100 - h.progress)/EGG_PER_FISH);
+    html = '<div class="hegg go" style="' + ring(pct) + '"><span>🥚</span><em>' + pct + '%</em></div>' +
+      '<div class="hx"><b>' + SHARK_BY_ID[h.sharkId].name + ' 알</b>' +
+      '<p>물고기 1마리 = +' + EGG_PER_FISH + '%<br>' + left + '마리만 더 먹으면 깨어나요!</p>' +
+      (SAVE.eggs > 0 ? '<span class="hchip">🥚 남은 알 ' + SAVE.eggs + '개</span>' : '') + '</div>';
   } else if (!locked.length) {
-    html = '<div class="hl"><div class="hn">모든 상어 해금</div></div>' +
-      '<p>더 부화시킬 상어가 없습니다.</p>';
+    html = '<div class="hegg" style="' + ring(100) + '"><span>🎉</span></div>' +
+      '<div class="hx"><b>모든 상어를 모았어요!</b><p>더 깨어날 상어가 없어요.</p></div>';
   } else {
-    html = '<div class="hl"><div class="hn">비어 있음</div>' +
-      '<div class="he">보유 알 ' + SAVE.eggs + '</div></div>' +
-      '<p>보스를 처음 쓰러뜨리면 상어알을 얻습니다. 알을 넣으면 다음 런부터 부화가 진행됩니다.</p>' +
-      '<button id="putEgg"' + (SAVE.eggs < 1 ? ' disabled' : '') + '>알 넣기</button>';
+    html = '<div class="hegg no" style="' + ring(0) + '"><span>🥚</span></div>' +
+      '<div class="hx"><b>부화기가 비어 있어요</b>' +
+      '<p>보스를 처음 쓰러뜨리면 상어알을 얻어요. 알을 넣으면 다음 판부터 자라요.</p>' +
+      '<span class="hchip">🥚 가진 알 ' + SAVE.eggs + '개</span>' +
+      '<button id="putEgg"' + (SAVE.eggs < 1 ? ' disabled' : '') + '>알 넣기</button></div>';
   }
-  el('hatchBox').innerHTML = html;
+  el('hatchBox').innerHTML = '<div class="hatch2">' + html + '</div>';
 }
+const UPG_ICON = { bite:['🦷','#ffe1e8'], fin:['🐟','#dff4ff'], vitality:['❤️','#e3fbe9'], lung:['💨','#f1e6ff'], sense:['🌀','#fff3d1'] };
 
 /* ---------------- 기지 — 수조 · 큰 버튼 · 올라오는 창 ---------------- */
 let hubView = 0;                                     // 수조에 보이는 상어 (SHARKS 번호)
@@ -5252,9 +5438,16 @@ function hubShark(step){
   if (SAVE.sharks[sh.id]) { SAVE.active = sh.id; fixStageSel(); writeSave(); }   // 가진 상어는 넘기면 바로 고른다
   SFX.ui(); renderHub();
 }
-const SHEET_TITLE = { sharks: '🦈 내 상어들', upg: '💪 능력치', bag: '🎒 가방', hatch: '🥚 부화기' };
+const SHEET_HEAD = {
+  sharks: { ico:'🦈', bg:'linear-gradient(180deg,#7fd6ff,#2a9df4)', t:'내 상어들', sub: () => SHARKS.filter(x => SAVE.sharks[x.id]).length + ' / ' + SHARKS.length + ' 모음 · 눌러서 고르기' },
+  upg:    { ico:'💪', bg:'linear-gradient(180deg,#ff8fa8,#f04a72)', t:'능력치',   sub: () => '진주로 상어를 튼튼하게!' },
+  bag:    { ico:'🎒', bg:'linear-gradient(180deg,#7fd6ff,#2a9df4)', t:'가방',     sub: () => '바다에 가져갈 아이템' },
+  hatch:  { ico:'🥚', bg:'linear-gradient(180deg,#fff08a,#ffc61a)', t:'부화기',   sub: () => '알을 넣고 물고기를 먹으면 깨어나요' },
+};
 function openSheet(pane){
-  el('hsTitle').textContent = SHEET_TITLE[pane];
+  const hd = SHEET_HEAD[pane];
+  el('hsIco').textContent = hd.ico; el('hsIco').style.background = hd.bg;
+  el('hsTitle').textContent = hd.t; el('hsSub').textContent = hd.sub();
   el('hsheet').querySelectorAll('[data-pane]').forEach(x => x.classList.toggle('on', x.dataset.pane === pane));
   el('hsheet').classList.remove('hidden');
   SFX.ui();
@@ -5330,25 +5523,30 @@ function openAch(){
   for (const a of ACH) if (SAVE.ach[a.id] === 1) SAVE.ach[a.id] = 2;   // 봤다 — 다음부터 NEW 없음
   writeSave();
 }
+let achTab = 'all';
 function renderAch(){
   const done = ACH.filter(a => SAVE.ach[a.id]).length, L = levelOf(SAVE.xp);
+  el('achPearls').textContent = SAVE.pearls;
+  el('achTabs').querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === achTab));
   el('achSum').innerHTML =
-    '<div><b>' + done + '/' + ACH.length + '</b><span>달성한 업적</span></div>' +
+    '<div><b>' + done + '/' + ACH.length + '</b><span>모은 업적</span></div>' +
     '<div><b>Lv ' + L.lv + '</b><span>내 레벨</span></div>' +
     '<div><b>' + (SAVE.stats.combo || 0) + '</b><span>최고 콤보</span></div>';
   /* 달성한 것은 아래로 — 지금 노릴 것이 위에 보이게. 진행률 높은 순 */
   const rows = ACH.map(a => ({ a, v: Math.min(a.get(), a.goal), d: !!SAVE.ach[a.id], nw: SAVE.ach[a.id] === 1 }))
-    .sort((x, y) => (x.d - y.d) || (y.v/y.a.goal - x.v/x.a.goal));
+    .sort((x, y) => (x.d - y.d) || (y.v/y.a.goal - x.v/x.a.goal))
+    .filter(r => achTab === 'all' || (achTab === 'done') === r.d);
+  if (!rows.length) { el('achList').innerHTML = '<div class="aqEmpty">' + (achTab === 'done' ? '아직 모은 업적이 없어요 — 바다로 출발!' : '전부 모았어요! 🎉') + '</div>'; return; }
   el('achList').innerHTML = rows.map(r =>
     '<div class="acard' + (r.d ? ' done' : '') + '"><div class="ai">' + r.a.icon + '</div>' +
     '<div class="tx"><div class="an">' + r.a.name + (r.nw ? '<span class="new">NEW</span>' : '') + '</div>' +
     '<div class="ad">' + r.a.desc + '</div>' +
-    '<div class="tl"><span class="tchip ' + rarityOf(r.a).cls + '">' + (r.d ? r.a.icon + ' ' + titleOf(r.a) : '🔒 ' + titleOf(r.a)) + '</span>' +
-      '<span style="font-size:10px;color:#9d86b3">' + rarityOf(r.a).name + ' 칭호</span>' +
-      (r.d ? '<button data-title="' + r.a.id + '"' + (SAVE.title === r.a.id ? ' class="on">사용 중' : '>달기') + '</button>' : '') + '</div>' +
-    (r.d ? '' : '<div class="ab"><i style="width:' + (100*r.v/r.a.goal).toFixed(1) + '%"></i></div>' +
-                '<div class="ap">' + r.v.toLocaleString() + ' / ' + r.a.goal.toLocaleString() + '</div>') +
-    '</div><div class="ar">' + (r.d ? '✓ 달성' : '◈ ' + r.a.pearls) + '</div></div>').join('');
+    (r.d ? '<div class="tl"><span class="tchip ' + rarityOf(r.a).cls + '">' + r.a.icon + ' ' + titleOf(r.a) + '</span>' +
+             '<button data-title="' + r.a.id + '"' + (SAVE.title === r.a.id ? ' class="on">사용 중' : '>달기') + '</button></div>'
+         : '<div class="ab"><i style="width:' + (100*r.v/r.a.goal).toFixed(1) + '%"></i></div>' +
+           '<div class="ap">' + r.v.toLocaleString() + ' / ' + r.a.goal.toLocaleString() +
+             ' · 칭호 <span class="tchip ' + rarityOf(r.a).cls + '" style="font-size:10px;padding:1px 7px">' + titleOf(r.a) + '</span></div>') +
+    '</div>' + (r.d ? '<span class="stamp">달성!</span>' : '<div class="ar">◈ ' + r.a.pearls + '</div>') + '</div>').join('');
 }
 el('openAch').addEventListener('click', () => { SFX.ui(); openAch(); });
 el('titleRow').addEventListener('click', () => { SFX.ui(); openAch(); });
@@ -5360,6 +5558,11 @@ el('achList').addEventListener('click', e => {
   writeSave(); SFX.buy(); renderAch();
 });
 el('achBack').addEventListener('click', () => { SFX.ui(); openHub(); });
+el('achTabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  achTab = b.dataset.tab; SFX.ui(); renderAch(); UI.ach.scrollTop = 0;
+});
 
 /* ---------------- 바다 지도 ----------------
    위가 수면, 아래로 갈수록 깊다. 노드는 STAGES + SOON 에서 자동으로 만든다 —
@@ -5489,9 +5692,11 @@ el('mapBack').addEventListener('click', () => { SFX.ui(); openHub(); });
 addEventListener('resize', () => { if (!UI.map.classList.contains('hidden')) renderMap(); });
 
 /* ---------------- 도감 ---------------- */
+let dexTab = null;               // 보고 있는 해역 탭 ('boss' = 보스)
 function openDex(){
   hideScreens();
   document.body.classList.add('menu');
+  if (!dexTab) dexTab = SAVE.stage;
   renderDex();
   UI.dex.classList.remove('hidden');
   UI.dex.scrollTop = 0;
@@ -5501,17 +5706,25 @@ function renderDex(){
   const bossIds = Object.keys(BOSSES);
   el('dexSum').innerHTML =
     '<div><b>' + (SAVE.totalEaten || 0).toLocaleString() + '</b><span>먹은 물고기</span></div>' +
-    '<div><b>' + allIds.filter(isKnown).length + '/' + allIds.length + '</b><span>발견한 종류</span></div>' +
-    '<div><b>' + bossIds.filter(id => SAVE.bossKills[id]).length + '/' + bossIds.length + '</b><span>쓰러뜨린 보스</span></div>';
+    '<div><b>' + allIds.filter(isKnown).length + '/' + allIds.length + '</b><span>발견</span></div>' +
+    '<div><b>' + bossIds.filter(id => SAVE.bossKills[id]).length + '/' + bossIds.length + '</b><span>보스</span></div>';
+  el('dexCount').textContent = allIds.filter(isKnown).length + ' / ' + allIds.length;
+
+  /* 해역 탭 — 한 번에 한 바다만 보인다 */
+  const groups = dexGroups().filter(g => g.ids.length);       // 끝없는 바다는 새 물고기가 없다
+  if (dexTab !== 'boss' && !groups.some(g => g.st.id === dexTab)) dexTab = groups[0].st.id;
+  el('dexTabs').innerHTML = groups.map(g => '<button data-tab="' + g.st.id + '"' + (dexTab === g.st.id ? ' class="on"' : '') + '>' +
+      g.st.icon + ' ' + g.st.name + '</button>').join('') +
+    '<button data-tab="boss"' + (dexTab === 'boss' ? ' class="on"' : '') + '>👑 보스</button>';
 
   let html = '';
-  for (const g of dexGroups()) {
-    if (!g.ids.length) continue;                     // 끝없는 바다는 새 물고기가 없다
+  for (const g of groups) {
+    if (g.st.id !== dexTab) continue;
     const found = g.ids.filter(isKnown).length;
     html += '<div class="dexSec"><h3>' + g.st.icon + ' ' + g.st.name + '<span>' + found + ' / ' + g.ids.length + '</span></h3><div class="dexGrid">';
     for (const id of g.ids) {
       const d = FISH_BY_ID[id], known = isKnown(id), n = SAVE.dex[id] || 0, m = medalOf(d, n);
-      html += '<button class="dcard' + (known ? '' : ' unk') + '" data-fish="' + id + '">' +
+      html += '<button class="dcard' + (known ? '' : ' unk') + (known && SAVE.goldDex[id] ? ' gold' : '') + '" data-fish="' + id + '">' +
         '<span class="tr">T' + d.tier + '</span>' + (m >= 0 ? '<span class="md">' + MEDALS[m] + '</span>' : '') +
         (SAVE.goldDex[id] ? '<span class="gd">✨</span>' : '') +
         '<canvas width="138" height="92" data-icon="' + id + '"></canvas>' +
@@ -5520,6 +5733,7 @@ function renderDex(){
     }
     html += '</div></div>';
   }
+  if (dexTab === 'boss') {
   html += '<div class="dexSec"><h3>👑 보스<span>' + bossIds.filter(id => SAVE.bossKills[id]).length + ' / ' + bossIds.length + '</span></h3><div class="dexGrid">';
   for (const id of bossIds) {
     const k = SAVE.bossKills[id] || 0;
@@ -5530,6 +5744,7 @@ function renderDex(){
       '<div class="dc">' + (k ? '×' + k : '-') + '</div></button>';
   }
   html += '</div></div>';
+  }
   el('dexBody').innerHTML = html;
   el('dexBody').querySelectorAll('[data-icon]').forEach(c => paintFish(c, FISH_BY_ID[c.dataset.icon], !isKnown(c.dataset.icon)));
   el('dexBody').querySelectorAll('[data-bossicon]').forEach(c => paintBoss(c, c.dataset.bossicon, !SAVE.bossKills[c.dataset.bossicon]));
@@ -5547,33 +5762,36 @@ function ruleOf(d){
 }
 function showDexDetail(kind, id){
   const box = el('dexDetail');
-  let h;
+  const card = (tank, known, name, tags, big, tip, prog) =>
+    '<div class="dpBack"></div><div class="dpCard"><button class="dpX" id="dexClose" aria-label="닫기">✕</button>' +
+    '<div class="dpTank' + (known ? '' : ' unk') + '"><canvas width="240" height="160"></canvas></div>' +
+    '<h3>' + name + '</h3><div class="dpTags">' + tags.filter(Boolean).map(t => '<i>' + t + '</i>').join('') + '</div>' +
+    '<div class="dpBig">' + big.map(x => '<div><b>' + x[0] + '</b>' + x[1] + '</div>').join('') + '</div>' +
+    '<div class="dpTip">💡 ' + tip + '</div>' + (prog ? '<div class="dpPr">' + prog + '</div>' : '') + '</div>';
   if (kind === 'boss') {
     const b = BOSSES[id], k = SAVE.bossKills[id] || 0;
     const st = STAGES.find(s => s.boss === id);
-    h = '<div class="dh"><canvas width="240" height="160"></canvas><div>' +
-      '<div class="dnm">' + (k ? b.name : '???') + '</div>' +
-      '<div class="dtr">보스 · 티어 ' + b.tier + ' · 체력 ' + b.hp + '</div></div></div>' +
-      '<div class="dtip">' + (k ? BOSS_TIP[id] || '' : (st ? st.name : '') + '의 끝에서 기다린다') + '</div>' +
-      '<div class="dpr">' + (k ? '쓰러뜨린 횟수 ' + k : '아직 쓰러뜨리지 못했다') + '</div>';
-    box.innerHTML = h + '<button id="dexClose">닫기</button>';
+    box.innerHTML = card(true, !!k, k ? b.name : '???',
+      [st ? st.icon + ' ' + st.name : '', '👑 보스', 'T' + b.tier],
+      [[k, '쓰러뜨림'], ['T' + b.tier, '티어'], [b.hp, '체력']],
+      k ? BOSS_TIP[id] || '' : (st ? st.name : '') + '의 끝에서 기다린다',
+      k ? '' : '아직 쓰러뜨리지 못했어요');
     paintBoss(box.querySelector('canvas'), id, !k);
   } else {
     const d = FISH_BY_ID[id], known = isKnown(id), n = SAVE.dex[id] || 0;
-    const home = STAGES.filter(s => s.fish.indexOf(id) >= 0).map(s => s.name).join(' · ');
-    let prog = '';
+    const homes = STAGES.filter(s => s.fish.indexOf(id) >= 0);
+    let prog = '', m = -1;
     if (known && !d.shock) {
-      const steps = medalSteps(d), m = medalOf(d, n);
+      const steps = medalSteps(d); m = medalOf(d, n);
       prog = m >= steps.length - 1 ? '🥇 금메달 완성!'
            : MEDALS[m + 1] + ' ' + MEDAL_NAMES[m + 1] + '까지 ' + (steps[m + 1] - n) + '마리';
     }
-    h = '<div class="dh"><canvas width="240" height="160"></canvas><div>' +
-      '<div class="dnm">' + (known ? d.name : '???') + '</div>' +
-      '<div class="dtr">티어 ' + d.tier + (known && ruleOf(d) ? ' · ' + ruleOf(d) : '') + '</div></div></div>' +
-      '<div class="dtip">' + (known ? FISH_TIP[id] || '' : '아직 만나지 못했다. ' + home + '에 산다') + '</div>' +
-      '<div class="dpr">' + (known ? (d.shock ? '만난 적 있음' : '먹은 수 ' + n.toLocaleString() + '마리') +
-        (prog ? ' · ' + prog : '') : '') + '</div>';
-    box.innerHTML = h + '<button id="dexClose">닫기</button>';
+    box.innerHTML = card(known, known, known ? d.name : '???',
+      [homes[0] ? homes[0].icon + ' ' + homes[0].name : '', 'T' + d.tier, known ? ruleOf(d) : ''],
+      [[known ? (d.shock ? '✓' : n.toLocaleString()) : '-', d.shock ? '만남' : '먹은 수'],
+       [m >= 0 ? MEDALS[m] : '-', '메달'], [SAVE.goldDex[id] ? '✨' : '-', '황금']],
+      known ? FISH_TIP[id] || '' : '아직 만나지 못했어요. ' + homes.map(s => s.name).join(' · ') + '에 살아요',
+      prog);
     paintFish(box.querySelector('canvas'), d, !known);
   }
   box.classList.remove('hidden');
@@ -5586,9 +5804,16 @@ el('dexBody').addEventListener('click', e => {
   else showDexDetail('fish', c.dataset.fish);
 });
 el('dexDetail').addEventListener('click', e => {
-  if (e.target.id === 'dexClose') el('dexDetail').classList.add('hidden');
+  if (e.target.id === 'dexClose' || e.target.classList.contains('dpBack')) { SFX.ui(); el('dexDetail').classList.add('hidden'); }
 });
 el('dexBack').addEventListener('click', () => { SFX.ui(); openHub(); });
+el('dexTabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  dexTab = b.dataset.tab; SFX.ui();
+  const x = el('dexTabs').scrollLeft;
+  renderDex(); el('dexTabs').scrollLeft = x;
+});
 
 el('openMap').addEventListener('click', () => { SFX.ui(); openMap(); });
 el('openDex').addEventListener('click', () => { SFX.ui(); openDex(); });

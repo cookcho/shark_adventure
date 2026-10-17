@@ -76,7 +76,7 @@ localStorage.setItem('seaking.save.v1', JSON.stringify({
 | ~1987 | **성장·재미** — 레벨 `levelOf`/`payLevels` · 업적 `ACH`/`checkAch` · 콤보 · 황금 `tintOf` · 바다 아이템 `ITEMS` · 가방 `SHOP` · 부활 |
 | ~2395 | 보스 굴 · 보스 상태기계 |
 | ~2841 | 렌더 |
-| ~3724 | HUD · 생물 아이콘 `paintFish` · 허브(버블 아쿠아리움: 수조 `renderTank` · 올라오는 창 `openSheet`) · 가방 · **업적** · **지도** · **도감** · **일시정지** · 런 시작/정산 · 메인 루프 |
+| ~3724 | HUD · 생물 아이콘 `paintFish` · 허브(버블 아쿠아리움: 수조 `renderTank` · 올라오는 창 `openSheet`) · 가방 · **업적**(탭 `achTab`) · **지도** · **도감**(해역 탭 `dexTab` · 가운데 팝업) — 메뉴 화면은 `.screen.aq` 공통 스타일 · **일시정지** · 런 시작/정산 · 메인 루프 |
 
 핵심 상수: `WORLD 3200×1700` · `TARGET_FISH 170` · `SPRITE_SPAN 1.5` ·
 `CAM_OVER 300` · `CAM_UNDER 110` · `HUNGER_DRAIN 1.2`
