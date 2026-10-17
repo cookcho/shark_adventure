@@ -956,6 +956,17 @@
 <div id="combo"></div>
 <div id="fxRow"></div>
 
+<!-- 끝없는 바다 — 보스 6마리를 다 잡으면: 끝낼지 더 할지 고른다 -->
+<div id="lapScreen" class="screen pause hidden">
+  <div style="font-size:64px;line-height:1">👑</div>
+  <h1>보스 6마리 완주!</h1>
+  <p id="lapInfo"></p>
+  <div class="pauseBox">
+    <button class="pbtn main" id="lapEnd">🏆 여기서 끝내기</button>
+    <button class="pbtn" id="lapMore">♾️ 계속 도전 (보스가 더 세져요)</button>
+  </div>
+</div>
+
 <div id="pauseScreen" class="screen pause hidden">
   <h1>일시정지</h1>
   <div class="pauseBox">
@@ -4144,8 +4155,9 @@ function bossDown(){
 
 /* ---------------- 끝없는 바다 ----------------
    1분마다 한 해역씩 깊어진다 (모습·음악·물고기). 끝까지 가면 배고픔이 조금씩 빨라진다.
-   보스는 100초에 처음, 쓰러뜨리면 110초 뒤 다음 — 6마리를 돌면 한 바퀴마다 체력 +30% */
-const ENDLESS_STEP = 60, ENDLESS_BOSS1 = 100, ENDLESS_BOSS_GAP = 110;
+   보스는 100초에 처음, 쓰러뜨리면 80초 뒤 다음 — 6마리(메갈로돈까지)를 다 잡으면 "완주" 창:
+   끝내기(기록 + 완주 보너스) / 계속(한 바퀴마다 보스 체력 +30%) */
+const ENDLESS_STEP = 60, ENDLESS_BOSS1 = 100, ENDLESS_BOSS_GAP = 80, LAP_BONUS = 300;
 const ENDLESS_BOSSES = ['giant_barra', 'giant_moray', 'rogue_white', 'orca_alpha', 'kraken', 'megalodon'];
 function endlessStart(st){
   G.endless = { t: 0, level: 0, kills: 0, next: ENDLESS_BOSS1, deadT: 0, ramp: 0 };
@@ -4178,8 +4190,20 @@ function endlessBossDown(){
   SAVE.bossKills[id] = (SAVE.bossKills[id] || 0) + 1;
   G.pearls += BOSS_PEARLS; G.xp += XP_BOSS;
   floatText(G.player.x, G.player.y - 60, '보스 격파! +' + BOSS_PEARLS + ' 진주', '#ffd34f');
-  showBanner('👑', '보스 ' + E.kills + '마리째!', '다음 보스는 ' + Math.round(ENDLESS_BOSS_GAP) + '초 뒤');
   checkAch();
+  if (E.kills % ENDLESS_BOSSES.length === 0) { E.lapT = 1.8; return; }   // 한 바퀴 완주 — 쓰러지는 연출 뒤에 창을 띄운다
+  showBanner('👑', '보스 ' + E.kills + '마리째!', '다음 보스는 ' + Math.round(ENDLESS_BOSS_GAP) + '초 뒤');
+}
+function showLap(){
+  const E = G.endless, lap = E.kills/ENDLESS_BOSSES.length;
+  G.paused = true; G.shake = 0;
+  IN.active = false; IN.mag = 0; IN.id = -1; IN.boost = false;
+  hideToast(); SFX.medal();
+  el('lapInfo').innerHTML = '버틴 시간 <b>' + fmtTime(E.t) + '</b> · 보스 <b>' + E.kills + '마리</b>' +
+    (lap > 1 ? ' · ' + lap + '바퀴째' : '') + '<br>여기서 끝내면 완주 보너스 <b>+' + LAP_BONUS + ' 진주</b>!<br>' +
+    '계속하면 보스들이 더 세져서 다시 나와요';
+  document.body.classList.add('menu');
+  el('lapScreen').classList.remove('hidden');
 }
 function updateEndless(dt){
   const E = G.endless;
@@ -4188,6 +4212,7 @@ function updateEndless(dt){
   if (lv > E.level) { E.level = lv; endlessSea(G.stage, lv); }
   const ramp = Math.floor(E.t/ENDLESS_STEP) - (SEAS.length - 1);
   if (ramp > E.ramp) { E.ramp = ramp; G.stage.hungerMul += 0.05; }   // 끝까지 내려가면 조금씩 더 배고프게
+  if (E.lapT > 0) { E.lapT -= dt; if (E.lapT <= 0) showLap(); }
   if (G.boss && G.boss.state === 'dead') {
     E.deadT += dt;
     if (E.deadT > 1.6) { G.boss = null; G.bossSpawned = false; BGM.play(G.stage.artId); }
@@ -5601,7 +5626,7 @@ function updateHUD(){
   setText(UI.eaten, '먹은 물고기 ' + G.eaten);
   if (G.endless && G.stage.endless) {
     const E = G.endless, left = !G.boss ? Math.max(0, Math.ceil(E.next - E.t)) : 0;
-    setText(el('endlessInfo'), '♾️ ' + fmtTime(E.t) + ' · 깊이 ' + (E.level + 1) + (left && left <= 15 ? ' · 보스 ' + left + '초' : ''));
+    setText(el('endlessInfo'), '♾️ ' + fmtTime(E.t) + ' · 깊이 ' + (E.level + 1) + (left ? ' · 다음 보스 ' + left + '초' : ''));
   }
   setText(UI.growLabel, need === Infinity
     ? evoName(p.st.shark, p.stage) + ' · 최종 단계'
@@ -5726,7 +5751,7 @@ function dexGroups(){
 
 /* 다른 화면을 전부 닫는다 — 화면이 늘어나도 한 곳만 고치면 된다 */
 function hideScreens(){
-  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, UI.ach, el('helpScreen'), el('installScreen'),
+  for (const s of [UI.start, UI.over, UI.hub, UI.map, UI.dex, UI.pause, UI.ach, el('lapScreen'), el('helpScreen'), el('installScreen'),
                    el('adminLogin'), el('adminScreen'), el('endingScreen')])
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
@@ -6335,6 +6360,17 @@ function pauseChoice(kind){
 }
 el('pauseBtn').addEventListener('click', e => { e.stopPropagation(); pauseGame(); });
 el('pResume').addEventListener('click', () => { resumeGame(); SFX.ui(); });
+el('lapEnd').addEventListener('click', () => {
+  el('lapScreen').classList.add('hidden'); document.body.classList.remove('menu');
+  G.paused = false; G.endlessWin = true; G.pearls += LAP_BONUS;
+  SFX.resume(); SFX.ui();
+  finishRun(false);
+});
+el('lapMore').addEventListener('click', () => {
+  el('lapScreen').classList.add('hidden'); document.body.classList.remove('menu');
+  G.paused = false; acc = 0; SFX.ui();
+  showBanner('🔥', '더 센 보스들이 온다!', '다음 보스는 ' + Math.round(ENDLESS_BOSS_GAP) + '초 뒤');
+});
 el('pRestart').addEventListener('click', () => pauseChoice('restart'));
 el('pHome').addEventListener('click', () => pauseChoice('home'));
 el('pMute').addEventListener('click', () => {
@@ -6505,7 +6541,7 @@ function startRun(){
   newFishQ.length = 0; nextNewFish(); showHint('');
   document.body.classList.remove('menu');
   document.body.classList.toggle('endless', !!st.endless);
-  G.over = false; G.running = true;
+  G.over = false; G.running = true; G.endlessWin = false;
   /* 입장 안내 — 이 해역에만 있는 장치를 한 줄씩 */
   let tips = stageHazards(st).map(h => h.icon + ' ' + h.name + ' — ' + h.tip).join('\n');
   if (packed.length) tips += (tips ? '\n' : '') + '🎒 ' + packed.join(' ') + ' 챙김';
@@ -6586,10 +6622,11 @@ function finishRun(cleared){
   writeSave();
 
   const allDone = cleared && !next;
-  if (!cleared) SFX.dead();
-  el('overTitle').textContent = endlessRec ? '♾️ 끝없는 바다' : allDone && first ? '👑 바다의 왕!' : cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
+  if (!cleared && !G.endlessWin) SFX.dead();
+  el('overTitle').textContent = endlessRec ? (G.endlessWin ? '👑 끝없는 바다 완주!' : '♾️ 끝없는 바다') : allDone && first ? '👑 바다의 왕!' : cleared ? G.stage.name + ' 정복' : '먹이가 되었다';
   el('overSub').textContent = endlessRec
-    ? '버틴 시간 ' + fmtTime(endlessRec.t) + ' · 깊이 ' + (endlessRec.level + 1) + ' · 보스 ' + endlessRec.kills + '마리'
+    ? (G.endlessWin ? '모든 보스를 쓰러뜨렸다! 완주 보너스 +' + LAP_BONUS + ' 진주 · ' : '') +
+      '버틴 시간 ' + fmtTime(endlessRec.t) + ' · 깊이 ' + (endlessRec.level + 1) + ' · 보스 ' + endlessRec.kills + '마리'
     : cleared
     ? G.bossDef.name + '를 쓰러뜨렸다. ' + (next ? '더 깊은 바다가 기다린다.' : '모든 바다를 정복했다!')
     : p.hunger <= 0 ? '굶주림이 먼저 찾아왔다. 포만감을 놓치지 마라.'
