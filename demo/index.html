@@ -2,7 +2,28 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" id="vp" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<script id="fit">
+/* 태블릿 크기 맞춤 (2026-10-17) — 화면 전체를 "조금 큰 폰"처럼 보이게 한다.
+   CSS·캔버스가 모두 1px = 1단위라 태블릿에서는 글자·물고기가 폰 크기 그대로 작게 보였다.
+   viewport 너비를 줄이면 브라우저가 메뉴·HUD·바다를 한꺼번에 키운다 (터치 좌표도 그대로 맞는다).
+   기준은 폰 390×844 — 폰(배율 1.15 미만)은 손대지 않는다. 데스크톱 브라우저는 이 설정을 무시한다 */
+(function(){
+  const vp = document.getElementById('vp'), BASE = vp.getAttribute('content');
+  function fit(){
+    const sw = screen.width || innerWidth, sh = screen.height || innerHeight;
+    const short = Math.min(sw, sh), long = Math.max(sw, sh), land = innerWidth > innerHeight;
+    const k = Math.min(short/390, long/844, 1.6);
+    const want = k < 1.15 ? BASE
+      : 'width=' + Math.round((land ? long : short)/k) + ',user-scalable=no,viewport-fit=cover';
+    if (vp.getAttribute('content') !== want) vp.setAttribute('content', want);
+    window.__uiScale = k < 1.15 ? 1 : k;
+  }
+  fit();
+  addEventListener('orientationchange', () => setTimeout(fit, 60));
+  addEventListener('resize', fit);
+})();
+</script>
 <meta name="theme-color" content="#04263d">
 <!-- 이미 어두운 화면이라고 선언한다. 없으면 삼성 인터넷/크롬의 자동 다크모드가
      CSS 색을 멋대로 어둡게 칠해 버튼과 체력바가 검붉게 보인다 -->
@@ -553,7 +574,7 @@
   .hgo button{width:100%;height:74px;border-radius:40px;border:4px solid #fff;background:linear-gradient(180deg,#ffe066,#ffb703);
     box-shadow:0 8px 0 #c77d00;color:#7a3e00;font-size:25px;font-weight:900;animation:hpulse 1.6s ease-in-out infinite}
   .hgo button:active{transform:translateY(4px);box-shadow:0 4px 0 #c77d00;animation:none}
-  @media (orientation:landscape) and (max-height:500px){
+  @media (orientation:landscape) and (max-height:560px){
     .tank{height:200px}
     .hbtn{height:84px}
     .hgo button{height:56px;font-size:21px}
