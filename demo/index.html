@@ -1659,7 +1659,7 @@ function stats(){
     hp:      sh.hp      * (1 + 0.12*u.vitality),
     speed:   sh.speed   * (1 + 0.08*u.fin),
     bite:    1 + 0.15*u.bite,
-    suction: sh.suction * (1 + 0.25*u.sense),
+    suction: Math.min(SUCTION_CAP, sh.suction * (1 + 0.25*u.sense)),   // 상어 × 감각 — 최대 2.5배 (자석이 특별하게 느껴지게)
     stam:    1 + 0.20*u.lung,          // 부스트 지속 → 소모량을 나눈다
   };
 }
@@ -2268,7 +2268,9 @@ function makePlayer(){
     chomp:0,                                    // 와앙 — 먹거나 물 때 몸을 앞으로 내민다 (보이는 것만)
   };
 }
-/* 흡입 반경 — 감각 업그레이드와 귀상어 능력이 여기로 들어온다 */
+/* 흡입 반경 — 감각 업그레이드와 귀상어 능력이 여기로 들어온다.
+   2026-10-18: 귀상어 1.8 × 감각 MAX 2.25 = 4배라 자석(2배)보다 넓어 늘 물고기가 몰려왔다 → 상어 × 감각을 2.5배로 묶음 */
+const SUCTION_CAP = 2.5, START_MAGNET = 10;   // 가방 시작 자석 10초 (바다 자석은 ITEMS.magnet.dur 5초)
 const suctionR = p => (p.len*0.95 + 18) * p.st.suction * (p.fx && p.fx.magnet > 0 ? 2 : 1);   // 🧲 자석 2배
 
 /* ---------------- 입력 ---------------- */
@@ -3279,7 +3281,7 @@ function eatGolden(f){
    20초쯤마다 플레이어 근처에 거품 아이템이 떠오른다. 어둠 위에 그려서 난파선에서도 보인다 */
 const ITEMS = {
   heal:   { icon:'❤️', name:'회복',   desc:'체력 40% · 포만감 회복', w:1.0 },
-  magnet: { icon:'🧲', name:'자석',   desc:'10초 동안 흡입 반경 2배', w:1.2, dur:10 },
+  magnet: { icon:'🧲', name:'자석',   desc:'5초 동안 흡입 반경 2배', w:1.2, dur:5 },
   bolt:   { icon:'⚡', name:'번개',   desc:'8초 동안 부스트 무한',    w:1.0, dur:8 },
   shield: { icon:'🛡️', name:'방어막', desc:'한 번 맞아도 안 다친다',  w:0.9 },
   rage:   { icon:'🔥', name:'광폭',   desc:'7초 동안 티어 +1',        w:0.7, dur:7 },
@@ -3355,14 +3357,14 @@ function drawItems(W, H){
 const SHOP = [
   { id:'revive', icon:'🐚', name:'부활 조개',   desc:'쓰러지면 그 자리에서 체력 절반으로 부활 (한 판 1번, 안 쓰면 그대로)', cost:180 },
   { id:'shield', icon:'🛡️', name:'시작 방어막', desc:'판을 시작할 때 방어막 1개', cost:60 },
-  { id:'magnet', icon:'🧲', name:'시작 자석',   desc:'판을 시작하고 30초 동안 흡입 2배', cost:60 },
+  { id:'magnet', icon:'🧲', name:'시작 자석',   desc:'판을 시작하고 10초 동안 흡입 2배', cost:60 },
 ];
 /* 출발할 때 가방에서 꺼낸다 — 방어막·자석은 바로 쓰고, 부활 조개는 쓰러질 때만 쓴다 */
 function packItems(){
   const p = G.player, used = [];
   G.reviveReady = SAVE.bring.revive && SAVE.inv.revive > 0;
   if (SAVE.bring.shield && SAVE.inv.shield > 0) { SAVE.inv.shield--; p.shield = 1; used.push('🛡️'); }
-  if (SAVE.bring.magnet && SAVE.inv.magnet > 0) { SAVE.inv.magnet--; p.fx.magnet = 30; used.push('🧲'); }
+  if (SAVE.bring.magnet && SAVE.inv.magnet > 0) { SAVE.inv.magnet--; p.fx.magnet = START_MAGNET; used.push('🧲'); }
   if (used.length) writeSave();
   return used;
 }
@@ -5329,11 +5331,17 @@ function drawShark(p){
 
   // 흡입 반경 — 규칙을 눈으로 알려주는 보조선
   if (!G.attract) {
-    const sucR = suctionR(p);
-    ctx.strokeStyle = 'rgba(160,236,255,' + (p.boosting ? 0.22 : 0.1) + ')';
-    ctx.lineWidth = 1.4; ctx.setLineDash([6, 8]);
+    const sucR = suctionR(p), mg = p.fx.magnet;
+    if (mg > 0) {                                   // 🧲 자석 중 — 진한 고리, 끝나기 1.5초 전부터 깜빡
+      const blink = mg < 1.5 ? 0.5 + 0.5*Math.sin(G.t*18) : 1;
+      ctx.strokeStyle = 'rgba(255,120,160,' + (0.55*blink) + ')'; ctx.lineWidth = 3.5; ctx.setLineDash([10, 8]);
+      ctx.lineDashOffset = -G.t*40;
+    } else {
+      ctx.strokeStyle = 'rgba(160,236,255,' + (p.boosting ? 0.22 : 0.1) + ')';
+      ctx.lineWidth = 1.4; ctx.setLineDash([6, 8]);
+    }
     ctx.beginPath(); ctx.arc(0, 0, sucR, 0, 6.2832); ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.setLineDash([]); ctx.lineDashOffset = 0;
   }
 
   const sp = art('shark.' + SAVE.active + '.' + st);
