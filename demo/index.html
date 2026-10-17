@@ -1322,10 +1322,14 @@ const BOSSES = {
     body:'#7a1f3d', fin:'#c04070', contact:17, staggerMul:2.0, kraken:true,
     summon:['glowplankton','deepshrimp'],
     patterns:[['sweep', 'sweep', 'grab'], ['sweep', 'grab', 'summon', 'sweep'], ['sweep', 'grab', 'ink', 'summon', 'sweep']] },
-  megalodon: { name:'메갈로돈', tier:11, len:260, hp:2400, shape:'shark',
-    body:'#2c3e56', fin:'#ffd34f', contact:22, staggerMul:2.0, stag3:2.2,
+  /* 끝판 대장 (2026-10-17 재설계) — 페이즈마다 분위기가 바뀐다.
+     1 사냥: 매복 돌진 / 2 분노: 포효 · 꼬리 해일 · 이빨 비 / 3 왕의 분노: 포효 · 붉은 기운 · 점프 내리찍기 · 세 번 물기 */
+  megalodon: { name:'메갈로돈', tier:11, len:260, hp:2800, shape:'shark',
+    body:'#2c3e56', fin:'#ffd34f', contact:24, staggerMul:2.0, stag3:2.2, roar:true, fast3:1.3,
     summon:['e_mackerel','e_squid'],
-    patterns:[['dash', 'chomp'], ['dash', 'chomp', 'summon', 'vortex'], ['dash2', 'chomp3', 'vortex', 'summon', 'chomp3']] },
+    patterns:[['dash', 'chomp', 'ambush', 'dash'],
+              ['chomp', 'tidal', 'teeth', 'ambush', 'summon', 'dash'],
+              ['chomp3', 'leap', 'tidal', 'teeth', 'dash2', 'leap', 'vortex']] },
 };
 const BOSS_TRIGGER_STAGE = 2;   // 진화 3단계(기본 티어 +2) 도달 시 보스 굴이 열린다
 const LAIR_ENTER    = 240;      // 굴에 이만큼 다가가면 보스가 나온다
@@ -1487,7 +1491,7 @@ const BOSS_TIP = {
   rogue_white:'내 주위를 빙글빙글 돌다가 돌진한다. 기뢰 쪽으로 돌진하게 만들면 큰 피해!',
   orca_alpha:'빨간 기둥이 보이면 옆으로! 얼음에 박히면 한참 못 움직인다',
   kraken:'촉수를 끊을 때마다 크라켄도 아파한다. 2개를 끊으면 본체가 나온다 — 그때 몸통을 물어라!',
-  megalodon:'바다의 왕. 턱 범위를 피하고, 지치면 꼬리를 물어라. 화나면 세 번 연속으로 문다!',
+  megalodon:'빨간 선·그림자는 피하고, 물벽은 초록 구멍으로! 피하면 지친다',
 };
 
 /* ---------------- 상어 로스터 ---------------- */
@@ -3263,6 +3267,7 @@ const ITEMS = {
   bolt:   { icon:'⚡', name:'번개',   desc:'8초 동안 부스트 무한',    w:1.0, dur:8 },
   shield: { icon:'🛡️', name:'방어막', desc:'한 번 맞아도 안 다친다',  w:0.9 },
   rage:   { icon:'🔥', name:'광폭',   desc:'7초 동안 티어 +1',        w:0.7, dur:7 },
+  tooth:  { icon:'🦷', name:'황금 이빨 +5 진주', desc:'메갈로돈 이빨 비가 남긴 보물', w:0 },
   lamp:   { icon:'🔦', name:'헤드라이트', desc:'5초 동안 어둠 속 시야 2배', w:0, dur:5, darkW:1.6 },   // 어두운 해역에서만 나온다
 };
 const ITEM_LIFE = 20;
@@ -3282,6 +3287,7 @@ function applyItem(kind){
   const p = G.player, it = ITEMS[kind];
   if (kind === 'heal')   { p.hp = Math.min(p.maxHp, p.hp + p.maxHp*0.4); p.hunger = Math.min(100, p.hunger + 30); }
   if (kind === 'shield') p.shield = 1;
+  if (kind === 'tooth')  G.pearls += 5;
   if (it.dur) p.fx[kind] = Math.max(p.fx[kind], it.dur);
   SAVE.stats.items++;
   floatText(p.x, p.y - p.len*0.9, it.icon + ' ' + it.name + '!', '#fff3a8');
@@ -3661,6 +3667,176 @@ const BOSS_MOVES = {
       const gap = R*0.9*(1 - k);                      // 위아래 턱 선이 닫힌다
       ctx.beginPath(); ctx.arc(b.cx, b.cy - gap*0.5, R*0.85, Math.PI*1.1, Math.PI*1.9); ctx.stroke();
       ctx.beginPath(); ctx.arc(b.cx, b.cy + gap*0.5, R*0.85, Math.PI*0.1, Math.PI*0.9); ctx.stroke();
+    },
+  },
+  /* ===== 메갈로돈 =====
+     포효 — 페이즈가 바뀔 때. 밀쳐내고 1.4초 동안 물어도 안 들어간다 (b.guard) */
+  roar: {
+    update(b, dt, nx, ny, dist){
+      b.vx = lerp(b.vx, 0, 0.15); b.vy = lerp(b.vy, 0, 0.15);
+      const p = G.player;
+      if (!b.hit && b.t > 0.25) {                          // 쿠웅 — 가까우면 밀려난다 (피해는 없다)
+        b.hit = true; G.shake = Math.max(G.shake, 16); SFX.bossIn();
+
+        if (dist < 520) { p.vx += nx*640; p.vy += ny*480; }
+        burst(b.x, b.y, 'rgba(255,120,90,.9)', 30, 260);
+      }
+      if (b.t > 1.4) { b.guard = false; toIdle(b, 0.5, 0.8); }
+    },
+    draw(b){
+      if (b.t < 0.25) return;
+      const r = (b.t - 0.25)*620;
+      ctx.strokeStyle = 'rgba(255,140,110,' + clamp(0.8 - r/700, 0, 0.8) + ')'; ctx.lineWidth = 12;
+      ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, 6.2832); ctx.stroke();
+    },
+    start(b){
+      b.state = 'roar'; b.t = 0; b.guard = true; b.hit = false;
+      showToast(b.phase === 3 ? '왕의 분노!' : '메갈로돈이 화났다!', '크 아 앙', b.phase === 3 ? '더 빠르고 더 세다 — 조심!' : '새로운 공격이 온다!', 1.6);
+    },
+  },
+  /* 매복 — 멀어지며 사라졌다가 화면 밖에서 빨간 선 예고 → 초고속 돌진 */
+  ambush: { start(b, nx, ny){ b.state = 'ambushOut'; b.t = 0; b.dx = -nx; b.dy = -ny; floatText(b.x, b.y - 70, '어둠 속으로…', '#b7c7d8'); } },
+  ambushOut: {
+    update(b){
+      b.vx = b.dx*520; b.vy = b.dy*380;
+      if (b.t > 0.55) {
+        b.hide = true; b.state = 'ambushHide'; b.t = 0; b.vx = b.vy = 0;
+        const p = G.player, Rr = Math.max(G.cam.w, G.cam.h)*0.62 + 120;
+        let best = null;                                  // 맵 안에서 플레이어와 가장 먼 쪽 (8방향 중)
+        for (let k = 0; k < 8; k++) {
+          const a = k*0.785 + rand(-0.2, 0.2);
+          const x = clamp(p.x + Math.cos(a)*Rr, 100, WORLD.w - 100), y = clamp(p.y + Math.sin(a)*Rr*0.75, 120, WORLD.h - 90);
+          const d = Math.hypot(x - p.x, y - p.y);
+          if (!best || d > best.d) best = { x, y, d };
+        }
+        b.x = best.x; b.y = best.y;
+      }
+    },
+  },
+  ambushHide: {
+    update(b){
+      const p = G.player, dx = p.x - b.x, dy = p.y - b.y, d = Math.hypot(dx, dy) || 1;
+      b.vx = b.vy = 0;
+      if (b.t < 0.95) { b.dx = dx/d; b.dy = dy/d; }        // 처음엔 겨누다 고정
+      if (b.t > 1.35) { b.hide = false; b.state = 'ambushDash'; b.t = 0; SFX.dash(); G.shake = Math.max(G.shake, 8); }
+    },
+    draw(b){
+      if (b.t < 0.35) return;
+      const a = 0.3 + 0.45*Math.sin(b.t*24), Lm = 1600;
+      ctx.strokeStyle = 'rgba(255,60,80,' + a + ')'; ctx.lineWidth = 7; ctx.setLineDash([18, 12]);
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x + b.dx*Lm, b.y + b.dy*Lm); ctx.stroke(); ctx.setLineDash([]);
+      const p = G.player, ex = p.x - b.dx*170, ey = p.y - b.dy*170;     // 플레이어 앞쪽 "!" — 어느 쪽에서 오는지
+      ctx.font = '900 40px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(120,0,20,.85)';
+      ctx.strokeText('!', ex, ey + 14); ctx.fillStyle = '#fff'; ctx.fillText('!', ex, ey + 14); ctx.textAlign = 'left';
+    },
+  },
+  ambushDash: {
+    update(b){
+      b.vx = b.dx*880; b.vy = b.dy*880;
+      if (b.t > 0.8) { b.state = 'stagger'; b.t = 0; b.stagT = 1.9; floatText(b.x, b.y - 70, '헛물었다! 지금!', '#ffd84d'); }
+    },
+  },
+  /* 꼬리 해일 — 구멍이 하나 뚫린 물벽이 밀려온다. 초록 구멍으로 빠져나가면 안전 */
+  tidal: { start(b){ b.state = 'tidalWind'; b.t = 0; floatText(b.x, b.y - 70, '꼬리를 휘두른다!', '#9fe9ff'); } },
+  tidalWind: {
+    update(b, dt, nx){
+      b.vx = lerp(b.vx, 0, 0.1); b.vy = lerp(b.vy, 0, 0.1); b.dx = -Math.sign(nx) || 1; b.dy = 0;   // 등을 돌려 꼬리로
+      if (b.t > 0.8) {
+        const p = G.player, dir = p.x > b.x ? 1 : -1, top = G.stage.ceil || 40;
+        b.wave = { x: b.x + dir*80, dir, gy: clamp(p.y + rand(-150, 150), top + 120, WORLD.h - 140), gh: 190, hit: false, life: 0 };
+        b.state = 'tidalGo'; b.t = 0; SFX.dash(); G.shake = Math.max(G.shake, 8);
+      }
+    },
+  },
+  tidalGo: {
+    update(b, dt){
+      b.vx = lerp(b.vx, 0, 0.06); b.vy = lerp(b.vy, 0, 0.06);
+      const w = b.wave, p = G.player;
+      if (!w) { toIdle(b); return; }
+      w.x += w.dir*380*dt;
+      if (!w.hit && Math.abs(p.x - w.x) < 28) {
+        w.hit = true;
+        if (Math.abs(p.y - w.gy) < w.gh/2 - 10) floatText(p.x, p.y - 34, '휴~ 통과!', '#c8ffe0');
+        else { hurtPlayer(Math.round(G.bossDef.contact*0.8), w.dir, 0, 0.6); p.vx += w.dir*420; floatText(p.x, p.y - 34, '철썩!', '#9fe9ff'); }
+      }
+      if (b.t > 4.2 || w.x < -60 || w.x > WORLD.w + 60) { b.wave = null; toIdle(b, 0.7, 1.2); }
+    },
+  },
+  /* 이빨 비 — 그림자 자리에 이빨이 떨어진다. 몇 개는 황금 이빨로 남는다 (먹으면 진주 +5) */
+  teeth: {
+    start(b){
+      const p = G.player, n = b.phase === 3 ? 12 : 9;
+      b.state = 'teethRain'; b.t = 0; b.teeth = [];
+      for (let i = 0; i < n; i++)
+        b.teeth.push({ x: clamp(p.x + rand(-280, 280), 60, WORLD.w - 60), y: clamp(p.y + rand(-220, 220), 90, WORLD.h - 80),
+          t0: 0.25 + i*0.17, done: false, aim: i % 3 === 0 });
+      floatText(b.x, b.y - 70, '이빨 비!', '#fff3a8');
+    },
+  },
+  teethRain: {
+    update(b){
+      b.vx = lerp(b.vx, 0, 0.08); b.vy = lerp(b.vy, 0, 0.08);
+      const p = G.player;
+      for (const k of b.teeth) {
+        if (k.aim && !k.done && b.t < k.t0) { k.x = lerp(k.x, p.x, 0.05); k.y = lerp(k.y, p.y, 0.05); }   // 세 개 중 하나는 나를 노린다
+        if (!k.done && b.t > k.t0 + 0.9) {
+          k.done = true;
+          burst(k.x, k.y, 'rgba(255,255,255,.9)', 8, 140, 'bubble');
+          if (Math.hypot(p.x - k.x, p.y - k.y) < 44 + p.len*0.2) hurtPlayer(Math.round(G.bossDef.contact*0.55), 0, -1, 0.5);
+          if (Math.random() < 0.35 && G.items.length < 6) G.items.push({ kind: 'tooth', t: ITEM_LIFE - 7, ph: rand(0, 6.28), x: k.x, y: k.y });
+        }
+      }
+      if (b.teeth.every(k => k.done) && b.t > b.teeth[b.teeth.length - 1].t0 + 1.4) { b.teeth = null; toIdle(b, 0.7, 1.1); }
+    },
+    draw(b){
+      if (!b.teeth) return;
+      for (const k of b.teeth) {
+        if (k.done || b.t < k.t0) continue;
+        const u = clamp((b.t - k.t0)/0.9, 0, 1);
+        ctx.fillStyle = 'rgba(0,0,0,' + (0.15 + 0.3*u) + ')';                     // 그림자 — 점점 진해진다
+        ctx.beginPath(); ctx.ellipse(k.x, k.y, 20 + 22*u, 9 + 10*u, 0, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,80,100,' + (0.4 + 0.5*u) + ')'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.ellipse(k.x, k.y, 44, 20, 0, 0, 6.2832); ctx.stroke();
+        if (u > 0.55) {                                                            // 떨어지는 이빨
+          const fy = k.y - (1 - (u - 0.55)/0.45)*260;
+          ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = '#8a7a60'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(k.x - 11, fy - 22); ctx.lineTo(k.x + 11, fy - 22); ctx.lineTo(k.x, fy + 10); ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+      }
+    },
+  },
+  /* 점프 내리찍기 — 물 위로 솟구쳤다가, 따라오다 멈추는 커다란 그림자에 쾅! 충격파 고리는 BOOST 로 통과 */
+  leap: { start(b){ b.state = 'leapUp'; b.t = 0; floatText(b.x, b.y - 70, '높이 뛰어오른다!', '#ffd0a0'); } },
+  leapUp: {
+    update(b){
+      b.vy = -760; b.vx *= 0.9; b.dy = -1;
+      if (b.t > 0.5) { b.hide = true; b.state = 'leapAir'; b.t = 0; b.vx = b.vy = 0; b.tx = G.player.x; b.ty = G.player.y; }
+    },
+  },
+  leapAir: {
+    update(b){
+      b.vx = b.vy = 0;
+      if (b.t < 1.15) { b.tx = lerp(b.tx, G.player.x, 0.07); b.ty = lerp(b.ty, G.player.y, 0.07); }
+      if (b.t > 1.75) {
+        const p = G.player, Lb = G.bossDef.len;
+        b.hide = false; b.x = clamp(b.tx, 120, WORLD.w - 120); b.y = clamp(b.ty, 140, WORLD.h - 100);
+        b.vx = b.vy = 0; b.dx = p.x > b.x ? 1 : -1; b.dy = 0;
+        G.shake = Math.max(G.shake, 18); SFX.bossIn();
+        burst(b.x, b.y, 'rgba(255,255,255,.95)', 30, 280, 'bubble');
+        if (Math.hypot(p.x - b.x, p.y - b.y) < Lb*0.5) hurtPlayer(Math.round(G.bossDef.contact*1.4), p.x - b.x > 0 ? 1 : -1, 0, HIT_CD);
+        b.ring = { x: b.x, y: b.y, r: Lb*0.5, hit: false };
+        b.state = 'stagger'; b.t = 0; b.stagT = 3.0;
+        floatText(b.x, b.y - 80, '바닥에 박혔다! 지금!', '#ffd84d');
+      }
+    },
+    draw(b){
+      const Lb = G.bossDef.len, u = clamp(b.t/1.75, 0, 1), a = 0.2 + 0.25*u;
+      ctx.fillStyle = 'rgba(0,0,0,' + a + ')';
+      ctx.beginPath(); ctx.ellipse(b.tx, b.ty, Lb*(0.3 + 0.25*u), Lb*(0.12 + 0.1*u), 0, 0, 6.2832); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,70,90,' + (0.5 + 0.4*Math.sin(b.t*22)) + ')'; ctx.lineWidth = 5; ctx.setLineDash([14, 10]);
+      ctx.beginPath(); ctx.arc(b.tx, b.ty, Lb*0.5, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = '900 36px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(120,0,20,.85)';
+      ctx.strokeText('!', b.tx, b.ty + 12); ctx.fillStyle = '#fff'; ctx.fillText('!', b.tx, b.ty + 12); ctx.textAlign = 'left';
     },
   },
   /* 거대 바라쿠다 — 짧은 돌진 세 번, 방향을 꺾어 가며. 끝나면 헥헥 지쳐서 오래 멈춘다 */
@@ -4050,6 +4226,7 @@ function updateBoss(dt){
   const want = b.hp/b.maxHp > 0.66 ? 1 : b.hp/b.maxHp > 0.33 ? 2 : 3;
   if (want > b.phase) {
     b.phase = want;
+    if (G.bossDef.roar) b.pendingRoar = true;
     G.shake = Math.max(G.shake, 11);
     burst(b.x, b.y, '#ffd84d', 26, 210);
   }
@@ -4072,15 +4249,17 @@ function updateBoss(dt){
       b.vx = lerp(b.vx, nx*62*k, 0.04);
       b.vy = lerp(b.vy, ny*46*k, 0.04);
       }
-      b.cd -= dt;
+      if (b.pendingRoar) { b.pendingRoar = false; BOSS_MOVES.roar.start(b); break; }
+      b.cd -= dt * (G.bossDef.fast3 && b.phase === 3 ? G.bossDef.fast3 : 1);   // 3페이즈에 더 자주 공격
       if (b.cd <= 0) pickPattern(b, nx, ny);
       break; }
     case 'telegraph':                                     // 0.7초 예고 — 뒤로 당긴다
       b.vx = lerp(b.vx, -b.dx*55, 0.12); b.vy = lerp(b.vy, -b.dy*40, 0.12);
       if (b.t > 0.7) { b.state = 'dash'; b.t = 0; SFX.dash(); }
       break;
-    case 'dash':
-      b.vx = b.dx*640; b.vy = b.dy*640;
+    case 'dash': {
+      const sp = 640 * (G.bossDef.fast3 && b.phase === 3 ? 1.2 : 1);
+      b.vx = b.dx*sp; b.vy = b.dy*sp; }
       if (b.t > 0.55) {
         if (b.dashLeft > 0) { b.dashLeft--; b.state = 'telegraph'; b.t = 0; b.dx = nx; b.dy = ny; }   // 2연속 돌진
         else { b.state = 'stagger'; b.t = 0; }
@@ -4106,6 +4285,16 @@ function updateBoss(dt){
     }
   }
 
+  if (b.ring) {                                           // 메갈로돈 내리찍기 충격파 — BOOST 중이면 뚫고 지나간다
+    b.ring.r += 360*dt;
+    const d = Math.hypot(p.x - b.ring.x, p.y - b.ring.y);
+    if (!b.ring.hit && Math.abs(d - b.ring.r) < 24) {
+      b.ring.hit = true;
+      if (!p.boosting) { hurtPlayer(Math.round(G.bossDef.contact*0.5), (p.x - b.ring.x)/d, (p.y - b.ring.y)/d, 0.6); floatText(p.x, p.y - 30, '충격파!', '#ffb3b3'); }
+      else floatText(p.x, p.y - 30, '슝~ 통과!', '#c8ffe0');
+    }
+    if (b.ring.r > 560) b.ring = null;
+  }
   b.x = clamp(b.x + b.vx*dt, 100, WORLD.w - 100);
   b.y = clamp(b.y + b.vy*dt, G.stage.ceil ? G.stage.ceil + 50 : 90, WORLD.h - 90);
 
@@ -4125,7 +4314,10 @@ function updateBoss(dt){
     const staggered = b.state === 'stagger';
     const z = bossZone(b, p);
     const armored = G.bossDef.kraken && !b.exposed;
-    if (p.biteCd <= 0 && armored) {
+    if (p.biteCd <= 0 && b.guard) {
+      p.biteCd = BITE_CD; SFX.shell();
+      floatText(p.x, p.y - p.len*0.7, '으르렁! 잠깐 피해!', '#ffb3b3');
+    } else if (p.biteCd <= 0 && armored) {
       p.biteCd = BITE_CD; SFX.shell();
       floatText(p.x, p.y - p.len*0.7, '촉수를 먼저 끊어라!', '#ffb3c7');
     } else if (p.biteCd <= 0) {
@@ -4145,12 +4337,37 @@ function updateBoss(dt){
   }
 }
 
+/* 메갈로돈 꼬리 해일 — 구멍 하나 뚫린 물벽 */
+function drawTidal(w){
+  const top = G.stage.ceil || 0, bot = WORLD.h, x = w.x - 26, g0 = w.gy - w.gh/2, g1 = w.gy + w.gh/2;
+  ctx.fillStyle = 'rgba(170,230,255,.55)';
+  ctx.fillRect(x, top, 52, g0 - top); ctx.fillRect(x, g1, 52, bot - g1);
+  ctx.fillStyle = 'rgba(255,255,255,.75)';                       // 거품 앞머리
+  for (let y = top; y < bot; y += 34) if (y < g0 - 10 || y > g1 + 10)
+    { ctx.beginPath(); ctx.arc(x + (w.dir > 0 ? 52 : 0), y + 17, 10 + 4*Math.sin(G.t*8 + y), 0, 6.2832); ctx.fill(); }
+  ctx.strokeStyle = 'rgba(80,255,170,.95)'; ctx.lineWidth = 4; ctx.setLineDash([10, 8]);   // 초록 구멍
+  ctx.strokeRect(x - 6, g0, 64, g1 - g0); ctx.setLineDash([]);
+  ctx.font = '900 18px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,40,20,.8)';
+  ctx.strokeText('여기로!', w.x, w.gy + 6); ctx.fillStyle = '#c8ffe0'; ctx.fillText('여기로!', w.x, w.gy + 6); ctx.textAlign = 'left';
+}
+
 function drawBoss(){
   const b = G.boss;
   if (!b || b.state === 'dead') return;
   const mv = BOSS_MOVES[b.state];
   if (mv && mv.draw) mv.draw(b);                    // 예고 표시 — 기둥 · 음파 · 턱 범위
   if (G.bossDef.kraken) drawTentacles(b);
+  if (b.ring) {
+    ctx.strokeStyle = 'rgba(255,230,200,' + clamp(1 - b.ring.r/560, 0, 0.9) + ')'; ctx.lineWidth = 10;
+    ctx.beginPath(); ctx.arc(b.ring.x, b.ring.y, b.ring.r, 0, 6.2832); ctx.stroke();
+  }
+  if (b.wave) drawTidal(b.wave);
+  if (G.bossDef.roar && b.phase === 3 && !b.hide) {     // 왕의 분노 — 붉은 기운
+    const R0 = G.bossDef.len*0.75, pul = 0.22 + 0.08*Math.sin(G.t*6);
+    const rg = ctx.createRadialGradient(b.x, b.y, R0*0.2, b.x, b.y, R0);
+    rg.addColorStop(0, 'rgba(255,60,40,' + pul + ')'); rg.addColorStop(1, 'rgba(255,60,40,0)');
+    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(b.x, b.y, R0, 0, 6.2832); ctx.fill();
+  }
   if (b.hide) return;
   const L = G.bossDef.len, H = L*0.17;
 
@@ -6556,6 +6773,8 @@ if (location.search.indexOf('debug') >= 0) {
   window.__openLair = () => openLair();
   window.__endless = () => G.endless;
   window.__currentTitle = () => currentTitle();
+  window.__bossMove = k => { const b = G.boss, p = G.player; if (!b) return;     // 보스 동작 바로 시험 — __bossMove('leap')
+    const d = Math.hypot(p.x - b.x, p.y - b.y) || 1; b.t = 0; BOSS_MOVES[k].start(b, (p.x - b.x)/d, (p.y - b.y)/d); };
   window.__BOSSES = BOSSES; window.__STAGES = STAGES; window.__showEnding = () => showEnding();
   window.__spawnItem = k => { spawnItem(); if (k) G.items[G.items.length - 1].kind = k; };
   window.__checkAch = () => checkAch(); window.__openAch = () => openAch(); window.__ITEMS = ITEMS; window.__ACH = ACH;
