@@ -1315,9 +1315,11 @@ const fishHp = def => def.tier*16 * (def.elite || def.tough ? 2 : 1);
 
 /* ---------------- 보스 ---------------- */
 const BOSSES = {
-  /* 난이도 곡선 (2026-10-17): 바라쿠다 < 곰치 < 백상아리 < 범고래 < 크라켄 < 메갈로돈.
+  /* 크기 (2026-10-19): 성체 상어(len 92, 그림 폭 ≈138px)보다 확실히 커 보이게 — 바라쿠다 140→190, 백상아리 165→200.
+     그림 폭 = len × 1.3. 폰 화면(390)을 넘지 않게 메갈로돈 260 이 상한쯤이다.
+     난이도 곡선 (2026-10-17): 바라쿠다 < 곰치 < 백상아리 < 범고래 < 크라켄 < 메갈로돈.
      보스마다 "피하면 약점이 열리는" 고유 동작이 하나씩 있다 — 지그재그 · 땅굴 · 빙글빙글 · 얼음 · 촉수 · 세 번 물기 */
-  giant_barra: { name:'거대 바라쿠다', tier:6, len:140, hp:500, shape:'barracuda',
+  giant_barra: { name:'거대 바라쿠다', tier:6, len:190, hp:500, shape:'barracuda',
     body:'#e8f1f5', fin:'#758c97', contact:11, staggerMul:2.0,
     summon:['anchovy','shrimp','clown','mackerel'],
     patterns:[['dash', 'dash', 'zigzag'], ['dash', 'zigzag', 'summon'], ['zigzag', 'dash', 'summon', 'vortex']] },
@@ -1325,7 +1327,7 @@ const BOSSES = {
     body:'#a8cc52', fin:'#5d7524', contact:13, staggerMul:2.0,
     summon:['parrot','wrasse','butterfly'],
     patterns:[['dash', 'burrow'], ['burrow', 'dash', 'summon'], ['burrow', 'burrow', 'dash', 'summon']] },
-  rogue_white: { name:'무법자 백상아리', tier:8, len:165, hp:950, shape:'shark',
+  rogue_white: { name:'무법자 백상아리', tier:8, len:200, hp:950, shape:'shark',
     body:'#d3dde2', fin:'#7b8c97', contact:15, staggerMul:2.0,
     summon:['sardine','yellowray'],
     patterns:[['dash', 'circle'], ['circle', 'dash', 'summon'], ['circle', 'dash2', 'summon', 'circle']] },
@@ -1502,7 +1504,7 @@ Object.assign(FISH_TIP, {
   e_leopard:'왕좌를 지키는 가장 강한 엘리트',
 });
 const BOSS_TIP = {
-  giant_barra:'빨간 점선이 보이면 옆으로! 지그재그로 세 번 달리고 나면 헥헥 — 그때 꼬리를 물어라',
+  giant_barra:'빨간 점선은 옆으로 피하고, 헥헥 지치면 꼬리를 물어라!',
   giant_moray:'땅속으로 쏙 숨으면 빨간 동그라미에서 튀어나온다. 피하면 바위에 끼어서 못 움직인다!',
   rogue_white:'내 주위를 빙글빙글 돌다가 돌진한다. 기뢰 쪽으로 돌진하게 만들면 큰 피해!',
   orca_alpha:'빨간 기둥이 보이면 옆으로! 얼음에 박히면 한참 못 움직인다',
