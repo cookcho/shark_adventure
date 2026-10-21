@@ -847,31 +847,31 @@ NES 3채널을 그대로 흉내 냈다. **오디오 파일은 0개**, 전부 코
 - **쓰러질 때**: 1.5초 동안 배를 뒤집고 깜빡이며 가라앉고 거품이 오른다 (전에는 그냥 사라짐).
 - 확인: 6보스 각 2500틱 + 격파 연출까지 에러 0. 메갈로돈 돌진 잔상 · 물기 예고 · 경직 별, 곰치 경직 별 · 헤엄 띠 이음매 없음 화면 확인.
 
-## Appendix 19 — Retention pass 1: daily missions, attendance stamps, shark customization, 3 stars per sea (2026-10-22)
+## 부록 19 — 1차 재미: 매일 미션 · 출석 도장 · 상어 꾸미기 · 해역 별 3개 (2026-10-22)
 
-"The kid has beaten everything including the endless sea and needs a reason to keep playing." Diagnosis: pearls have nothing to spend on, there's no reason to log in daily, nothing to replay, nothing to show off.
-These three are designed to feed each other: **missions, stamps and stars → pearls and 🎨 fragments → customization shop → back to sea with the dressed-up shark**. (Mockup `demo/_mock/retention.html`, not committed)
+"아이가 끝없는 바다까지 다 깼다 — 계속할 이유가 필요하다." 진단: 진주 쓸 곳이 없고, 매일 올 이유·다시 할 해역·자랑거리가 없다.
+셋이 맞물리게 만들었다: **미션·도장·별 → 진주·🎨 조각 → 꾸미기 상점 → 꾸민 상어로 다시 바다**. (시안 `demo/_mock/retention.html`, 커밋 안 함)
 
-**📅 Daily missions** (`MISSIONS`, `rollDaily`, `missionEv`)
-- When the date changes, 3 new missions (one each easy, medium, hard), fixed from the date seed so they stay the same all day. The easy one may be "eat 5 of today's fish" (a known fish of tier 4 or lower from a reachable sea).
-- Tracked in-run: eat / eatF / item / adult / combo (best value) / golden / boss / nohit / endlessT (best value). On completion a "📅 미션 완료!" banner shows on the spot.
-- Claimed in the base mission window. Hard missions also give 🎨 fragments. Claiming all 3 opens a bonus chest (◈150 + 🎨1).
+**📅 매일 미션** (`MISSIONS` · `rollDaily` · `missionEv`)
+- 날짜가 바뀌면 쉬움·보통·어려움 하나씩 3개. 날짜로 씨앗을 정해 하루 동안 그대로. 쉬움 중 "오늘의 물고기 5마리"는 갈 수 있는 해역의 이미 만난 티어 4 이하 물고기.
+- 판 안에서 센다: eat / eatF / item / adult / combo(최고값) / golden / boss / nohit / endlessT(최고값). 다 되면 그 자리에서 "📅 미션 완료!" 알림.
+- 기지 미션 창에서 받는다. 어려움은 🎨 조각도 준다. 3개 다 받으면 보너스 상자(◈150 + 🎨1).
 
-**Attendance stamps** — the first time the base opens on a new day, a stamp lands (days 1–7, then repeats) and the reward is paid immediately. The mission window opens automatically showing "🎉 오늘 출석 도장 꽝!" (today's stamp!).
-Rewards: 50 / 80 / 100 / 🎨1 / 150 / 🎨1 / day 7 ◈300 + 🎨2 + 🦄 unicorn horn.
+**출석 도장** — 그날 처음 기지를 열면 도장(1~7일, 돌고 돈다)이 찍히고 보상을 바로 준다. 미션 창이 저절로 열리며 "🎉 오늘 출석 도장 꽝!".
+보상: 50 / 80 / 100 / 🎨1 / 150 / 🎨1 / 7일째 ◈300 + 🎨2 + 🦄 유니콘 뿔.
 
-**🎨 Customization** (`COS` · `cosSprite` · `drawCosAcc` · `cosPreviewURL` · `cosTrail`) — visuals only, hit detection unchanged
-- Hats 8 / face 4 / color 6 (tints the sprite, rainbow changes every 0.3s) / tail effects 5 (emoji particles; the rainbow tail is colored bubbles).
-- How to get them: pearls 300–800 / 🎨 fragments / unlocked automatically by stars (⭐ sticker 9, gold 12, crown 18, rainbow tail 21) / stamp day 7 (unicorn horn).
-- First tap previews in the tank, second tap buys. Applies to every shark. The base tank and the in-game shark both show the customized look.
-- Head and eye positions for all 8 sharks × 4 stages were extracted from the images (`COS_HEAD`). The sawshark was adjusted by hand because its saw threw off the extraction. Minimum sizes (hat 16, face 11) so they're visible on fry.
+**🎨 꾸미기** (`COS` · `cosSprite` · `drawCosAcc` · `cosPreviewURL` · `cosTrail`) — 보이는 것만, 판정 무관
+- 모자 8 / 얼굴 4 / 색 6(그림을 물들임, 무지개는 0.3초마다 색이 바뀜) / 꼬리 효과 5(이모지 가루, 무지개 꼬리는 색 거품).
+- 얻는 법: 진주 300~800 / 🎨 조각 / 별을 모으면 저절로(⭐ 스티커 9 · 금빛 12 · 왕관 18 · 무지개 꼬리 21) / 출석 7일(유니콘 뿔).
+- 처음 누르면 수조에서 미리보기, 한 번 더 누르면 산다. 모든 상어에 같이 적용. 기지 수조와 판 안 상어 모두 꾸민 모습.
+- 상어 8종 × 4단계의 머리·눈 위치를 그림에서 뽑았다(`COS_HEAD`). 톱상어는 톱날 때문에 값이 틀어져 손으로 맞춤. 치어에서도 보이게 최소 크기(모자 16 · 얼굴 11).
 
-**⭐ 3 stars per sea** (`STAR_DEFS` · `judgeStars`) — 6 seas × 3 + endless 3 = 21 stars, ◈100 each on first earn
-- ① Defeat the boss ② a challenge that fits that sea (shore: escape nets twice / coral: eat 3 squid / wreck: blow up the boss with a mine / ice: 15 combo / vent: cut 4 tentacles / throne: collect 3 golden teeth) ③ fast or no-hit.
-- Endless: survive 3 minutes, 6 minutes, beat all 6 bosses.
-- Judged from this run's record (`G.run`) when the run ends. The results screen pops new stars in one at a time and shows "다음 별: …" (next star). Map nodes show ★★☆, the info card lists the 3 challenges, and the top bar shows ⭐ n / 21.
+**⭐ 해역 별 3개** (`STAR_DEFS` · `judgeStars`) — 6해역 × 3 + 끝없는 바다 3 = 21개, 처음 딸 때마다 ◈100
+- ①보스 쓰러뜨리기 ②그 해역다운 도전(연안 그물 2번 탈출 / 산호 오징어 3마리 / 난파선 기뢰로 보스 / 빙하 15 콤보 / 열수구 촉수 4개 / 왕좌 황금 이빨 3개) ③빠르게 또는 안 맞고.
+- 끝없는 바다: 3분 버티기 · 6분 버티기 · 보스 6마리 완주.
+- 판이 끝날 때 이번 판 기록(`G.run`)으로 판정. 정산에서 새 별이 하나씩 쾅 튀어나오고 "다음 별: …"을 보여준다. 지도 노드에 ★★☆, 정보판에 도전 3개, 상단에 ⭐ n / 21.
 
-**Base layout**: below the tank, a "📅 오늘의 미션 n/3 · 도장 n일째" (today's missions, stamp day n) bar. Big buttons are now 4 across × 2 rows (map ★badge · fish book · achievements · **missions** · upgrades · bag · hatcher · **customize**).
-Admin test buttons: all cosmetics, all stars, advance to tomorrow (missions and stamp), complete today's missions.
+**기지 배치**: 수조 아래 "📅 오늘의 미션 n/3 · 도장 n일째" 띠. 큰 버튼은 4칸 × 2줄(지도 ★배지 · 도감 · 업적 · **미션** · 능력치 · 가방 · 부화기 · **꾸미기**).
+관리자 테스트 버튼: 꾸미기 전부 · 별 전부 · 내일로(미션·도장) · 오늘 미션 다 하기.
 
-- Verified: first visit stamps day 1 and auto-opens the window, the eat-60 mission completes, claiming works, bonus chest (+150 · 🎨1), buy and wear top hat, sunglasses and pink, customization shows in-game (both facing directions) plus heart tail, clearing the shore with 2 net escapes in under 3 minutes gives ★★★ (+300) with pop-in animation, map 3/21, hat positions for 8 sharks × 2 stages, 390×844 · 360×640 · 844×390 no horizontal overflow, 0 console errors.
+- 확인: 첫 방문 도장 1일째 + 창 자동 열림, 물고기 60마리 미션 완료·받기, 보너스 상자(+150 · 🎨1), 신사 모자·선글라스·분홍 사서 착용, 판 안 꾸민 모습(좌우 모두) + 하트 꼬리, 연안을 그물 2번 탈출 + 3분 안에 깨서 ★★★(+300)와 튀어나오는 연출, 지도 3/21, 상어 8종 × 2단계 모자 위치, 390×844 · 360×640 · 844×390 가로 넘침 없음, 콘솔 에러 0.
