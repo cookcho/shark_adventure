@@ -846,3 +846,32 @@ NES 3채널을 그대로 흉내 냈다. **오디오 파일은 0개**, 전부 코
 - 맞으면 하얗게 번쩍 + 흔들, 물 때 숫자 표시 ("꼬리 -38", 경직 중이면 노랑 "!").
 - **쓰러질 때**: 1.5초 동안 배를 뒤집고 깜빡이며 가라앉고 거품이 오른다 (전에는 그냥 사라짐).
 - 확인: 6보스 각 2500틱 + 격파 연출까지 에러 0. 메갈로돈 돌진 잔상 · 물기 예고 · 경직 별, 곰치 경직 별 · 헤엄 띠 이음매 없음 화면 확인.
+
+## Appendix 19 — Retention pass 1: daily missions, attendance stamps, shark customization, 3 stars per sea (2026-10-22)
+
+"The kid has beaten everything including the endless sea and needs a reason to keep playing." Diagnosis: pearls have nothing to spend on, there's no reason to log in daily, nothing to replay, nothing to show off.
+These three are designed to feed each other: **missions, stamps and stars → pearls and 🎨 fragments → customization shop → back to sea with the dressed-up shark**. (Mockup `demo/_mock/retention.html`, not committed)
+
+**📅 Daily missions** (`MISSIONS`, `rollDaily`, `missionEv`)
+- When the date changes, 3 new missions (one each easy, medium, hard), fixed from the date seed so they stay the same all day. The easy one may be "eat 5 of today's fish" (a known fish of tier 4 or lower from a reachable sea).
+- Tracked in-run: eat / eatF / item / adult / combo (best value) / golden / boss / nohit / endlessT (best value). On completion a "📅 미션 완료!" banner shows on the spot.
+- Claimed in the base mission window. Hard missions also give 🎨 fragments. Claiming all 3 opens a bonus chest (◈150 + 🎨1).
+
+**Attendance stamps** — the first time the base opens on a new day, a stamp lands (days 1–7, then repeats) and the reward is paid immediately. The mission window opens automatically showing "🎉 오늘 출석 도장 꽝!" (today's stamp!).
+Rewards: 50 / 80 / 100 / 🎨1 / 150 / 🎨1 / day 7 ◈300 + 🎨2 + 🦄 unicorn horn.
+
+**🎨 Customization** (`COS` · `cosSprite` · `drawCosAcc` · `cosPreviewURL` · `cosTrail`) — visuals only, hit detection unchanged
+- Hats 8 / face 4 / color 6 (tints the sprite, rainbow changes every 0.3s) / tail effects 5 (emoji particles; the rainbow tail is colored bubbles).
+- How to get them: pearls 300–800 / 🎨 fragments / unlocked automatically by stars (⭐ sticker 9, gold 12, crown 18, rainbow tail 21) / stamp day 7 (unicorn horn).
+- First tap previews in the tank, second tap buys. Applies to every shark. The base tank and the in-game shark both show the customized look.
+- Head and eye positions for all 8 sharks × 4 stages were extracted from the images (`COS_HEAD`). The sawshark was adjusted by hand because its saw threw off the extraction. Minimum sizes (hat 16, face 11) so they're visible on fry.
+
+**⭐ 3 stars per sea** (`STAR_DEFS` · `judgeStars`) — 6 seas × 3 + endless 3 = 21 stars, ◈100 each on first earn
+- ① Defeat the boss ② a challenge that fits that sea (shore: escape nets twice / coral: eat 3 squid / wreck: blow up the boss with a mine / ice: 15 combo / vent: cut 4 tentacles / throne: collect 3 golden teeth) ③ fast or no-hit.
+- Endless: survive 3 minutes, 6 minutes, beat all 6 bosses.
+- Judged from this run's record (`G.run`) when the run ends. The results screen pops new stars in one at a time and shows "다음 별: …" (next star). Map nodes show ★★☆, the info card lists the 3 challenges, and the top bar shows ⭐ n / 21.
+
+**Base layout**: below the tank, a "📅 오늘의 미션 n/3 · 도장 n일째" (today's missions, stamp day n) bar. Big buttons are now 4 across × 2 rows (map ★badge · fish book · achievements · **missions** · upgrades · bag · hatcher · **customize**).
+Admin test buttons: all cosmetics, all stars, advance to tomorrow (missions and stamp), complete today's missions.
+
+- Verified: first visit stamps day 1 and auto-opens the window, the eat-60 mission completes, claiming works, bonus chest (+150 · 🎨1), buy and wear top hat, sunglasses and pink, customization shows in-game (both facing directions) plus heart tail, clearing the shore with 2 net escapes in under 3 minutes gives ★★★ (+300) with pop-in animation, map 3/21, hat positions for 8 sharks × 2 stages, 390×844 · 360×640 · 844×390 no horizontal overflow, 0 console errors.
