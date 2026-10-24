@@ -272,3 +272,19 @@ polar sea — intimidating but cartoon-stylized, not gory. Head RIGHT.
 
 - **제가 답변을 끝낸 뒤에** 보내야 파일이 디스크에 남는다 (작업 중에 보내면 유실됨)
 - 한 번에 4~5장. **"톱상어 0~3단계"처럼 무엇인지만** 적으면 파일 이름·크기·투명 처리는 내가 한다
+
+---
+
+## 해역 7~9 보스 3장 (2026-10-24) — 지금은 물고기 그림을 키워서 대신 쓰는 중
+
+기존 보스 그림과 같은 규칙: **투명 배경 PNG, 오른쪽을 보는 옆모습, 몸 전체가 프레임 안, 가로로 긴 구도(약 3:2)**, 아이 게임에 맞는 귀엽지만 위엄 있는 만화체, 두꺼운 외곽선과 밝은 하이라이트.
+받으면 `demo/assets/boss/<id>.png` 로 넣고 `ART` 의 `'boss.<id>'` 줄만 바꾸면 된다.
+
+1. **angler_king — 거대 아귀 왕** (아귀 동굴)
+   > A giant cartoon anglerfish king boss for a kids' mobile game, side view facing right, deep navy and purple body with glowing cyan spots, huge grinning mouth with crooked teeth, a long glowing lure on its head with a bright yellow bulb, a tiny golden crown tilted on its head, menacing but cute, thick dark outlines, soft rim light, transparent background, full body in frame, 3:2 wide composition
+
+2. **king_crab — 대왕 킹크랩** (게 요새)
+   > A giant cartoon king crab boss for a kids' mobile game, three-quarter side view facing right, bright red spiky shell, two huge claws raised (one bigger than the other), small angry eyes on stalks, barnacles and a little coral on its back, a golden crown-shaped ridge on the shell, sturdy and funny, thick dark outlines, soft highlights, transparent background, full body in frame, 3:2 wide composition
+
+3. **oar_king — 산갈치 대왕** (해류 고속도로)
+   > A giant cartoon oarfish serpent king boss for a kids' mobile game, side view facing right, very long ribbon-like silver body in a gentle S-curve, bright red flowing dorsal fin crest along the whole back, regal red crest plumes on its head like a crown, large wise eyes, shimmering scales, majestic and friendly-scary, thick dark outlines, soft glow, transparent background, full body in frame, wide 3:1 composition
