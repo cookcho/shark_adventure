@@ -1443,17 +1443,17 @@ const BOSSES = {
     patterns:[['sweep', 'sweep', 'grab'], ['sweep', 'grab', 'summon', 'sweep'], ['sweep', 'grab', 'ink', 'summon', 'sweep']] },
   /* 끝판 대장 (2026-10-17 재설계) — 페이즈마다 분위기가 바뀐다.
      1 사냥: 매복 돌진 / 2 분노: 포효 · 꼬리 해일 · 이빨 비 / 3 왕의 분노: 포효 · 붉은 기운 · 점프 내리찍기 · 세 번 물기 */
-  /* 해역 7~9 보스 — 그림은 물고기 그림을 크게 키우고 물들여 쓴다 (tint). flat = 기울지 않음(게) */
+  /* 해역 7~9 보스 — flat = 기울지 않음(게), serpent = 크게 물결. tint 를 주면 그림을 물들인다 */
   angler_king: { name:'거대 아귀 왕', tier:11, len:240, hp:2600, shape:'shark',
-    body:'#2a3a48', fin:'#7fe0ff', contact:24, staggerMul:2.0, tint:'#3a2a6a',
+    body:'#2a3a48', fin:'#7fe0ff', contact:24, staggerMul:2.0,
     summon:['hatchet','deepshrimp'],
     patterns:[['dash', 'gulp', 'dash'], ['gulp', 'fakeLure', 'dash', 'summon'], ['lightsOut', 'gulp', 'fakeLure', 'dash2', 'lightsOut']] },
   king_crab: { name:'대왕 킹크랩', tier:11, len:230, hp:2800, shape:'shark',
-    body:'#c8402a', fin:'#ffb070', contact:24, staggerMul:2.0, tint:'#ff3a1a', flat:true,
+    body:'#c8402a', fin:'#ffb070', contact:24, staggerMul:2.0, flat:true,
     summon:['crab','parrot'],
     patterns:[['clawSlam', 'sideRush'], ['clawSlam', 'sideRush', 'bubbles', 'summon'], ['clawSlam', 'shell', 'sideRush', 'bubbles', 'clawSlam']] },
   oar_king: { name:'산갈치 대왕', tier:12, len:300, hp:3000, shape:'eel',
-    body:'#c8d8e8', fin:'#ff5a6a', contact:25, staggerMul:2.0, tint:'#ffd23c', serpent:true,
+    body:'#c8d8e8', fin:'#ff5a6a', contact:25, staggerMul:2.0, serpent:true,
     summon:['sardine','herring'],
     patterns:[['dash', 'serpent'], ['serpent', 'coil', 'summon', 'dash'], ['serpent', 'coil', 'rockRain', 'dash2', 'serpent']] },
   megalodon: { name:'메갈로돈', tier:11, len:260, hp:2800, shape:'shark',
@@ -1847,10 +1847,10 @@ const ART = {
   'stage.ice':            'stage/ice.jpg',
   'stage.vent':           'stage/vent.jpg',
   'stage.throne':         'stage/throne.jpg',
-  /* 해역 7~9 보스 — 물고기 그림을 빌려 쓴다 (새 그림이 오면 boss/<id>.png 로 바꾼다) */
-  'boss.angler_king':     'fish/angler.png',
-  'boss.king_crab':       'fish/kingcrab.png',
-  'boss.oar_king':        'fish/oarfish.png',
+  /* 해역 7~9 보스 (2026-10-24 새 그림) */
+  'boss.angler_king':     'boss/angler_king.png',
+  'boss.king_crab':       'boss/king_crab.png',
+  'boss.oar_king':        'boss/oar_king.png',
   /* 플레이어 상어 — shark.<상어id>.<진화단계 0~3> */
   'shark.reef.0':         'shark/reef_0.png',
   'shark.reef.1':         'shark/reef_1.png',
@@ -6406,7 +6406,7 @@ function drawBossLights(W, H){
   const glow = (x, y, r, col) => { const q = ctx.createRadialGradient(x, y, 0, x, y, r); q.addColorStop(0, col); q.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = q; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); };
   if (G.stage.boss === 'angler_king' && !b.hide) {
     const L = G.bossDef.len, f = (b.vx || b.dx) < 0 ? -1 : 1;
-    const lx = sx(b.x + f*L*0.42), ly = sy(b.y - L*0.36) + Math.sin(G.t*3)*4;
+    const lx = sx(b.x + f*L*0.56), ly = sy(b.y - L*0.12) + Math.sin(G.t*3)*4;   // 새 그림의 전구 자리
     glow(lx, ly, b.dark ? 90 : 55, b.lureRed ? 'rgba(255,80,80,.95)' : 'rgba(255,245,180,.9)');
   }
   if (b.orbs) for (const o of b.orbs) {
