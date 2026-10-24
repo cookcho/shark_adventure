@@ -824,28 +824,77 @@
   .mchest small{font-size:10.5px;color:#a8741a}
   .mchest.hot{border-style:solid;animation:hpulse 1.2s infinite}
   .mchest.got{opacity:.55}
-  /* 꾸미기 창 */
-  .cprev{height:150px;border-radius:24px;border:4px solid #fff;display:flex;align-items:center;justify-content:center;margin-bottom:10px;
-    background:radial-gradient(ellipse at 50% 115%,#ffe9a8 0 22%,transparent 23%),linear-gradient(180deg,#bff0ff,#62cdf2);box-shadow:0 4px 0 #d7e8f4}
-  .cprev img{max-width:62%;max-height:140px;animation:hbob 3s ease-in-out infinite}
-  .cwal{display:flex;gap:8px;justify-content:center;font-size:12px;color:#5a86a8;margin-bottom:8px}
-  .cwal span{background:#fff;border-radius:999px;padding:4px 10px;box-shadow:0 2px 0 #d7e8f4}
-  .ctabs{display:flex;gap:6px;margin-bottom:10px}
-  .ctabs button{flex:1;border:none;font-size:12.5px;font-weight:900;padding:8px 0;border-radius:14px;background:#e3eff8;color:#5a86a8}
-  .ctabs button.on{background:linear-gradient(180deg,#ffb3e6,#e45bc0);color:#fff;box-shadow:0 3px 0 #a3308a}
-  .citems{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .ci{position:relative;background:#fff;border-radius:18px;padding:8px 3px 7px;text-align:center;box-shadow:0 4px 0 #d7e8f4;border:none;font-weight:800}
-  .ci .e{font-size:28px;line-height:1.25;display:block}
-  .ci .sw{display:block;width:30px;height:30px;margin:2px auto 3px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #d7e8f4}
-  .ci b{display:block;font-size:10.5px;color:#1f3d5c;margin:1px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .ci .p{display:block;font-size:10.5px;border-radius:10px;padding:4px 0;background:linear-gradient(180deg,#ffe066,#ffb703);color:#7a3e00;box-shadow:0 2px 0 #c77d00}
-  .ci .p.own{background:#e3eff8;color:#5a86a8;box-shadow:none}
-  .ci .p.lock{background:#eef1f4;color:#a9b6c2;box-shadow:none;font-size:9.5px}
-  .ci .p.no{background:#eef1f4;color:#a9b6c2;box-shadow:none}
-  .ci.on{box-shadow:0 0 0 3px #e45bc0,0 4px 0 #d7e8f4}
-  .ci .w{position:absolute;right:3px;top:3px;font-size:9px;background:#e45bc0;color:#fff;padding:1px 5px;border-radius:999px}
-  .ci.lk .e,.ci.lk .sw{filter:grayscale(1) opacity(.4)}
-  .ci.pv{box-shadow:0 0 0 3px #2a9df4,0 4px 0 #d7e8f4}
+  /* ---------- 상어 카드 ---------- */
+  .cardTip{margin:-2px 14px 12px;color:#fff;font-size:12.5px;font-weight:800;max-width:none;text-align:center;text-shadow:0 1px 3px rgba(0,40,80,.6)}
+  .sgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px}
+  .scard{position:relative;border:none;border-radius:20px;padding:5px;aspect-ratio:5/7;font-weight:900;text-align:center;overflow:hidden;
+    box-shadow:0 6px 0 rgba(0,40,80,.3)}
+  .scard:active{transform:scale(.97)}
+  .scard .in{position:absolute;inset:5px;border-radius:15px;background:linear-gradient(180deg,#e9fbff,#9fdcf4);display:flex;flex-direction:column;
+    align-items:center;padding:8px 6px 6px;overflow:hidden}
+  .scard .nm{font-size:14px;color:#1f3d5c;line-height:1.2}
+  .scard .tg{font-size:10px;color:#fff;background:#1f7fc6;border-radius:999px;padding:1px 8px;margin-top:3px}
+  .scard .art{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
+  .scard .art img{width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 6px 4px rgba(0,40,80,.25))}
+  .scard .rs{font-size:13px;letter-spacing:1px;color:#ffb703;text-shadow:0 1px 0 #a86a00}
+  .scard .rn{font-size:9.5px;color:#5a86a8}
+  .scard.lock .in{background:linear-gradient(180deg,#5a6e82,#34465a)}
+  .scard.lock .art img{filter:brightness(0) opacity(.45)}
+  .scard.lock .nm{color:#dfe8ef} .scard.lock .rn{color:#b9c8d6}
+  .scard .use{position:absolute;right:9px;top:9px;font-size:9px;background:#2fd17a;color:#fff;padding:2px 6px;border-radius:999px;z-index:2}
+  /* 등급 테두리 */
+  .r-c{background:linear-gradient(160deg,#c9d6e2,#8ea4b8)}
+  .r-u{background:linear-gradient(160deg,#7fd6ff,#2a7fd4)}
+  .r-e{background:linear-gradient(160deg,#d7a0ff,#7a3fd0)}
+  .r-l{background:linear-gradient(160deg,#fff08a,#ff9f1c)}
+  .r-m{background:linear-gradient(160deg,#ff8fb1,#ff3b5c,#ffd23f)}
+  .r-s{background:linear-gradient(160deg,#ffb3e6,#8a5cf0,#4fd1ff)}
+  .holo::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%);background-size:250% 100%;animation:holo 2.6s linear infinite}
+  @keyframes holo{from{background-position:120% 0}to{background-position:-120% 0}}
+  /* 크게 보기 + 뒤집기 */
+  .cpop{position:fixed;inset:0;z-index:41;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px}
+  .cpop.hidden{display:none}
+  .cpop .bk{position:absolute;inset:0;background:rgba(0,25,50,.6)}
+  .cpop>*{position:relative}
+  .cpop>.bk{position:absolute}
+  .cflip{position:relative;flex:0 0 auto;width:min(84vw,300px);height:min(117vw,430px);cursor:pointer}
+  /* 뒤집기 — 옆으로 납작해졌다가(0.18초) 반대 면으로 펴진다. 3D 회전은 카드 안 스크롤과 함께 쓰면 뒷면이 사라져서 안 쓴다 */
+  .cinner{position:absolute;inset:0;transition:transform .18s ease-in}
+  .cflip.turn .cinner{transform:scaleX(0)}
+  .cface{position:absolute;inset:0;border-radius:24px;padding:7px;overflow:hidden;box-shadow:0 10px 0 rgba(0,30,60,.35)}
+  .cface.bkf{display:none}
+  .cflip.flipped .cface.bkf{display:block}
+  .cflip.flipped .cface:not(.bkf){display:none}
+  .cface .in{position:absolute;inset:7px;border-radius:18px;display:flex;flex-direction:column;align-items:center;padding:12px 12px 10px;
+    background:linear-gradient(180deg,#e9fbff,#9fdcf4)}
+  .cface.bkf .in{background:linear-gradient(180deg,#ffffff,#e6f5ff);align-items:stretch;text-align:left;overflow-y:auto;padding:10px 11px 9px}
+  .cface .nm{font-size:22px;color:#1f3d5c}
+  .cface .tg{font-size:12px;color:#fff;background:#1f7fc6;border-radius:999px;padding:2px 10px;margin-top:4px;font-weight:900}
+  .cface .art{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
+  .cface .art img{width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 6px rgba(0,40,80,.3));animation:hbob 3s ease-in-out infinite}
+  .cface .rs{font-size:20px;letter-spacing:2px;color:#ffb703;text-shadow:0 2px 0 #a86a00}
+  .cface .rn{font-size:12px;color:#5a86a8;font-weight:800}
+  .cface .hint{font-size:11px;color:#7a95ad;font-weight:700;margin-top:4px}
+  .bkf h4{font-size:17px;color:#1f3d5c;display:flex;align-items:center;gap:6px}
+  .bkf .ab{margin:6px 0 8px;background:#fff7db;border-radius:12px;padding:7px 9px;font-size:11.5px;color:#7a5200;line-height:1.5;font-weight:700}
+  .bkf .stt{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;font-size:11.5px;color:#4d6c86;font-weight:800}
+  .bkf .pp{display:flex;gap:3px}
+  .bkf .pp i{flex:1;height:9px;border-radius:5px;background:#e3eff8}
+  .bkf .pp i.f{background:linear-gradient(90deg,#4fd1ff,#2a9df4)}
+  .bkf .sec{font-size:11.5px;color:#1f5f99;margin:9px 0 4px;font-weight:900}
+  .bkf .evo{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .bkf .evo div{background:#eef8ff;border-radius:10px;padding:3px 2px;text-align:center;font-size:9px;color:#5a86a8;font-weight:800}
+  .bkf .evo img{width:100%;height:26px;object-fit:contain}
+  .bkf .rec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}
+  .bkf .rec div{background:#eef8ff;border-radius:10px;padding:4px 0;font-size:9.5px;color:#5a86a8;font-weight:800}
+  .bkf .rec b{display:block;font-size:15px;color:#1f7fc6}
+  .cpbtns{position:relative;display:flex;gap:10px}
+  .cpbtns button{border:none;border-radius:16px;padding:11px 18px;font-size:14px;font-weight:900}
+  .cpbtns .go{background:linear-gradient(180deg,#5ee0a0,#22b26c);color:#fff;box-shadow:0 4px 0 #138149}
+  .cpbtns .on{background:#e3eff8;color:#5a86a8}
+  .cpbtns .cl{background:#fff;color:#1f7fc6;box-shadow:0 4px 0 rgba(0,30,60,.3)}
+
   /* 지도 별 */
   .node .nst{font-size:14px;letter-spacing:1px;color:#ffd84d;text-shadow:0 2px 0 rgba(0,0,0,.45)}
   .node .nst i{font-style:normal;color:rgba(255,255,255,.3)}
@@ -1108,7 +1157,7 @@
     <button class="hbtn b4" id="openUpg"><span class="ic">💪</span>능력치<span class="hbadge red hidden" id="upgBadge">!</span></button>
     <button class="hbtn b5" id="openBag"><span class="ic">🎒</span>가방<span class="hbadge hidden" id="bagBadge"></span></button>
     <button class="hbtn b8" id="openHatch"><span class="ic">🥚</span>부화기<span class="hbadge hidden" id="hatchBadge"></span></button>
-    <button class="hbtn b7" id="openCos"><span class="ic">🎨</span>꾸미기<span class="hbadge red hidden" id="cosBadge">NEW</span></button>
+    <button class="hbtn b7" id="openCards"><span class="ic">🃏</span>상어 카드<span class="hbadge" id="cardBadge"></span></button>
   </div>
   <div class="hgo"><button id="diveBtn">🦈 바다로 출발!</button></div>
 </div>
@@ -1126,7 +1175,6 @@
       <div data-pane="bag"><div id="shopList" class="bag3"></div></div>
       <div data-pane="hatch"><div id="hatchBox"></div></div>
       <div data-pane="mission"><div id="missionBox"></div></div>
-      <div data-pane="cos"><div id="cosBox"></div></div>
     </div>
   </div>
 </div>
@@ -1170,7 +1218,6 @@
     <button class="pbtn" data-adm="lvup">⭐ 레벨 +1</button>
     <button class="pbtn" data-adm="achall">🏆 업적 전부</button>
     <button class="pbtn" data-adm="egg">🥚 상어알 +1</button>
-    <button class="pbtn" data-adm="cosall">🎨 꾸미기 전부</button>
     <button class="pbtn" data-adm="starsall">⭐ 별 전부</button>
     <button class="pbtn" data-adm="daily">📅 내일로 (미션·도장)</button>
     <button class="pbtn" data-adm="missiondone">📅 미션 다 하기</button>
@@ -1227,6 +1274,15 @@
   <div class="aqTabs scroll" id="dexTabs"></div>
   <div id="dexBody"></div>
   <div class="dexPop hidden" id="dexDetail"></div>
+</div>
+
+<!-- 상어 카드 (2026-10-24) — 모은 상어를 카드로. 누르면 크게, 한 번 더 누르면 뒤집어서 능력치 -->
+<div id="cardScreen" class="screen aq hidden">
+  <div class="aqTop"><button class="hround" id="cardBack" aria-label="기지로">‹</button><span class="aqTtl">🃏 상어 카드</span>
+    <span class="hpearl" id="cardCount"></span></div>
+  <p class="cardTip">카드를 누르면 크게 · 한 번 더 누르면 뒤집어서 능력치!</p>
+  <div class="sgrid2" id="cardGrid"></div>
+  <div class="cpop hidden" id="cardPop"></div>
 </div>
 
 <div id="startScreen" class="screen title">
@@ -1740,8 +1796,7 @@ const freshSave = () => ({
   /* 1차 재미 (2026-10-22) */
   daily: { date:'', ms:[], bonus:false },            // 오늘의 미션 3개 { id, p(진행), done, got, fish }
   stamp: { day:0, last:'', total:0 },                // 출석 도장 — day 1~7 돌고 돈다
-  cos:   { owned:{}, hat:'', face:'', color:'', trail:'', seen:false },   // 꾸미기
-  frags: 0,                                          // 🎨 꾸미기 조각 — 미션·도장으로만 얻는다
+  sharkRec: {},                                      // 상어 카드 기록 — 상어 id → { runs, eaten, boss }
   stars: {},                                         // 해역 id → [별1, 별2, 별3] (1 = 받음)
 });
 let SAVE = freshSave();
@@ -1770,9 +1825,8 @@ function loadSave(){
       endless:{ ...f.endless, ...(o.endless || {}) },
       daily:  { ...f.daily, ...(o.daily || {}) },
       stamp:  { ...f.stamp, ...(o.stamp || {}) },
-      cos:    { ...f.cos, ...(o.cos || {}), owned: { ...((o.cos && o.cos.owned) || {}) } },
+      sharkRec: { ...(o.sharkRec || {}) },
       stars:  { ...(o.stars || {}) } };
-    if (typeof SAVE.frags !== 'number') SAVE.frags = 0;
     if (typeof SAVE.xp !== 'number') SAVE.xp = 0;
     if (typeof SAVE.lvPaid !== 'number') SAVE.lvPaid = 1;
     if (typeof SAVE.totalEaten !== 'number') SAVE.totalEaten = 0;
@@ -3542,7 +3596,6 @@ function applyItem(kind){
 }
 function updateItems(dt){
   const p = G.player;
-  cosTrail(dt);
   for (const k in p.fx) p.fx[k] = Math.max(0, p.fx[k] - dt);
   if (p.fx.rage > 0 && Math.random() < 0.5 && G.parts.length < 340)   // 🔥 광폭 불꽃 가루
     G.parts.push({ x: p.x + rand(-p.len*0.4, p.len*0.4), y: p.y + rand(-p.len*0.3, p.len*0.3),
@@ -3588,7 +3641,7 @@ const SHOP = [
   { id:'magnet', icon:'🧲', name:'시작 자석',   desc:'판을 시작하고 10초 동안 흡입 2배', cost:60 },
 ];
 /* ================= 1차 재미 (2026-10-22) — 매일 미션 · 출석 도장 · 꾸미기 · 해역 별 =================
-   셋이 맞물린다: 미션·도장·별 → 진주·🎨 조각 → 꾸미기 상점 → 꾸민 상어로 다시 바다. 꾸미기는 보이는 것만 */
+   미션·도장·별 → 진주. (꾸미기는 2026-10-24 "어색하다"는 의견으로 뺐다 — 조각 보상은 진주로 바꿈) */
 const todayKey = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 /* diff 0 쉬움 · 1 보통 · 2 어려움 — 하루에 하나씩. ev = 어디서 세는지, max = 누적이 아니라 최고값 */
 const MISSIONS = [
@@ -3600,19 +3653,18 @@ const MISSIONS = [
   { id:'gold1',   diff:1, icon:'✨', name:'황금 물고기 먹기',          goal:1,   ev:'golden', pearls:120 },
   { id:'eat200',  diff:1, icon:'🍽️', name:'물고기 200마리 먹기',       goal:200, ev:'eat',    pearls:120 },
   { id:'boss1',   diff:1, icon:'👑', name:'보스 쓰러뜨리기',           goal:1,   ev:'boss',   pearls:150 },
-  { id:'nohit',   diff:2, icon:'🛡️', name:'보스를 한 번도 안 맞고 쓰러뜨리기', goal:1, ev:'nohit', pearls:250, frags:1 },
-  { id:'combo25', diff:2, icon:'💥', name:'25 콤보 만들기',            goal:25,  ev:'combo',  pearls:250, frags:1, max:true },
-  { id:'boss2',   diff:2, icon:'⚔️', name:'보스 2마리 쓰러뜨리기',     goal:2,   ev:'boss',   pearls:250, frags:1 },
-  { id:'endless3',diff:2, icon:'♾️', name:'끝없는 바다 3분 버티기',     goal:180, ev:'endlessT', pearls:250, frags:1, max:true,
+  { id:'nohit',   diff:2, icon:'🛡️', name:'보스를 한 번도 안 맞고 쓰러뜨리기', goal:1, ev:'nohit', pearls:350 },
+  { id:'combo25', diff:2, icon:'💥', name:'25 콤보 만들기',            goal:25,  ev:'combo',  pearls:350, max:true },
+  { id:'boss2',   diff:2, icon:'⚔️', name:'보스 2마리 쓰러뜨리기',     goal:2,   ev:'boss',   pearls:350 },
+  { id:'endless3',diff:2, icon:'♾️', name:'끝없는 바다 3분 버티기',     goal:180, ev:'endlessT', pearls:350, max:true,
     need: () => stageCleared('throne') },
 ];
 const MISSION_BY_ID = Object.fromEntries(MISSIONS.map(m => [m.id, m]));
-const DAILY_BONUS = { pearls:150, frags:1 };
-const STAMP_REWARD = [ { pearls:50 }, { pearls:80 }, { pearls:100 }, { frags:1 }, { pearls:150 }, { frags:1 }, { pearls:300, frags:2, cos:'unicorn' } ];
-const rewardText = r => [r.pearls ? '◈ ' + r.pearls : '', r.frags ? '🎨 조각 ' + r.frags : '', r.cos ? COS_BY_ID[r.cos].icon + ' ' + COS_BY_ID[r.cos].name : ''].filter(Boolean).join(' · ');
+const DAILY_BONUS = { pearls:250 };
+const STAMP_REWARD = [ { pearls:50 }, { pearls:80 }, { pearls:100 }, { pearls:120 }, { pearls:150 }, { pearls:180 }, { pearls:500 } ];   // 7일째 보물상자
+const rewardText = r => '◈ ' + (r.pearls || 0);
 function giveReward(r){
-  SAVE.pearls += r.pearls || 0; SAVE.frags += r.frags || 0;
-  if (r.cos) SAVE.cos.owned[r.cos] = true;
+  SAVE.pearls += r.pearls || 0;
 }
 const missionName = m => m.id === 'eatF' ? (FISH_BY_ID[m.fish] ? FISH_BY_ID[m.fish].name : '물고기') + ' 5마리 먹기' : MISSION_BY_ID[m.id].name;
 /* 날짜가 바뀌면: 새 미션 3개 (날짜로 정해져 하루 동안 그대로) + 출석 도장. 도장 찍힌 날이면 true */
@@ -3658,196 +3710,6 @@ function missionEv(ev, v, fish){
   }
 }
 const missionClaimable = () => SAVE.daily.ms && (SAVE.daily.ms.some(m => m.done && !m.got) || (!SAVE.daily.bonus && SAVE.daily.ms.length && SAVE.daily.ms.every(m => m.got)));
-
-/* ---- 꾸미기 ---- price = 진주 / frags = 🎨 조각 / stars = 별을 모으면 저절로 / stamp = 출석 7일 */
-const COS = [
-  { id:'tophat',  slot:'hat',   icon:'🎩', name:'신사 모자',   price:300 },
-  { id:'cap',     slot:'hat',   icon:'🧢', name:'야구 모자',   price:300 },
-  { id:'ribbon',  slot:'hat',   icon:'🎀', name:'리본',        price:400 },
-  { id:'sunhat',  slot:'hat',   icon:'👒', name:'밀짚 모자',   price:500 },
-  { id:'helmet',  slot:'hat',   icon:'🪖', name:'탐험 모자',   price:600 },
-  { id:'grad',    slot:'hat',   icon:'🎓', name:'박사 모자',   price:800 },
-  { id:'crown',   slot:'hat',   icon:'👑', name:'왕관',        stars:18 },
-  { id:'unicorn', slot:'hat',   icon:'🦄', name:'유니콘 뿔',   stamp:true },
-  { id:'shades',  slot:'face',  icon:'🕶️', name:'선글라스',    price:300 },
-  { id:'glasses', slot:'face',  icon:'👓', name:'안경',        price:300 },
-  { id:'flower',  slot:'face',  icon:'🌸', name:'꽃 핀',       frags:1 },
-  { id:'starfx',  slot:'face',  icon:'⭐', name:'별 스티커',   stars:9 },
-  { id:'pink',    slot:'color', color:'#ff7eb6', name:'분홍',  price:400 },
-  { id:'purple',  slot:'color', color:'#a77bff', name:'보라',  price:400 },
-  { id:'mint',    slot:'color', color:'#3fe0b0', name:'민트',  price:400 },
-  { id:'night',   slot:'color', color:'#2a2f6a', name:'한밤',  price:600 },
-  { id:'goldc',   slot:'color', color:'#ffd23c', name:'금빛',  stars:12 },
-  { id:'rainbow', slot:'color', color:'rainbow', name:'무지개', frags:3 },
-  { id:'hearts',  slot:'trail', icon:'💖', name:'하트 꼬리',   price:500 },
-  { id:'stars',   slot:'trail', icon:'⭐', name:'별 꼬리',     price:500 },
-  { id:'sparkle', slot:'trail', icon:'✨', name:'반짝이 꼬리', price:700 },
-  { id:'fire',    slot:'trail', icon:'🔥', name:'불꽃 꼬리',   frags:2 },
-  { id:'rbtrail', slot:'trail', icon:'🌈', name:'무지개 꼬리', stars:21 },
-];
-const COS_BY_ID = Object.fromEntries(COS.map(c => [c.id, c]));
-const RAINBOW = ['#ff6b6b', '#ffb84d', '#ffe66b', '#6be08a', '#5ab8ff', '#a77bff'];
-const cosHas = c => !!SAVE.cos.owned[c.id] || (c.stars && totalStars() >= c.stars);
-const cosOn = slot => { const c = COS_BY_ID[SAVE.cos[slot]]; return c && cosHas(c) ? c : null; };
-/* 상어 그림마다 [모자 x, 머리 꼭대기 y, 기울기, 눈 x, 눈 y, 눈 반지름] (그림 가운데 기준, 그림 폭·높이 비율).
-   2026-10-24: 눈 자리는 그림을 격자로 보고 맞추고, 머리 꼭대기는 그 자리의 윤곽선에서 뽑았다 */
-const COS_HEAD = {
-  reef:[[.21,-.371,.12,.28,-.1,.045],[.195,-.287,.12,.265,-.085,.03],[.23,-.30,.12,.30,-.055,.026],[.25,-.242,.14,.32,-.05,.026]],
-  mako:[[.23,-.313,.12,.30,-.05,.045],[.23,-.197,.16,.30,-.03,.03],[.27,-.173,.16,.34,-.02,.026],[.27,-.164,.18,.34,-.03,.026]],
-  hammerhead:[[.27,-.26,.08,.07,-.04,.045],[.16,-.184,.2,.23,-.07,.03],[.17,-.17,.2,.24,.02,.026],[.18,-.138,.2,.25,.02,.026]],
-  saw:[[.07,-.264,.06,.12,-.05,.045],[.0,-.128,.12,.05,.02,.03],[-.03,-.10,.12,.02,.02,.026],[.03,-.187,.2,.08,-.08,.026]],
-  white:[[.23,-.341,.12,.30,-.08,.045],[.25,-.261,.14,.32,-.05,.03],[.25,-.274,.16,.32,-.05,.026],[.26,-.283,.15,.33,-.1,.026]],
-  orca:[[.15,-.379,.16,.22,.05,.045],[.23,-.291,.1,.30,0,.03],[.26,-.247,.12,.33,.05,.026],[.21,-.204,.1,.28,.02,.026]],
-  megalodon:[[.21,-.364,.15,.28,-.12,.045],[.23,-.32,.12,.30,-.1,.03],[.23,-.286,.12,.30,-.05,.026],[.26,-.285,.2,.33,-.02,.026]],
-  goblin:[[.2,-.321,.2,.27,-.08,.045],[.15,-.259,.2,.22,0,.03],[.15,-.28,.12,.22,-.02,.026],[.15,-.204,.2,.22,-.05,.026]],
-};
-const headOf = (id, st) => (COS_HEAD[id] || COS_HEAD.reef)[st] || [.2, -.3, .12, .3, -.08, .03];
-/* ---- 꾸미기 그림 — 상어 그림체에 맞춰 두꺼운 외곽선 + 위 밝고 아래 어두운 명암으로 직접 그린다 ----
-   좌표: (0,0) = 놓이는 자리, s = 크기 단위, 머리 쪽이 +x. 위가 -y */
-const OUT = 'rgba(28,24,48,.92)';
-function cosShape(g, s, fill, path){
-  g.beginPath(); path(); g.fillStyle = fill; g.fill();
-  g.lineWidth = Math.max(1.2, s*0.075); g.strokeStyle = OUT; g.lineJoin = 'round'; g.stroke();
-}
-const grad2 = (g, y0, y1, c0, c1) => { const q = g.createLinearGradient(0, y0, 0, y1); q.addColorStop(0, c0); q.addColorStop(1, c1); return q; };
-const HATS = {
-  tophat(g, s){
-    cosShape(g, s, grad2(g, -s*1.5, 0, '#4a4560', '#1c1a2a'), () => { g.moveTo(-s*.42, -s*.12); g.lineTo(-s*.36, -s*1.35); g.quadraticCurveTo(0, -s*1.46, s*.36, -s*1.35); g.lineTo(s*.42, -s*.12); g.closePath(); });
-    cosShape(g, s, '#e8335f', () => g.rect(-s*.41, -s*.48, s*.82, s*.2));
-    cosShape(g, s, grad2(g, -s*.2, s*.1, '#3e3a52', '#15131f'), () => g.ellipse(0, -s*.08, s*.72, s*.16, 0, 0, 6.2832));
-    g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(-s*.28, -s*1.25, s*.1, s*.7);
-  },
-  cap(g, s){
-    cosShape(g, s, grad2(g, -s*.9, 0, '#5ab8ff', '#1f6fc6'), () => { g.moveTo(-s*.6, 0); g.quadraticCurveTo(-s*.6, -s*.85, 0, -s*.86); g.quadraticCurveTo(s*.6, -s*.85, s*.6, 0); g.closePath(); });
-    cosShape(g, s, '#1a4f94', () => { g.moveTo(s*.35, -s*.05); g.quadraticCurveTo(s*1.05, -s*.12, s*1.15, s*.06); g.quadraticCurveTo(s*.7, s*.1, s*.3, s*.06); g.closePath(); });
-    cosShape(g, s, '#fff', () => g.arc(0, -s*.86, s*.1, 0, 6.2832));
-    g.fillStyle = 'rgba(255,255,255,.3)'; g.beginPath(); g.ellipse(-s*.2, -s*.55, s*.14, s*.22, -0.4, 0, 6.2832); g.fill();
-  },
-  ribbon(g, s){
-    g.translate(-s*.1, -s*.2);
-    cosShape(g, s, grad2(g, -s*.5, s*.5, '#ff9fc4', '#e8337a'), () => { g.moveTo(0, 0); g.quadraticCurveTo(-s*.5, -s*.75, -s*.85, -s*.35); g.quadraticCurveTo(-s*.75, s*.1, 0, 0); });
-    cosShape(g, s, grad2(g, -s*.5, s*.5, '#ff9fc4', '#e8337a'), () => { g.moveTo(0, 0); g.quadraticCurveTo(s*.5, -s*.75, s*.85, -s*.35); g.quadraticCurveTo(s*.75, s*.1, 0, 0); });
-    cosShape(g, s, '#ff6fa6', () => g.ellipse(0, 0, s*.18, s*.2, 0, 0, 6.2832));
-  },
-  sunhat(g, s){
-    cosShape(g, s, grad2(g, -s*.2, s*.12, '#ffe39a', '#d9a640'), () => g.ellipse(0, -s*.06, s*1.0, s*.2, 0, 0, 6.2832));
-    cosShape(g, s, grad2(g, -s*.8, 0, '#fff0b8', '#e2b452'), () => { g.moveTo(-s*.45, -s*.1); g.quadraticCurveTo(-s*.45, -s*.78, 0, -s*.8); g.quadraticCurveTo(s*.45, -s*.78, s*.45, -s*.1); g.closePath(); });
-    cosShape(g, s, '#ff7eb6', () => g.rect(-s*.45, -s*.32, s*.9, s*.16));
-  },
-  helmet(g, s){
-    cosShape(g, s, grad2(g, -s*.9, 0, '#9fb070', '#5a6a32'), () => { g.moveTo(-s*.7, -s*.02); g.quadraticCurveTo(-s*.68, -s*.95, 0, -s*.95); g.quadraticCurveTo(s*.68, -s*.95, s*.7, -s*.02); g.closePath(); });
-    cosShape(g, s, '#6e7e42', () => g.ellipse(0, -s*.02, s*.82, s*.12, 0, 0, 6.2832));
-    g.fillStyle = 'rgba(255,255,255,.25)'; g.beginPath(); g.ellipse(-s*.25, -s*.6, s*.15, s*.24, -0.4, 0, 6.2832); g.fill();
-  },
-  grad(g, s){
-    cosShape(g, s, '#24223a', () => { g.moveTo(-s*.42, 0); g.lineTo(-s*.4, -s*.42); g.lineTo(s*.4, -s*.42); g.lineTo(s*.42, 0); g.closePath(); });
-    cosShape(g, s, grad2(g, -s*.8, -s*.4, '#3a3758', '#1a1830'), () => { g.moveTo(0, -s*.82); g.lineTo(s*.95, -s*.55); g.lineTo(0, -s*.3); g.lineTo(-s*.95, -s*.55); g.closePath(); });
-    g.strokeStyle = '#ffc61a'; g.lineWidth = Math.max(1.2, s*.07);
-    g.beginPath(); g.moveTo(0, -s*.56); g.quadraticCurveTo(s*.55, -s*.5, s*.6, -s*.1); g.stroke();
-    cosShape(g, s, '#ffc61a', () => g.arc(s*.6, -s*.05, s*.09, 0, 6.2832));
-  },
-  crown(g, s){
-    cosShape(g, s, grad2(g, -s*.9, 0, '#fff08a', '#e09a00'), () => {
-      g.moveTo(-s*.6, 0); g.lineTo(-s*.68, -s*.7); g.lineTo(-s*.32, -s*.38); g.lineTo(0, -s*.9); g.lineTo(s*.32, -s*.38); g.lineTo(s*.68, -s*.7); g.lineTo(s*.6, 0); g.closePath(); });
-    for (const [x, c] of [[-s*.3, '#ff4d6d'], [0, '#3fb8ff'], [s*.3, '#2fd17a']]) cosShape(g, s*.6, c, () => g.arc(x, -s*.2, s*.09, 0, 6.2832));
-    g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.arc(0, -s*.9, s*.07, 0, 6.2832); g.fill();
-  },
-  unicorn(g, s){
-    g.rotate(0.35);                                      // 앞으로 뻗은 뿔
-    cosShape(g, s, grad2(g, -s*1.3, 0, '#fff4fb', '#ffb3e0'), () => { g.moveTo(-s*.24, 0); g.lineTo(0, -s*1.3); g.lineTo(s*.24, 0); g.quadraticCurveTo(0, s*.08, -s*.24, 0); });
-    g.strokeStyle = '#e45bc0'; g.lineWidth = Math.max(1, s*.06);
-    for (let i = 1; i <= 3; i++) { const y = -s*.3*i, k = 1 - i*0.27; g.beginPath(); g.moveTo(-s*.22*k, y + s*.06); g.lineTo(s*.22*k, y - s*.06); g.stroke(); }
-    cosShape(g, s*.7, '#fff', () => g.arc(0, -s*1.3, s*.05, 0, 6.2832));
-  },
-};
-const FACES = {
-  shades(g, s, back){                                  // 옆모습 — 렌즈 하나 + 머리 뒤로 걸치는 다리
-    g.strokeStyle = OUT; g.lineWidth = Math.max(1.4, s*.11); g.lineCap = 'round';
-    g.beginPath(); g.moveTo(-s*.75, -s*.1); g.lineTo(-back, -s*.35); g.stroke();
-    cosShape(g, s, grad2(g, -s*.6, s*.6, '#4a4a6a', '#0d0d18'), () => { g.moveTo(-s*.8, -s*.45); g.quadraticCurveTo(0, -s*.6, s*.8, -s*.45); g.quadraticCurveTo(s*.8, s*.55, 0, s*.55); g.quadraticCurveTo(-s*.8, s*.55, -s*.8, -s*.45); });
-    g.fillStyle = 'rgba(255,255,255,.5)'; g.beginPath(); g.ellipse(-s*.3, -s*.15, s*.16, s*.1, -0.5, 0, 6.2832); g.fill();
-  },
-  glasses(g, s, back){
-    g.strokeStyle = OUT; g.lineWidth = Math.max(1.2, s*.09); g.lineCap = 'round';
-    g.beginPath(); g.moveTo(-s*.78, -s*.05); g.lineTo(-back, -s*.3); g.stroke();
-    g.fillStyle = 'rgba(200,235,255,.28)'; g.beginPath(); g.arc(0, 0, s*.78, 0, 6.2832); g.fill();
-    g.lineWidth = Math.max(1.4, s*.13); g.strokeStyle = '#c0392b'; g.stroke();
-    g.lineWidth = Math.max(0.8, s*.05); g.strokeStyle = OUT; g.beginPath(); g.arc(0, 0, s*.86, 0, 6.2832); g.stroke();
-    g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.ellipse(-s*.3, -s*.32, s*.14, s*.08, -0.6, 0, 6.2832); g.fill();
-  },
-};
-/* 꽃 핀 · 별 스티커 — 눈 뒤쪽 머리에 붙인다 */
-function drawPetal(g, s){
-  for (let i = 0; i < 5; i++) { g.save(); g.rotate(i*1.2566); cosShape(g, s, grad2(g, -s*.6, 0, '#ffd1e6', '#ff7eb6'), () => g.ellipse(0, -s*.38, s*.24, s*.34, 0, 0, 6.2832)); g.restore(); }
-  cosShape(g, s, '#ffd23c', () => g.arc(0, 0, s*.2, 0, 6.2832));
-}
-function drawStarSticker(g, s){
-  cosShape(g, s, grad2(g, -s*.6, s*.6, '#fff3a8', '#ffb703'), () => {
-    for (let i = 0; i < 10; i++) { const r = i % 2 ? s*.26 : s*.6, a = -Math.PI/2 + i*Math.PI/5; i ? g.lineTo(Math.cos(a)*r, Math.sin(a)*r) : g.moveTo(Math.cos(a)*r, Math.sin(a)*r); }
-    g.closePath(); });
-}
-/* 물들인 상어 그림 — 무지개는 0.3초마다 다음 색 */
-function cosSprite(sp, t){
-  const c = cosOn('color');
-  if (!c) return sp;
-  const col = c.color === 'rainbow' ? RAINBOW[Math.floor((t || 0)*3) % RAINBOW.length] : c.color;
-  return tintOf(sp, col, 0.42);
-}
-/* 모자·얼굴 — 그림을 그린 좌표계(머리가 +x) 안에서 부른다. t = 흔들림 시간, sway = 기울임(위아래 헤엄) */
-function drawCosAcc(g, id, st, w, h, t, sway){
-  const H = headOf(id, st), hat = cosOn('hat'), face = cosOn('face');
-  if (!hat && !face) return;
-  t = t || 0; sway = sway || 0;
-  const unit = Math.max(w*0.135, 9);                 // 머리 크기에 맞춘 단위 — 치어에서도 보이게 최소 9
-  g.save();
-  if (face) {
-    const ex = H[3]*w, ey = H[4]*h, er = Math.max(H[5]*w*1.75, 5);   // 렌즈가 눈을 덮을 만큼
-    g.save(); g.translate(ex, ey);
-    if (face.id === 'shades' || face.id === 'glasses') { g.rotate(H[2]*0.6); FACES[face.id](g, er, er*2.6); }
-    else if (face.id === 'flower') { g.translate(-er*2.4, -er*1.6); g.rotate(Math.sin(t*3)*0.08); drawPetal(g, unit*0.55); }
-    else { g.translate(-er*1.6, er*1.8); g.rotate(-0.2); drawStarSticker(g, unit*0.5); }
-    g.restore();
-  }
-  if (hat) {
-    const bob = Math.sin(t*6)*unit*0.03;             // 헤엄칠 때 살짝 들썩
-    g.translate(H[0]*w, H[1]*h + unit*0.12 + bob);   // 머리에 살짝 묻히게 (떠 보이지 않게)
-    g.rotate(H[2] + Math.sin(t*6 + 1)*0.035 - sway*0.25);
-    g.fillStyle = 'rgba(0,10,30,.22)';                // 닿는 그림자 — 붙어 있는 느낌
-    g.beginPath(); g.ellipse(0, unit*0.04, unit*0.62, unit*0.12, 0, 0, 6.2832); g.fill();
-    HATS[hat.id](g, unit);
-  }
-  g.restore();
-}
-/* 기지 수조 · 꾸미기 미리보기 — 물들인 그림 + 모자·얼굴을 한 장으로 (주소 캐시) */
-const cosUrlCache = new Map();
-function cosPreviewURL(id, st){
-  const sp = art('shark.' + id + '.' + st);
-  if (!sp || !sp.naturalWidth) return null;
-  const key = [id, st, SAVE.cos.hat, SAVE.cos.face, SAVE.cos.color, totalStars() >= 9, totalStars() >= 12, totalStars() >= 18].join('|');
-  if (SAVE.cos.color !== 'rainbow' && cosUrlCache.has(key)) return cosUrlCache.get(key);
-  const w = sp.naturalWidth, h = sp.naturalHeight, top = Math.round(Math.max(h*0.3, w*0.2));
-  const c = document.createElement('canvas'); c.width = w; c.height = h + top;
-  const g = c.getContext('2d');
-  g.drawImage(cosSprite(sp, performance.now()/1000), 0, top, w, h);
-  g.translate(w/2, top + h/2); drawCosAcc(g, id, st, w, h);
-  const url = c.toDataURL();
-  if (SAVE.cos.color !== 'rainbow') cosUrlCache.set(key, url);
-  return url;
-}
-/* 꼬리 효과 — 헤엄칠 때 가루 (update 에서만 만든다) */
-function cosTrail(dt){
-  const c = cosOn('trail'), p = G.player;
-  if (!c || !p || G.parts.length > 320) return;
-  const spd = Math.hypot(p.vx, p.vy);
-  if (spd < 50 || Math.random() > dt*(c.id === 'rbtrail' ? 30 : 9)) return;
-  const back = -Math.sign(p.vx || 1)*p.len*0.5;
-  if (c.id === 'rbtrail')
-    G.parts.push({ x: p.x + back + rand(-6, 6), y: p.y + rand(-6, 6), vx: rand(-20, 20), vy: rand(-20, 20), life: 0.7, max: 0.7, r: rand(4, 7),
-      color: RAINBOW[Math.floor(G.t*10) % RAINBOW.length], kind: 'bubble' });
-  else
-    G.parts.push({ x: p.x + back + rand(-8, 8), y: p.y + rand(-10, 10), vx: rand(-25, 25), vy: rand(-30, 10), life: 0.9, max: 0.9,
-      r: 14 + Math.random()*6, text: c.icon, kind: 'emo' });
-}
 
 /* ---- 해역 별 3개 — ①보스 쓰러뜨리기 ②그 해역다운 도전 ③빠르게/안 맞고. 끝없는 바다는 버틴 시간 ---- */
 const STAR_DEFS = {
@@ -6210,7 +6072,7 @@ function drawShark(p){
 
   const sp0 = art('shark.' + SAVE.active + '.' + st);
   if (sp0) {
-    const sp = cosSprite(sp0, G.t);                  // 🎨 색 꾸미기
+    const sp = sp0;
     const span = (SHARK_SPAN[SAVE.active] || [])[st] || SPRITE_SPAN;
     faceHeading(p.vx, p.vy);
     chompPose(p, L);
@@ -6230,7 +6092,6 @@ function drawShark(p){
       drawSprite(tintOf(sp, '#ff5a72'), L, span);
       ctx.restore();
     } else drawSprite(sp, L, span);
-    { const w = L*span; drawCosAcc(ctx, SAVE.active, st, w, w*sp0.naturalHeight/(sp0.naturalWidth || 1), G.t, clamp(p.vy/400, -1, 1)); }   // 🎩 모자 · 🕶️ 얼굴
     ctx.restore(); return;
   }
 
@@ -6659,6 +6520,7 @@ function hideScreens(){
     s.classList.add('hidden');
   el('dexDetail').classList.add('hidden');
   if (el('hsheet')) el('hsheet').classList.add('hidden');
+  if (el('cardScreen')) { el('cardScreen').classList.add('hidden'); el('cardPop').classList.add('hidden'); }
   hideToast();
 }
 function hideToast(){ toastTimer = 0; UI.toast.classList.remove('show'); }
@@ -6750,10 +6612,10 @@ function renderHub(){
   el('mbarGo').textContent = hot ? '보상 받기!' : nd === D.ms.length ? '다 했어요 ✔' : '보기 ›';
   el('mbarGo').classList.toggle('hot', !!hot);
   el('missionBadge').classList.toggle('hidden', !hot);
-  el('cosBadge').classList.toggle('hidden', !!SAVE.cos.seen);
+  el('cardBadge').textContent = SHARKS.filter(x => SAVE.sharks[x.id]).length + '/' + SHARKS.length;
   el('starBadge').textContent = '★' + totalStars();
   el('starBadge').classList.add('star');
-  renderMission(); renderCos();
+  renderMission();
 }
 const UPG_ICON = { bite:['🦷','#ffe1e8'], fin:['🐟','#dff4ff'], vitality:['❤️','#e3fbe9'], lung:['💨','#f1e6ff'], sense:['🌀','#fff3d1'] };
 
@@ -6764,7 +6626,7 @@ function renderTank(){
   const im = art('shark.' + sh.id + '.2'), img = el('tankShark');
   img.style.display = im ? '' : 'none';
   el('tankEmoji').style.display = im ? 'none' : 'block';
-  if (im) { img.src = owned ? (cosPreviewURL(sh.id, 2) || im.src) : im.src; img.classList.toggle('sil', !owned); }
+  if (im) { img.src = im.src; img.classList.toggle('sil', !owned); }
   el('tankName').textContent = owned ? sh.name : '???';
   el('tankTag').textContent = (owned ? sh.tag + ' · ' : '') + '기본 티어 ' + sh.base;
   const u = el('tankUse');
@@ -6778,8 +6640,7 @@ function hubShark(step){
   SFX.ui(); renderHub();
 }
 const SHEET_HEAD = {
-  mission:{ ico:'📅', bg:'linear-gradient(180deg,#ffe066,#ffb703)', t:'오늘의 미션', sub: () => '내일 아침에 새 미션이 와요 · 🎨 조각 ' + SAVE.frags + '개' },
-  cos:    { ico:'🎨', bg:'linear-gradient(180deg,#ffb3e6,#e45bc0)', t:'상어 꾸미기', sub: () => '모든 상어에 같이 적용돼요' },
+  mission:{ ico:'📅', bg:'linear-gradient(180deg,#ffe066,#ffb703)', t:'오늘의 미션', sub: () => '내일 아침에 새 미션이 와요' },
   sharks: { ico:'🦈', bg:'linear-gradient(180deg,#7fd6ff,#2a9df4)', t:'내 상어들', sub: () => SHARKS.filter(x => SAVE.sharks[x.id]).length + ' / ' + SHARKS.length + ' 모음 · 눌러서 고르기' },
   upg:    { ico:'💪', bg:'linear-gradient(180deg,#ff8fa8,#f04a72)', t:'능력치',   sub: () => '진주로 상어를 튼튼하게!' },
   bag:    { ico:'🎒', bg:'linear-gradient(180deg,#7fd6ff,#2a9df4)', t:'가방',     sub: () => '바다에 가져갈 아이템' },
@@ -6803,7 +6664,7 @@ el('openBag').addEventListener('click', () => openSheet('bag'));
 el('openHatch').addEventListener('click', () => openSheet('hatch'));
 el('openMission').addEventListener('click', () => openSheet('mission'));
 el('mbar').addEventListener('click', () => openSheet('mission'));
-el('openCos').addEventListener('click', () => { cosPreview = null; if (!SAVE.cos.seen) { SAVE.cos.seen = true; writeSave(); } renderHub(); openSheet('cos'); });
+el('openCards').addEventListener('click', () => { SFX.ui(); openCards(); });
 /* 미션 창 — 받기 */
 el('missionBox').addEventListener('click', e => {
   const b = e.target.closest('[data-claim]');
@@ -6820,29 +6681,13 @@ el('missionBox').addEventListener('click', e => {
   writeSave(); SFX.buy(); renderHub();
   el('hsSub').textContent = SHEET_HEAD.mission.sub();
 });
-/* 꾸미기 창 — 탭 · 미리보기 · 사기 · 착용 */
-let cosTab = 'hat', cosPreview = null;
-el('cosBox').addEventListener('click', e => {
-  const t = e.target.closest('[data-ctab]');
-  if (t) { cosTab = t.dataset.ctab; cosPreview = null; SFX.ui(); renderCos(); return; }
-  const b = e.target.closest('[data-cos]');
-  if (!b) return;
-  const id = b.dataset.cos, c = COS_BY_ID[id];
-  if (id === 'none') { SAVE.cos[cosTab] = ''; writeSave(); SFX.ui(); renderHub(); return; }
-  if (cosHas(c)) { SAVE.cos[c.slot] = SAVE.cos[c.slot] === id ? '' : id; writeSave(); SFX.buy(); renderHub(); return; }
-  if (cosPreview !== id) { cosPreview = id; SFX.ui(); renderCos(); return; }   // 처음 누르면 미리보기, 한 번 더 = 사기
-  if (c.price && SAVE.pearls >= c.price) { SAVE.pearls -= c.price; SAVE.cos.owned[id] = true; SAVE.cos[c.slot] = id; }
-  else if (c.frags && SAVE.frags >= c.frags) { SAVE.frags -= c.frags; SAVE.cos.owned[id] = true; SAVE.cos[c.slot] = id; }
-  else { SFX.hurt(); return; }
-  cosPreview = null; writeSave(); SFX.medal(); renderHub();
-});
 function renderMission(){
   const D = SAVE.daily, today = SAVE.stamp.day;
   let h = '';
   if (missionStampNote) h += '<div class="mnew">🎉 오늘 출석 도장 꽝! ' + today + '일째 — ' + rewardText(STAMP_REWARD[today - 1]) + ' 받았어요</div>';
   h += '<div class="msec">출석 도장 <span>' + today + '일째 · 하루라도 놀면 도장 1개</span></div><div class="stamps">';
   STAMP_REWARD.forEach((r, i) => {
-    const d = i + 1, f = d <= today, ic = r.cos ? '🎁' : r.frags ? '🎨' : '◈';
+    const d = i + 1, f = d <= today, ic = d === 7 ? '🎁' : '◈';
     h += '<div class="stp' + (f ? ' f' : '') + (d === today ? ' today' : '') + (d === 7 && !f ? ' big' : '') + '"><i>' + (f ? '✔' : ic) + '</i>' + (d === 7 ? '🎁7일' : d + '일') + '</div>';
   });
   h += '</div><div class="msec">오늘의 미션 <span>' + D.ms.filter(m => m.got).length + ' / ' + D.ms.length + ' 받음</span></div>';
@@ -6854,7 +6699,7 @@ function renderMission(){
       '<div class="mpb"><em style="width:' + pct.toFixed(0) + '%"></em></div><small>' + prog + ' · ' + ['쉬움', '보통', '어려움'][def.diff] + '</small></div>' +
       (m.got ? '<button class="mrw got">✔ 받음</button>'
              : m.done ? '<button class="mrw get" data-claim="' + i + '">' + rewardText(def) + '<br>받기</button>'
-                      : '<button class="mrw wait">' + rewardText(def).replace(' · ', '<br>') + '</button>') + '</div>';
+                      : '<button class="mrw wait">' + rewardText(def) + '</button>') + '</div>';
   });
   const all = D.ms.length && D.ms.every(m => m.got);
   h += '<button class="mchest' + (D.bonus ? ' got' : all ? ' hot' : '') + '"' + (all && !D.bonus ? ' data-claim="bonus"' : '') + '><span class="e">🎁</span><span><b>' +
@@ -6862,33 +6707,7 @@ function renderMission(){
   el('missionBox').innerHTML = h;
 }
 let missionStampNote = false;
-function renderCos(){
-  const pv = cosPreview && COS_BY_ID[cosPreview];
-  const saved = pv ? SAVE.cos[pv.slot] : null;
-  if (pv) SAVE.cos[pv.slot] = pv.id;                   // 미리보기 — 잠깐 입혀서 그리고 되돌린다
-  const om = SAVE.cos.owned[cosPreview]; if (pv && !cosHas(pv)) SAVE.cos.owned[cosPreview] = true;
-  const url = cosPreviewURL(SAVE.active, 2);
-  if (pv) { SAVE.cos[pv.slot] = saved; if (!om) delete SAVE.cos.owned[cosPreview]; }
-  let h = '<div class="cprev">' + (url ? '<img src="' + url + '" alt="">' : '<span style="font-size:70px">🦈</span>') + '</div>' +
-    '<div class="cwal"><span>◈ ' + SAVE.pearls.toLocaleString() + '</span><span>🎨 조각 ' + SAVE.frags + '</span><span>⭐ 별 ' + totalStars() + '</span></div>' +
-    '<div class="ctabs">' + [['hat', '🎩 모자'], ['face', '🕶️ 얼굴'], ['color', '🎨 색'], ['trail', '✨ 꼬리']]
-      .map(t => '<button data-ctab="' + t[0] + '"' + (cosTab === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>').join('') + '</div><div class="citems">';
-  h += '<button class="ci' + (!SAVE.cos[cosTab] ? ' on' : '') + '" data-cos="none"><span class="e">🚫</span><b>안 하기</b><span class="p own">' + (!SAVE.cos[cosTab] ? '✔' : '벗기') + '</span></button>';
-  for (const c of COS.filter(x => x.slot === cosTab)) {
-    const has = cosHas(c), on = SAVE.cos[c.slot] === c.id && has;
-    const look = c.slot === 'color' ? '<span class="sw" style="background:' + (c.color === 'rainbow' ? 'conic-gradient(' + RAINBOW.join(',') + ',' + RAINBOW[0] + ')' : c.color) + '"></span>' : '<span class="e">' + c.icon + '</span>';
-    let tag;
-    if (on) tag = '<span class="p own">✔ 착용</span>';
-    else if (has) tag = '<span class="p own">착용</span>';
-    else if (c.stars) tag = '<span class="p lock">⭐ 별 ' + c.stars + '개</span>';
-    else if (c.stamp) tag = '<span class="p lock">🎁 출석 7일</span>';
-    else if (c.frags) tag = '<span class="p' + (SAVE.frags >= c.frags ? '' : ' no') + '">' + (cosPreview === c.id ? '사기! ' : '') + '🎨 ' + c.frags + '</span>';
-    else tag = '<span class="p' + (SAVE.pearls >= c.price ? '' : ' no') + '">' + (cosPreview === c.id ? '사기! ' : '') + '◈ ' + c.price + '</span>';
-    h += '<button class="ci' + (on ? ' on' : '') + (!has && (c.stars || c.stamp) ? ' lk' : '') + (cosPreview === c.id ? ' pv' : '') + '" data-cos="' + c.id + '">' +
-      (on ? '<span class="w">착용 중</span>' : '') + look + '<b>' + c.name + '</b>' + tag + '</button>';
-  }
-  el('cosBox').innerHTML = h + '</div>';
-}
+
 el('hsClose').addEventListener('click', () => { SFX.ui(); closeSheet(); });
 el('hsBack').addEventListener('click', closeSheet);
 
@@ -6941,6 +6760,76 @@ el('shopList').addEventListener('click', e => {
   }
   writeSave(); renderHub();
 });
+
+/* ---------------- 상어 카드 (2026-10-24) ----------------
+   등급 = 기본 티어 (2 일반 · 3 희귀 · 4~5 영웅 · 6 전설 · 7 신화 · 비밀). 능력치는 상어 고유값 (업그레이드 전) */
+const RARITY_OF = sh => sh.secret ? { c:'r-s', n:'비밀', st:5 } : sh.base >= 7 ? { c:'r-m', n:'신화', st:5 } : sh.base >= 6 ? { c:'r-l', n:'전설', st:4 }
+  : sh.base >= 4 ? { c:'r-e', n:'영웅', st:3 } : sh.base >= 3 ? { c:'r-u', n:'희귀', st:2 } : { c:'r-c', n:'일반', st:1 };
+const starsTxt = n => '★'.repeat(n) + '<span style="color:rgba(0,0,0,.15)">' + '★'.repeat(5 - n) + '</span>';
+const sharkArt = (id, st) => { const im = art('shark.' + id + '.' + st); return im ? im.src : ''; };
+function cardFront(sh, big){
+  const owned = !!SAVE.sharks[sh.id], R = RARITY_OF(sh), src = sharkArt(sh.id, owned ? 3 : 2);
+  return '<div class="in"><div class="nm">' + (owned ? sh.name : '???') + '</div>' + (owned ? '<div class="tg">' + sh.tag + '</div>' : '') +
+    '<div class="art">' + (src ? '<img src="' + src + '" alt="">' : '<span style="font-size:' + (big ? 80 : 44) + 'px">🦈</span>') + '</div>' +
+    '<div class="rs">' + starsTxt(R.st) + '</div><div class="rn">' + R.n + ' · 기본 티어 ' + sh.base + '</div>' +
+    (big && owned ? '<div class="hint">👆 눌러서 뒤집기</div>' : '') +
+    (!owned ? '<div class="rn" style="margin-top:2px">' + (sh.secret ? '🔒 업적 20개를 모으면' : '🥚 알을 깨면 나와요') + '</div>' : '') + '</div>';
+}
+function cardBack(sh){
+  const r = SAVE.sharkRec[sh.id] || { runs: 0, eaten: 0, boss: 0 };
+  const pip = (v, max) => { const n = clamp(Math.round(v/max*5), 1, 5); let h = '<span class="pp">'; for (let i = 0; i < 5; i++) h += '<i class="' + (i < n ? 'f' : '') + '"></i>'; return h + '</span>'; };
+  let evo = '';
+  for (let i = 0; i < 4; i++) evo += '<div>' + (sharkArt(sh.id, i) ? '<img src="' + sharkArt(sh.id, i) + '" alt="">' : '🦈') + (EVO[i].label || (i + 1) + '단계') + '</div>';
+  return '<div class="in"><h4>' + sh.name + ' <span class="tg">' + sh.tag + '</span></h4>' +
+    '<div class="ab">✨ ' + sh.desc + '</div>' +
+    '<div class="stt"><span>❤️ 체력</span>' + pip(sh.hp, 1.5) + '<span>💨 속도</span>' + pip(sh.speed, 1.22) +
+    '<span>🌀 흡입</span>' + pip(sh.suction, 1.8) + '<span>🦷 물기</span>' + pip(sh.biteMul || 1, 2) + '<span>⭐ 티어</span>' + pip(sh.base, 7) + '</div>' +
+    '<div class="sec">진화</div><div class="evo">' + evo + '</div>' +
+    '<div class="sec">나와 함께한 기록</div><div class="rec"><div><b>' + r.runs + '</b>판</div><div><b>' + r.eaten.toLocaleString() + '</b>먹은 물고기</div><div><b>' + r.boss + '</b>보스</div></div></div>';
+}
+function openCards(){
+  hideScreens();
+  document.body.classList.add('menu');
+  renderCards();
+  el('cardScreen').classList.remove('hidden');
+  el('cardScreen').scrollTop = 0;
+}
+function renderCards(){
+  el('cardCount').textContent = SHARKS.filter(x => SAVE.sharks[x.id]).length + ' / ' + SHARKS.length;
+  el('cardGrid').innerHTML = SHARKS.map(sh => {
+    const owned = !!SAVE.sharks[sh.id], R = RARITY_OF(sh);
+    return '<button class="scard ' + R.c + (owned ? '' : ' lock') + (owned && R.st >= 4 ? ' holo' : '') + '" data-card="' + sh.id + '">' +
+      (SAVE.active === sh.id ? '<span class="use">사용 중</span>' : '') + cardFront(sh, false) + '</button>';
+  }).join('');
+}
+function showCard(id){
+  const sh = SHARK_BY_ID[id], owned = !!SAVE.sharks[id], R = RARITY_OF(sh), pop = el('cardPop');
+  pop.innerHTML = '<div class="bk"></div><div class="cflip" id="cflip"><div class="cinner">' +
+    '<div class="cface ' + R.c + (owned && R.st >= 4 ? ' holo' : '') + '">' + cardFront(sh, true) + '</div>' +
+    (owned ? '<div class="cface bkf ' + R.c + '">' + cardBack(sh) + '</div>' : '') + '</div></div>' +
+    '<div class="cpbtns">' + (owned ? (SAVE.active === id ? '<button class="on">✔ 사용 중</button>' : '<button class="go" data-pick="' + id + '">이 상어로 하기</button>') : '') +
+    '<button class="cl" id="cardClose">닫기</button></div>';
+  pop.classList.remove('hidden');
+}
+el('cardGrid').addEventListener('click', e => {
+  const c = e.target.closest('[data-card]');
+  if (!c) return;
+  SFX.ui(); showCard(c.dataset.card);
+});
+el('cardPop').addEventListener('click', e => {
+  if (e.target.id === 'cardClose' || e.target.classList.contains('bk')) { SFX.ui(); el('cardPop').classList.add('hidden'); return; }
+  const pk = e.target.closest('[data-pick]');
+  if (pk) {
+    SAVE.active = pk.dataset.pick; fixStageSel(); writeSave(); SFX.buy();
+    renderCards(); showCard(pk.dataset.pick); return;
+  }
+  const f = e.target.closest('#cflip');
+  if (f && f.querySelector('.bkf') && !f.classList.contains('turn')) {   // 'flipped' — 'back' 은 뒤로가기 버튼 스타일과 겹친다
+    f.classList.add('turn'); SFX.ui();
+    setTimeout(() => { f.classList.toggle('flipped'); f.classList.remove('turn'); }, 180);
+  }
+});
+el('cardBack').addEventListener('click', () => { SFX.ui(); openHub(); });
 
 /* ---------------- 업적 화면 ---------------- */
 function openAch(){
@@ -7464,7 +7353,6 @@ const ADMIN_ACTIONS = {
   lvup:   () => { const L = levelOf(SAVE.xp); SAVE.xp += L.need - L.cur; payLevels(); return '레벨 +1 → Lv ' + levelOf(SAVE.xp).lv; },
   achall: () => { ACH.forEach(a => { if (!SAVE.ach[a.id]) SAVE.ach[a.id] = 1; }); return '업적 전부 달성 (보상 없이)'; },
   egg:    () => { SAVE.eggs++; return '상어알 +1'; },
-  cosall: () => { COS.forEach(c => SAVE.cos.owned[c.id] = true); SAVE.frags += 5; return '꾸미기 전부 + 조각 5'; },
   starsall: () => { STAGES.forEach(st => SAVE.stars[st.id] = starList(st).map(() => 1)); return '별 전부 ' + totalStars(); },
   daily:  () => { SAVE.daily.date = ''; SAVE.stamp.last = ''; rollDaily(); return '내일이 됐어요 — 새 미션 · 도장 ' + SAVE.stamp.day + '일째'; },
   missiondone: () => { SAVE.daily.ms.forEach(m => { m.done = true; m.p = MISSION_BY_ID[m.id].goal; }); return '오늘 미션 다 함 (받기는 미션 창에서)'; },
@@ -7655,13 +7543,14 @@ function finishRun(cleared){
     if (G.t < 180) SAVE.stats.fastClear++;
     if (G.bossHits === 0) SAVE.stats.noHitBoss++;
   }
+  { const r = SAVE.sharkRec[SAVE.active] || (SAVE.sharkRec[SAVE.active] = { runs: 0, eaten: 0, boss: 0 });   // 🃏 상어 카드 기록
+    r.runs++; r.eaten += G.eaten; r.boss += (cleared ? 1 : 0) + (G.stage.endless && G.endless ? G.endless.kills : 0); }
   /* ⭐ 별 — 이번 판 기록으로 판정. 새 별마다 진주 */
   const R0r = G.run || { nets:0, mineBoss:0, tent:0, teeth:0, lure:0, shellBreak:0, streamT:0, eat:{} };
   const before = totalStars();
   const freshStars = judgeStars(G.stage, { ...R0r, cleared, time: G.stage.endless && G.endless ? G.endless.t : G.t,
     combo: G.maxComboRun, nohit: cleared && G.bossHits === 0, kills: G.endless ? G.endless.kills : 0 });
   if (freshStars.length) { SAVE.pearls += freshStars.length*STAR_PEARLS; }
-  const starUnlocks = COS.filter(c => c.stars && before < c.stars && totalStars() >= c.stars);
   const xpGain = G.xp;
   SAVE.xp += xpGain;
   checkAch();
@@ -7706,7 +7595,6 @@ function finishRun(cleared){
   }
   if (G.newAch) msgs.push('🏆 업적 ' + G.newAch + '개 달성 · 새 칭호 — 업적 화면에서 달 수 있다');
   if (G.revived) msgs.push('🐚 부활 조개를 썼다');
-  for (const c of starUnlocks) msgs.push('🎨 별 ' + c.stars + '개! 꾸미기 「' + c.name + '」가 열렸다');
   if (missionClaimable()) msgs.push('📅 미션 완료 — 기지에서 보상 받기');
   if (allDone && first && after && after.endless) msgs.push('♾️ 끝없는 바다가 열렸다 — 지도 맨 아래');
   if (endlessRec && (endlessRec.newT || endlessRec.newK))
@@ -7871,7 +7759,7 @@ if (location.search.indexOf('debug') >= 0) {
   window.__openLair = () => openLair();
   window.__endless = () => G.endless;
   window.__currentTitle = () => currentTitle();
-  window.__rollDaily = rollDaily; window.__COS = COS; window.__totalStars = totalStars; window.__cosURL = cosPreviewURL;
+  window.__rollDaily = rollDaily; window.__totalStars = totalStars; window.__openCards = () => openCards();
   window.__bossMove = k => { const b = G.boss, p = G.player; if (!b) return;     // 보스 동작 바로 시험 — __bossMove('leap')
     const d = Math.hypot(p.x - b.x, p.y - b.y) || 1; b.t = 0; BOSS_MOVES[k].start(b, (p.x - b.x)/d, (p.y - b.y)/d); };
   window.__BOSSES = BOSSES; window.__STAGES = STAGES; window.__showEnding = () => showEnding();
