@@ -753,6 +753,8 @@
   #putEgg{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:10px;font-size:14px;font-weight:900;color:#7a3e00;
     background:linear-gradient(180deg,#ffe066,#ffb703);box-shadow:0 4px 0 #c77d00}
   #putEgg:disabled{background:#dfe8ef;color:#97a9b8;box-shadow:0 4px 0 #c5d3de}
+  #sellEgg{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:10px;font-size:13.5px;font-weight:900;color:#fff;
+    background:linear-gradient(180deg,#5ee0a0,#22b26c);box-shadow:0 4px 0 #138149}
   /* 바다 지도 — 흰 정보 카드 + 노란 통통 버튼 */
   #mapScreen .mapHead{background:linear-gradient(180deg,rgba(20,90,150,.55),rgba(20,90,150,0))}
   #mapScreen .mapInfo{background:linear-gradient(180deg,rgba(10,50,90,0),rgba(10,50,90,.75) 22%)}
@@ -1758,6 +1760,7 @@ const UPGRADES = [
 ];
 const UPG_MAX  = 5;
 const upgCost  = lv => 80 * Math.pow(2, lv);      // 80 / 160 / 320 / 640 / 1280
+const EGG_PEARLS = 300;                           // 알에서 나올 상어를 다 모은 뒤 남은 알 1개 값
 const EGG_PER_FISH = 2;                           // 물고기 1마리 = 부화 +2%
 const BOSS_PEARLS  = 150;
 
@@ -6549,7 +6552,8 @@ function renderHub(){
   el('upgBadge').classList.toggle('hidden', !UPGRADES.some(u => SAVE.upg[u.id] < UPG_MAX && SAVE.pearls >= upgCost(SAVE.upg[u.id])));
   const bagN = SHOP.reduce((a, it) => a + (SAVE.inv[it.id] || 0), 0);
   el('bagBadge').textContent = bagN ? '×' + bagN : ''; el('bagBadge').classList.toggle('hidden', !bagN);
-  const hb = SAVE.hatch.sharkId ? Math.floor(SAVE.hatch.progress) + '%' : SAVE.eggs > 0 ? '알 ' + SAVE.eggs : '';
+  const hatchDone = !SHARKS.some(x => !SAVE.sharks[x.id] && !x.secret);   // 알에서 나올 상어를 다 모음 — 남은 알은 진주로 바꾼다
+  const hb = SAVE.hatch.sharkId ? Math.floor(SAVE.hatch.progress) + '%' : SAVE.eggs > 0 ? (hatchDone ? '◈' : '알 ' + SAVE.eggs) : '';
   el('hatchBadge').textContent = hb; el('hatchBadge').classList.toggle('hidden', !hb);
   el('hatchBadge').classList.toggle('red', !SAVE.hatch.sharkId && SAVE.eggs > 0);
 
@@ -6594,7 +6598,10 @@ function renderHub(){
       (SAVE.eggs > 0 ? '<span class="hchip">🥚 남은 알 ' + SAVE.eggs + '개</span>' : '') + '</div>';
   } else if (!locked.length) {
     html = '<div class="hegg" style="' + ring(100) + '"><span>🎉</span></div>' +
-      '<div class="hx"><b>모든 상어를 모았어요!</b><p>더 깨어날 상어가 없어요.</p></div>';
+      '<div class="hx"><b>알에서 나올 상어를 다 모았어요!</b>' +
+      (SAVE.eggs > 0 ? '<p>남은 알은 진주로 바꿀 수 있어요. 알 1개 = ◈ ' + EGG_PEARLS + '</p><span class="hchip">🥚 가진 알 ' + SAVE.eggs + '개</span>' +
+                       '<button id="sellEgg">🥚 → ◈ ' + (SAVE.eggs*EGG_PEARLS).toLocaleString() + ' 진주로 바꾸기</button>'
+                     : '<p>보스를 처음 쓰러뜨려 얻는 알은 여기서 진주로 바꿀 수 있어요.</p>') + '</div>';
   } else {
     html = '<div class="hegg no" style="' + ring(0) + '"><span>🥚</span></div>' +
       '<div class="hx"><b>부화기가 비어 있어요</b>' +
@@ -6738,6 +6745,12 @@ el('upgList').addEventListener('click', e => {
   writeSave(); SFX.buy(); checkAch(); payLevels(); renderHub();
 });
 el('hatchBox').addEventListener('click', e => {
+  if (e.target.id === 'sellEgg' && SAVE.eggs > 0) {
+    const n = SAVE.eggs; SAVE.pearls += n*EGG_PEARLS; SAVE.eggs = 0;
+    writeSave(); SFX.medal(); renderHub();
+    showBanner('🥚', '알 ' + n + '개를 바꿨어요', '◈ +' + (n*EGG_PEARLS).toLocaleString() + ' 진주');
+    return;
+  }
   if (e.target.id !== 'putEgg' || SAVE.eggs < 1) return;
   const locked = SHARKS.filter(x => !SAVE.sharks[x.id] && !x.secret);   // 비밀 상어는 알로 안 나온다
   if (!locked.length) return;
@@ -7584,7 +7597,7 @@ function finishRun(cleared){
   const nextOpen = !!(next && cleared && !stageLock(next, i + 1));
   const msgs = [];
   if (unlocked) msgs.push('부화 완료 — ' + unlocked.name + ' 해금');
-  if (gotEgg)   msgs.push('상어알 획득 — 기지의 부화기에 넣어라');
+  if (gotEgg)   msgs.push(SHARKS.some(x => !SAVE.sharks[x.id] && !x.secret) ? '상어알 획득 — 기지의 부화기에 넣어라' : '상어알 획득 — 부화기에서 진주로 바꿀 수 있어요');
   if (newStage) msgs.push('새 해역 — ' + newStage.name);
   if (cleared && next && !nextOpen) msgs.push(next.name + ': ' + stageLock(next, i + 1));
   if (newBest)  msgs.push('신기록! ' + fmtTime(G.t));
